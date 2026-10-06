@@ -1,0 +1,2034 @@
+import type { CourseDifficulty, CourseSection } from './catalog.types';
+
+export interface CourseSeed {
+	title: string;
+	subtitle: string;
+	shortDescription: string;
+	description: string;
+	outcomes: string[];
+	requirements: string[];
+	tags: string[];
+	categorySlug: string;
+	instructorSlug: string;
+	difficulty: CourseDifficulty;
+	language: string;
+	priceUsd: number;
+	discountUsd?: number;
+	durationMinutes: number;
+	rating: number;
+	studentsCount: number;
+	certificateEnabled: boolean;
+	featured?: boolean;
+	thumbnailUrl?: string | null;
+	customSections?: CourseSection[];
+}
+
+export const COURSE_SEEDS: CourseSeed[] = [
+	// ---------------------------------------------------------------- Joel Talargie Flagship Courses
+	{
+		title: 'AI & Modern Technology: Orientation & Roadmap',
+		subtitle: 'Your complete starter guide to modern artificial intelligence and digital workflows',
+		shortDescription:
+			'Get started with modern AI and emerging tech with a guided orientation from Joel Talargie.',
+		description:
+			'A comprehensive orientation and foundation designed to help beginners and ambitious creators navigate the fast-moving world of artificial intelligence and emerging technology. In this course, Joel Talargie introduces the core pillars of modern AI, demonstrates essential account setups across top AI platforms (ChatGPT, Claude, Dala AI, Google AI Studio), and outlines a structured roadmap to transition from passive consumer to empowered AI builder.',
+		outcomes: [
+			'Understand the current generative AI landscape and upcoming technological shifts',
+			'Set up and configure essential AI tool accounts safely and effectively',
+			'Identify high-impact opportunities to leverage AI in your daily work, studies, and business',
+			'Follow a personalized learning roadmap to build real-world AI and no-code skills'
+		],
+		requirements: [
+			'A computer or smartphone with an internet connection',
+			'No prior coding or technical background required',
+			'Curiosity to learn and experiment with modern AI tools'
+		],
+		tags: [
+			'Artificial Intelligence',
+			'Getting Started',
+			'Productivity',
+			'Tech Kemsha',
+			'Joel Talargie'
+		],
+		categorySlug: 'artificial-intelligence',
+		instructorSlug: 'joel-talargie',
+		difficulty: 'BEGINNER',
+		language: 'English & Amharic',
+		priceUsd: 0,
+		durationMinutes: 45,
+		rating: 4.9,
+		studentsCount: 14800,
+		certificateEnabled: true,
+		featured: true,
+		thumbnailUrl: '/images/courses/ai-modern-tech-orientation.jpg',
+		customSections: [
+			{
+				id: 'sec-ai-orient',
+				title: 'Orientation & Modern AI Landscape',
+				description: 'Orientation to the academy and the emerging AI technology ecosystem.',
+				lessons: [
+					{
+						id: 'l-ai-orient-1',
+						title: 'Course Orientation, Account Setup & Modern AI Roadmap',
+						lessonType: 'VIDEO',
+						durationSeconds: 480,
+						isMandatory: true,
+						isPreview: true,
+						videoUrl: 'https://youtu.be/xTz_mlIin5c',
+						content:
+							'<p>Welcome to the <strong>Joel Talargie Academy</strong>! In this opening orientation, lead instructor <strong>Joel Talargie</strong> welcomes you to the academy and provides a complete roadmap of modern generative AI and tech ecosystems.</p><h3>Key Takeaways</h3><ul><li>The shift from traditional computing to AI-accelerated workflows</li><li>Essential accounts to set up: Anthropic Claude, OpenAI ChatGPT, Dala AI Studio, Google AI</li><li>Best practices for data security, privacy, and effective continuous learning</li></ul>',
+						resources: [
+							{
+								id: 'res-ai-orient-1',
+								title: 'Academy Orientation & Tool Setup Guide (PDF)',
+								externalUrl: 'https://preview.mailerlite.io/forms/2549291/194589885305193786/share',
+								originalFileName: 'JoelAcademy-AI-Setup-Guide.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 450
+							},
+							{
+								id: 'res-ai-orient-2',
+								title: 'Joel Talargie Community Links & Socials',
+								externalUrl: 'https://bit.ly/m/Joel-Talargie-community',
+								originalFileName: null,
+								mimeType: null,
+								fileSize: null
+							}
+						]
+					},
+					{
+						id: 'l-ai-orient-2',
+						title: 'How to Navigate & Get Certified in Joel Academy',
+						lessonType: 'TEXT',
+						durationSeconds: 300,
+						isMandatory: true,
+						isPreview: true,
+						content:
+							'<p>Learn how to maximize your learning experience inside the Joel Talargie Academy. Track your progress across modules, save timestamped lesson notes, complete hands-on practical exercises, and claim your verified, shareable certificate upon course completion.</p>'
+					}
+				]
+			}
+		]
+	},
+	{
+		title: 'AI from A to Z: 13-Minute Complete Free Crash Course',
+		subtitle: "በ13 ደቂቃ ብቻ! AI በነፃ ከ'ሀ' እስከ 'ፐ' — Complete Free AI Foundations & Productivity",
+		shortDescription:
+			'Master AI foundations, understand how AI actually works, and explore the best free AI tools in minutes.',
+		description:
+			'Want to master Artificial Intelligence without spending money or wasting hours? In this intensive crash course by Joel Talargie, you will learn the exact foundations of AI from A to Z, discover the top free tools you can start using today, and learn practical ways to automate work and studies with zero technical background.\n\nየአርቲፊሻል ኢንተለጀንስ (AI) ቴክኖሎጂን ከ"ሀ" እስከ "ፐ" በቀላሉ እና በፍጥነት ለመማር የተዘጋጀ ሙሉ የቪዲዮ ኮርስ! የ AI ጽንሰ-ሀሳቦችን፣ ምርጥ ነጻ የ AI ቱሎችን እና በዕለት ተዕለት ስራ ላይ እንዴት ማዋል እንደምትችሉ ደረጃ በደረጃ ይማራሉ።',
+		outcomes: [
+			'Explain what Artificial Intelligence, Neural Networks, and LLMs are in simple terms',
+			'Discover and navigate the top 100% free AI productivity tools available today',
+			'Automate repetitive tasks, writing, research, and study habits with smart prompts',
+			'Apply prompt engineering basics to get exact, high-quality responses every time'
+		],
+		requirements: [
+			'No prior coding or technical experience needed',
+			'A web browser on PC or mobile phone'
+		],
+		tags: [
+			'AI Crash Course',
+			'Free AI',
+			'Tech Kemsha',
+			'Learn AI',
+			'Productivity',
+			'Ethiopia Tech'
+		],
+		categorySlug: 'artificial-intelligence',
+		instructorSlug: 'joel-talargie',
+		difficulty: 'BEGINNER',
+		language: 'Amharic & English',
+		priceUsd: 0,
+		durationMinutes: 60,
+		rating: 5.0,
+		studentsCount: 28900,
+		certificateEnabled: true,
+		featured: true,
+		thumbnailUrl: '/images/courses/ai-crash-course-a-to-z.jpg',
+		customSections: [
+			{
+				id: 'sec-ai-az',
+				title: 'The 13-Minute AI Masterclass',
+				description: 'Complete breakdown of AI foundations and essential free tools.',
+				lessons: [
+					{
+						id: 'l-ai-az-1',
+						title: 'Master AI in Just 13 Minutes! (Foundations & Best Free Tools)',
+						lessonType: 'VIDEO',
+						durationSeconds: 896,
+						isMandatory: true,
+						isPreview: true,
+						videoUrl: 'https://youtu.be/TQSUjYxJKwo',
+						content:
+							'<p>In this masterclass, Joel Talargie breaks down artificial intelligence into simple, intuitive concepts that anyone can grasp in 13 minutes.</p><h3>What You Will Learn</h3><ul><li>What AI actually is (explained simply from A to Z)</li><li>The best free AI tools you can start using today for writing, research, and analysis</li><li>Practical ways to automate your daily work and academic studies</li><li>How to start learning AI with zero technical background</li></ul>',
+						resources: [
+							{
+								id: 'res-ai-az-1',
+								title: 'Free AI Tools Directory & Beginner Prompt Cheatsheet (PDF)',
+								externalUrl: 'https://preview.mailerlite.io/forms/2549291/194589885305193786/share',
+								originalFileName: 'Free-AI-Tools-Directory-2026.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 620
+							},
+							{
+								id: 'res-ai-az-2',
+								title: 'AI Productivity Starter Cheatsheet',
+								externalUrl: null,
+								originalFileName: 'AI-Productivity-Cheatsheet.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 280
+							}
+						]
+					},
+					{
+						id: 'l-ai-az-2',
+						title: 'Quick Self-Assessment & Action Plan',
+						lessonType: 'TEXT',
+						durationSeconds: 360,
+						isMandatory: true,
+						isPreview: true,
+						content:
+							'<p>Test your understanding of the core AI tools covered in the lesson and formulate your 7-day automation plan.</p>'
+					}
+				]
+			}
+		]
+	},
+	{
+		title: 'Build Anything with No-Code AI: Dala AI Studio Masterclass',
+		subtitle: 'ስራህን በደቂቃ የሚያቀልልህ ድብቁ ነጻ AI! — Build Apps, Websites & Digital Assets with No-Code',
+		shortDescription:
+			'Build full websites, mobile apps, digital art, and social media videos in minutes with Dala AI Studio.',
+		description:
+			'In this video masterclass, Joel Talargie dives deep into Dala AI Studio—the revolutionary all-in-one no-code AI platform that lets you build literally anything in minutes! Whether you want to create full websites, mobile apps, stunning digital art, or high-converting social media videos, this free AI tool does it all with simple text prompts.\n\nያለምንም የኮዲንግ እውቀት ድረ-ገጾችን (Websites)፣ ሞባይል አፕሊኬሽኖችን (Apps)፣ ዲጂታል ምስሎችን፣ ቪዲዮዎችን እና ሌሎችንም ዲጂታል ስራዎች በደቂቃዎች ውስጥ እንድትሰሩ የሚያስችል ልዩ የቪዲዮ ስልጠና!',
+		outcomes: [
+			'Build and deploy full responsive websites using simple natural language prompts',
+			'Generate mobile applications with interactive UI components without writing code',
+			'Create stunning digital art, product mockups, and social media marketing videos',
+			'Package no-code digital services to launch your own freelance or agency business'
+		],
+		requirements: [
+			'No coding or graphic design experience required',
+			'Internet access and a free Dala AI account'
+		],
+		tags: [
+			'Dala AI Studio',
+			'No Code',
+			'App Builder',
+			'Website Builder',
+			'Digital Art',
+			'Tech Kemsha'
+		],
+		categorySlug: 'artificial-intelligence',
+		instructorSlug: 'joel-talargie',
+		difficulty: 'BEGINNER',
+		language: 'Amharic & English',
+		priceUsd: 0,
+		durationMinutes: 75,
+		rating: 4.9,
+		studentsCount: 21500,
+		certificateEnabled: true,
+		featured: true,
+		thumbnailUrl: '/images/courses/dala-ai-studio-no-code-mastery.jpg',
+		customSections: [
+			{
+				id: 'sec-dala-mastery',
+				title: 'Dala AI Studio Deep Dive',
+				description: 'Step-by-step masterclass on creating digital products with Dala AI.',
+				lessons: [
+					{
+						id: 'l-dala-1',
+						title: 'Building Websites, Apps & Digital Assets with Dala AI Studio',
+						lessonType: 'VIDEO',
+						durationSeconds: 1141,
+						isMandatory: true,
+						isPreview: true,
+						videoUrl: 'https://youtu.be/4x9jwFxcWMc',
+						content:
+							"<p>Follow along with Joel Talargie as he demonstrates the power of Africa's groundbreaking all-in-one AI platform, <strong>Dala AI Studio</strong>.</p><h3>What is covered</h3><ul><li>Creating responsive landing pages and web apps in minutes</li><li>Generating mobile application prototypes</li><li>Creating high-resolution digital artwork and branding assets</li><li>Producing marketing videos from text descriptions</li><li>Monetizing no-code digital creations for clients worldwide</li></ul>",
+						resources: [
+							{
+								id: 'res-dala-1',
+								title: 'Dala AI Studio Official Platform Access',
+								externalUrl: 'https://dala.gebeya.com/ref/eyoel-abrham',
+								originalFileName: null,
+								mimeType: null,
+								fileSize: null
+							},
+							{
+								id: 'res-dala-2',
+								title: 'Dala AI Studio Prompt Formulas & Asset Templates (PDF)',
+								externalUrl: null,
+								originalFileName: 'Dala-AI-Prompt-Formulas.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 512
+							}
+						]
+					},
+					{
+						id: 'l-dala-2',
+						title: 'No-Code Project Workflow & Best Practices',
+						lessonType: 'TEXT',
+						durationSeconds: 420,
+						isMandatory: true,
+						isPreview: true,
+						content:
+							'<p>A comprehensive step-by-step checklist on refining generated web code, optimizing asset exports, and connecting custom domain names.</p>'
+					}
+				]
+			}
+		]
+	},
+	{
+		title: 'Claude AI Masterclass: Advanced Reasoning & Online Income',
+		subtitle: 'Claude AIን በመጠቀም እንዴት የኦንላይን ስራ መስራት እና ገቢ ማግኘት ይቻላል?',
+		shortDescription:
+			"Master Anthropic Claude AI's advanced reasoning, 200k context window, and monetize your AI skills online.",
+		description:
+			"Anthropic's Claude AI represents a massive paradigm shift in artificial intelligence. While everyone is still discussing traditional chatbots, Claude has quietly dropped updates that completely redefine what an AI assistant can achieve.\n\nIn this comprehensive guide, Joel Talargie breaks down why Claude is turning heads across the global tech industry, how its advanced reasoning and 200K+ context window outperform rivals, and how YOU can use its hidden features as a complete beginner with zero tech experience to automate knowledge work, analyze complex data, and earn income online.",
+		outcomes: [
+			"Master Claude 3.5 Sonnet's state-of-the-art reasoning and coding capabilities",
+			'Utilize Claude Artifacts to generate live interactive web applications, charts, and documents',
+			'Analyze massive books, financial reports, and datasets using the 200k context window',
+			'Package and deliver high-value freelance services (copywriting, data analysis, automation) on Upwork and Fiverr'
+		],
+		requirements: ['No prior technical experience required', 'Free Claude AI account (claude.ai)'],
+		tags: [
+			'Claude AI',
+			'Anthropic',
+			'Prompt Engineering',
+			'Online Income',
+			'Freelancing',
+			'Tech Kemsha'
+		],
+		categorySlug: 'artificial-intelligence',
+		instructorSlug: 'joel-talargie',
+		difficulty: 'ALL_LEVELS',
+		language: 'Amharic & English',
+		priceUsd: 0,
+		durationMinutes: 90,
+		rating: 5.0,
+		studentsCount: 34200,
+		certificateEnabled: true,
+		featured: true,
+		thumbnailUrl: '/images/courses/claude-ai-mastery-online-income.jpg',
+		customSections: [
+			{
+				id: 'sec-claude-mastery',
+				title: 'Claude AI Comprehensive Guide',
+				description: 'Master Anthropic Claude AI from prompt engineering to online monetization.',
+				lessons: [
+					{
+						id: 'l-claude-1',
+						title: 'Claude AI Deep Dive: Advanced Reasoning, Context & Income Generation',
+						lessonType: 'VIDEO',
+						durationSeconds: 881,
+						isMandatory: true,
+						isPreview: true,
+						videoUrl: 'https://youtu.be/nDW9G05lhlg',
+						content:
+							"<p>Join Joel Talargie on <strong>Tech Kemsha</strong> as we dissect the groundbreaking features of Anthropic's Claude AI.</p><h3>Key Topics</h3><ul><li>Why Claude outperforms traditional AI models in deep reasoning and nuanced writing</li><li>How to take advantage of the massive 200K context window to analyze entire books and codebases</li><li>Building instant web apps and visualizations with Claude Artifacts</li><li>Real-world strategies to land freelance clients and generate income using Claude</li></ul>",
+						resources: [
+							{
+								id: 'res-claude-1',
+								title: 'Claude Advanced Prompting Framework & Blueprint (PDF)',
+								externalUrl: null,
+								originalFileName: 'Claude-Advanced-Prompting-Framework.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 740
+							},
+							{
+								id: 'res-claude-2',
+								title: 'Online AI Freelancing & Client Outreach Kit',
+								externalUrl: null,
+								originalFileName: 'AI-Freelancing-Outreach-Kit.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 380
+							}
+						]
+					},
+					{
+						id: 'l-claude-2',
+						title: 'The Claude Artifacts Playbook',
+						lessonType: 'TEXT',
+						durationSeconds: 480,
+						isMandatory: true,
+						isPreview: true,
+						content:
+							'<p>Learn how to prompt Claude to produce interactive React components, SVG illustrations, HTML prototypes, and comprehensive research reports inside the Artifacts window.</p>'
+					}
+				]
+			}
+		]
+	},
+	{
+		title: 'ChatGPT & Systematic Prompt Engineering for Productivity',
+		subtitle: 'Master structured prompt frameworks, Custom GPTs, and advanced workplace automation',
+		shortDescription:
+			'Master ChatGPT prompt frameworks, custom GPTs, and advanced workflows for 10x productivity.',
+		description:
+			'Move far beyond basic questions. Learn the systematic prompt engineering frameworks used by top professionals to extract accurate, nuanced, and repeatable results from ChatGPT for business analysis, software development, research, and executive communication.',
+		outcomes: [
+			'Apply the RTCF (Role, Task, Context, Format) and Chain-of-Thought prompting frameworks',
+			'Build and deploy custom GPTs tailored to your exact business workflows',
+			'Automate complex research, data synthesis, and email management',
+			'Prevent hallucinations and verify AI generated outputs reliably'
+		],
+		requirements: ['Familiarity with basic ChatGPT interface'],
+		tags: [
+			'ChatGPT',
+			'OpenAI',
+			'Prompt Engineering',
+			'Custom GPTs',
+			'Productivity',
+			'Joel Talargie'
+		],
+		categorySlug: 'artificial-intelligence',
+		instructorSlug: 'joel-talargie',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 29.99,
+		discountUsd: 19.99,
+		durationMinutes: 90,
+		rating: 4.9,
+		studentsCount: 19800,
+		certificateEnabled: true,
+		featured: false,
+		thumbnailUrl: '/images/courses/chatgpt-prompt-engineering-mastery.jpg',
+		customSections: [
+			{
+				id: 'sec-chatgpt-mastery',
+				title: 'Systematic Prompt Engineering',
+				description: 'Advanced prompt frameworks and custom GPT architecture.',
+				lessons: [
+					{
+						id: 'l-chatgpt-1',
+						title: 'Structured Prompt Frameworks & Custom GPT Architecture',
+						lessonType: 'VIDEO',
+						durationSeconds: 900,
+						isMandatory: true,
+						isPreview: true,
+						videoUrl: 'https://youtu.be/TQSUjYxJKwo',
+						content:
+							'<p>Learn how to architect high-performance prompts and construct custom GPTs with knowledge files and instructions.</p>',
+						resources: [
+							{
+								id: 'res-chatgpt-1',
+								title: 'ChatGPT Master Prompt Library (100+ Production Prompts)',
+								externalUrl: null,
+								originalFileName: 'ChatGPT-Master-Prompt-Library.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 850
+							}
+						]
+					},
+					{
+						id: 'l-chatgpt-2',
+						title: 'Custom GPTs in Practice',
+						lessonType: 'TEXT',
+						durationSeconds: 480,
+						isMandatory: true,
+						isPreview: true,
+						content:
+							'<p>Hands-on guide to configuring custom instructions, actions, and persistent knowledge bases for your custom GPTs.</p>'
+					}
+				]
+			}
+		]
+	},
+	{
+		title: 'AI-Driven Digital Marketing & Content Creation Engine',
+		subtitle:
+			'Scale your audience with AI short-form videos, viral copywriting, and automated funnels',
+		shortDescription:
+			'Create high-converting social media content, viral short-form videos, and SEO copy using AI.',
+		description:
+			'Learn how to construct a scalable digital content machine. Use cutting-edge generative AI for video creation, voice synthesis, thumbnail ideation, copy generation, and SEO optimization to rapidly grow your brand and revenue.',
+		outcomes: [
+			'Design multi-channel content marketing calendars in minutes',
+			'Generate viral short-form video scripts, voiceovers, and visual b-roll with AI',
+			'Write high-converting ad copy and email marketing campaigns',
+			'Optimize blog posts and landing pages to rank on search engines'
+		],
+		requirements: [
+			'Basic understanding of social media platforms (YouTube, TikTok, Instagram, LinkedIn)'
+		],
+		tags: ['Digital Marketing', 'Content Creation', 'Shorts', 'TikTok', 'Video AI', 'SEO'],
+		categorySlug: 'digital-marketing',
+		instructorSlug: 'joel-talargie',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 39.99,
+		discountUsd: 24.99,
+		durationMinutes: 105,
+		rating: 4.8,
+		studentsCount: 16200,
+		certificateEnabled: true,
+		featured: false,
+		thumbnailUrl: '/images/courses/ai-digital-marketing-content-creation.jpg',
+		customSections: [
+			{
+				id: 'sec-ai-marketing',
+				title: 'The AI Content Machine',
+				description: 'Automated video generation, scripting, and social media distribution.',
+				lessons: [
+					{
+						id: 'l-aim-1',
+						title: 'Building an Automated Social Media & Video Content Engine',
+						lessonType: 'VIDEO',
+						durationSeconds: 1020,
+						isMandatory: true,
+						isPreview: true,
+						videoUrl: 'https://youtu.be/4x9jwFxcWMc',
+						content:
+							'<p>Master the end-to-end process of generating viral video concepts, automated scripts, voiceovers, and high-CTR thumbnails using generative AI tools.</p>',
+						resources: [
+							{
+								id: 'res-aim-1',
+								title: 'AI Content Marketing Calendar & Video Production Kit',
+								externalUrl: null,
+								originalFileName: 'AI-Content-Calendar-Template.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 610
+							}
+						]
+					},
+					{
+						id: 'l-aim-2',
+						title: 'Copywriting Formulas that Convert',
+						lessonType: 'TEXT',
+						durationSeconds: 420,
+						isMandatory: true,
+						isPreview: true,
+						content:
+							'<p>Explore PAS, AIDA, and Story-Hook-Offer formulas fine-tuned for AI prompt workflows.</p>'
+					}
+				]
+			}
+		]
+	},
+	{
+		title: 'Online Freelancing & High-Income Remote Work with AI',
+		subtitle:
+			'The complete blueprint to landing global clients, packaging AI services, and receiving payments',
+		shortDescription:
+			'Launch a high-income freelance career offering AI-powered writing, design, and automation services.',
+		description:
+			'A battle-tested blueprint for breaking into online freelancing on platforms like Upwork, Fiverr, and direct enterprise contracts. Learn how to package AI-accelerated services, write winning proposals that get accepted, set competitive pricing, and safely manage international payments.',
+		outcomes: [
+			'Identify the most in-demand, high-margin freelance services you can deliver using AI',
+			'Write high-converting proposals on Upwork and build a 5-star profile',
+			'Set up global payment pathways to receive international funds from Ethiopia and worldwide',
+			'Communicate professionally with international clients and secure repeat retainers'
+		],
+		requirements: [
+			'A computer or smartphone with internet connection',
+			'Desire to build an independent remote income stream'
+		],
+		tags: ['Freelancing', 'Upwork', 'Remote Work', 'AI Services', 'Monetization', 'Online Income'],
+		categorySlug: 'business-management',
+		instructorSlug: 'joel-talargie',
+		difficulty: 'ALL_LEVELS',
+		language: 'English & Amharic',
+		priceUsd: 49.99,
+		discountUsd: 29.99,
+		durationMinutes: 120,
+		rating: 5.0,
+		studentsCount: 22400,
+		certificateEnabled: true,
+		featured: true,
+		thumbnailUrl: '/images/courses/ai-freelancing-remote-work-mastery.jpg',
+		customSections: [
+			{
+				id: 'sec-ai-freelance',
+				title: 'Freelancing Blueprint',
+				description: 'Packaging AI services, landing clients, and managing international payments.',
+				lessons: [
+					{
+						id: 'l-aif-1',
+						title: 'The AI Freelancer Blueprint: Packaging Services, Proposals & Payments',
+						lessonType: 'VIDEO',
+						durationSeconds: 960,
+						isMandatory: true,
+						isPreview: true,
+						videoUrl: 'https://youtu.be/nDW9G05lhlg',
+						content:
+							'<p>Learn the exact step-by-step strategy to create in-demand service offerings, submit proposals that stand out, and get paid globally.</p>',
+						resources: [
+							{
+								id: 'res-aif-1',
+								title: 'Winning Upwork Proposal Templates & Client Contract Pack',
+								externalUrl: null,
+								originalFileName: 'Upwork-Winning-Proposals-Pack.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 540
+							},
+							{
+								id: 'res-aif-2',
+								title: 'International Payment Solutions Guide for Ethiopian Freelancers',
+								externalUrl: null,
+								originalFileName: 'Global-Payments-Guide.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 430
+							}
+						]
+					},
+					{
+						id: 'l-aif-2',
+						title: 'Setting Up Your Upwork & Fiverr Profiles',
+						lessonType: 'TEXT',
+						durationSeconds: 480,
+						isMandatory: true,
+						isPreview: true,
+						content:
+							'<p>Comprehensive profile optimization guide with headline formulas, portfolio layout examples, and client testimonial strategies.</p>'
+					}
+				]
+			}
+		]
+	},
+	{
+		title: 'AI-Powered Rapid Web Prototyping & Development',
+		subtitle:
+			'From concept to live deployed web application in hours with modern AI coding assistants',
+		shortDescription:
+			'Turn ideas into fully functioning web prototypes in hours using modern AI coding tools.',
+		description:
+			'Discover how AI has transformed modern software engineering. Learn how to use next-generation AI coding tools (Cursor, v0.dev, Claude Artifacts) to generate clean React components, style responsive Tailwind UIs, and deploy live full-stack web prototypes at 10x speed.',
+		outcomes: [
+			'Build responsive Next.js & Tailwind CSS web interfaces using AI prompts',
+			'Use Cursor and AI pair programming tools to write, refactor, and debug production code',
+			'Connect frontend UI prototypes to databases and REST APIs',
+			'Deploy production applications to cloud hosting (Vercel, Netlify) with custom domains'
+		],
+		requirements: [
+			'Basic understanding of HTML, CSS, and JavaScript concepts',
+			'A code editor installed on your computer (VS Code / Cursor)'
+		],
+		tags: [
+			'Web Development',
+			'React',
+			'Next.js',
+			'Cursor',
+			'v0',
+			'Claude Artifacts',
+			'Prototyping'
+		],
+		categorySlug: 'web-development',
+		instructorSlug: 'joel-talargie',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 59.99,
+		discountUsd: 39.99,
+		durationMinutes: 120,
+		rating: 4.9,
+		studentsCount: 18700,
+		certificateEnabled: true,
+		featured: false,
+		thumbnailUrl: '/images/courses/ai-powered-web-prototyping.jpg',
+		customSections: [
+			{
+				id: 'sec-ai-proto',
+				title: 'Rapid Prototyping Workflow',
+				description: 'From concept to live deployed web application with AI coding tools.',
+				lessons: [
+					{
+						id: 'l-aip-1',
+						title: 'From Concept to Live Web App: Rapid Prototyping with AI',
+						lessonType: 'VIDEO',
+						durationSeconds: 1100,
+						isMandatory: true,
+						isPreview: true,
+						videoUrl: 'https://youtu.be/4x9jwFxcWMc',
+						content:
+							'<p>Master modern AI-assisted web development workflows: generating wireframes, scaffolding React components with Tailwind, and shipping production builds in record time.</p>',
+						resources: [
+							{
+								id: 'res-aip-1',
+								title: 'Modern AI Developer Starter Kit & Cheatsheet (PDF)',
+								externalUrl: null,
+								originalFileName: 'AI-Developer-Starter-Kit.pdf',
+								mimeType: 'application/pdf',
+								fileSize: 1024 * 720
+							},
+							{
+								id: 'res-aip-2',
+								title: 'Next.js & Tailwind AI Starter Template Repo',
+								externalUrl: 'https://github.com',
+								originalFileName: null,
+								mimeType: null,
+								fileSize: null
+							}
+						]
+					},
+					{
+						id: 'l-aip-2',
+						title: 'Deploying & Scaling Your Web Applications',
+						lessonType: 'TEXT',
+						durationSeconds: 540,
+						isMandatory: true,
+						isPreview: true,
+						content:
+							'<p>Step-by-step deployment guide for Vercel, Supabase backend integration, and setting up automated CI/CD pipelines.</p>'
+					}
+				]
+			}
+		]
+	},
+	// Web Development
+	{
+		title: 'Full Stack Web Development Bootcamp',
+		subtitle: 'Go from zero to deploying production apps with React and Node.js',
+		shortDescription: 'A complete, project-based path through frontend, backend, and deployment.',
+		description:
+			'This bootcamp takes you from HTML and CSS fundamentals through building and deploying a complete full-stack application with React on the frontend and Node.js on the backend. Every module ends with a real project, not just exercises, so you finish with a portfolio you can show employers.',
+		outcomes: [
+			'Build responsive interfaces with HTML, CSS, and modern JavaScript',
+			'Create dynamic single-page applications with React',
+			'Design and build REST APIs with Node.js and Express',
+			'Connect applications to a PostgreSQL database',
+			'Deploy full-stack applications to production'
+		],
+		requirements: [
+			'Basic computer literacy',
+			'No prior coding experience required',
+			'A computer capable of running a code editor'
+		],
+		tags: ['JavaScript', 'React', 'Node.js', 'Full Stack'],
+		categorySlug: 'web-development',
+		instructorSlug: 'sarah-mitchell',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 89.99,
+		discountUsd: 59.99,
+		durationMinutes: 2640,
+		rating: 4.8,
+		studentsCount: 18420,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'NestJS Masterclass: Building Enterprise APIs',
+		subtitle: 'Architect scalable, testable backend systems with NestJS',
+		shortDescription: 'A deep dive into building production-grade APIs with NestJS and TypeScript.',
+		description:
+			'NestJS brings structure and discipline to Node.js backend development. This course walks through building a real enterprise API - modules, dependency injection, guards, interceptors, validation, and testing - the same patterns used in production systems handling millions of requests.',
+		outcomes: [
+			'Structure large backend applications using NestJS modules',
+			'Implement authentication and authorization with guards',
+			'Write unit and integration tests for backend services',
+			'Design clean, maintainable REST APIs',
+			'Apply dependency injection and SOLID principles in practice'
+		],
+		requirements: [
+			'Working knowledge of JavaScript or TypeScript',
+			'Basic understanding of REST APIs'
+		],
+		tags: ['NestJS', 'TypeScript', 'Backend', 'API Design'],
+		categorySlug: 'web-development',
+		instructorSlug: 'david-chen',
+		difficulty: 'ADVANCED',
+		language: 'English',
+		priceUsd: 99.99,
+		discountUsd: 69.99,
+		durationMinutes: 1560,
+		rating: 4.9,
+		studentsCount: 9840,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'React for Professionals: Advanced Patterns',
+		subtitle: 'Master hooks, performance, and architecture at a senior level',
+		shortDescription: 'Advanced React patterns used by senior engineers in production codebases.',
+		description:
+			'This course is built for developers who already know React basics and want to work like a senior engineer. You will cover advanced hooks, render performance, state architecture, and the patterns that keep large React codebases maintainable.',
+		outcomes: [
+			'Design custom hooks for reusable logic',
+			'Optimize React rendering performance',
+			'Architect scalable component and state structures',
+			'Apply advanced patterns like compound components and render props',
+			'Debug and profile React applications effectively'
+		],
+		requirements: [
+			'Solid understanding of React fundamentals',
+			'Comfortable with modern JavaScript (ES6+)'
+		],
+		tags: ['React', 'JavaScript', 'Frontend', 'Performance'],
+		categorySlug: 'web-development',
+		instructorSlug: 'amara-okafor',
+		difficulty: 'ADVANCED',
+		language: 'English',
+		priceUsd: 79.99,
+		durationMinutes: 1140,
+		rating: 4.9,
+		studentsCount: 14200,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'Next.js Enterprise Development',
+		subtitle: 'Build production Next.js apps with the App Router',
+		shortDescription: 'Server components, routing, and performance for real Next.js applications.',
+		description:
+			'Learn how to build enterprise-grade applications with Next.js using the App Router, server components, and modern data-fetching patterns. This course focuses on the architectural decisions that matter once an app grows beyond a simple demo.',
+		outcomes: [
+			'Build applications using the Next.js App Router',
+			'Understand server components vs client components',
+			'Implement SEO-friendly server-side rendering',
+			'Optimize performance with caching and streaming',
+			'Structure a large-scale Next.js codebase'
+		],
+		requirements: [
+			'Working knowledge of React',
+			'Basic familiarity with Next.js is helpful but not required'
+		],
+		tags: ['Next.js', 'React', 'SSR', 'Frontend'],
+		categorySlug: 'web-development',
+		instructorSlug: 'amara-okafor',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 84.99,
+		discountUsd: 54.99,
+		durationMinutes: 1320,
+		rating: 4.8,
+		studentsCount: 11600,
+		certificateEnabled: true
+	},
+	{
+		title: 'Node.js Backend Development from Scratch',
+		subtitle: 'Build servers, APIs, and services with Node.js',
+		shortDescription: 'A hands-on introduction to server-side JavaScript with Node.js.',
+		description:
+			'Learn how to build backend services with Node.js from the ground up - HTTP servers, REST APIs, middleware, authentication, and working with databases. By the end, you will have built and deployed a working API.',
+		outcomes: [
+			'Build HTTP servers and REST APIs with Node.js',
+			'Work with Express middleware and routing',
+			'Implement authentication with JWTs',
+			'Connect to and query a database',
+			'Deploy a Node.js application'
+		],
+		requirements: ['Basic JavaScript knowledge'],
+		tags: ['Node.js', 'JavaScript', 'Backend', 'API'],
+		categorySlug: 'web-development',
+		instructorSlug: 'david-chen',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 960,
+		rating: 4.6,
+		studentsCount: 22100,
+		certificateEnabled: false
+	},
+	{
+		title: 'TypeScript for JavaScript Developers',
+		subtitle: 'Add type safety to your JavaScript projects',
+		shortDescription: 'Learn TypeScript fundamentals and how to adopt it in real projects.',
+		description:
+			'TypeScript has become the standard for serious JavaScript projects. This course teaches you the type system, generics, and how to gradually adopt TypeScript in an existing codebase without rewriting everything at once.',
+		outcomes: [
+			"Understand TypeScript's type system and syntax",
+			'Use interfaces, generics, and utility types effectively',
+			'Configure a TypeScript project from scratch',
+			'Migrate a JavaScript codebase to TypeScript incrementally'
+		],
+		requirements: ['Working knowledge of JavaScript'],
+		tags: ['TypeScript', 'JavaScript', 'Frontend', 'Backend'],
+		categorySlug: 'web-development',
+		instructorSlug: 'sarah-mitchell',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 49.99,
+		durationMinutes: 720,
+		rating: 4.7,
+		studentsCount: 16800,
+		certificateEnabled: true
+	},
+	{
+		title: 'GraphQL API Design and Implementation',
+		subtitle: 'Design flexible, efficient APIs with GraphQL',
+		shortDescription: 'Build a production-ready GraphQL API from schema design to deployment.',
+		description:
+			'Move beyond REST and learn how to design GraphQL schemas that scale. This course covers resolvers, data loaders, authentication, and the common pitfalls that hurt GraphQL API performance in production.',
+		outcomes: [
+			'Design GraphQL schemas for real applications',
+			'Implement resolvers and data loaders',
+			'Handle authentication and authorization in GraphQL',
+			'Avoid the N+1 query problem'
+		],
+		requirements: ['Experience building REST APIs', 'Working knowledge of Node.js'],
+		tags: ['GraphQL', 'API Design', 'Backend', 'Node.js'],
+		categorySlug: 'web-development',
+		instructorSlug: 'david-chen',
+		difficulty: 'ADVANCED',
+		language: 'English',
+		priceUsd: 74.99,
+		durationMinutes: 900,
+		rating: 4.7,
+		studentsCount: 6200,
+		certificateEnabled: true
+	},
+	{
+		title: 'Vue.js 3 Complete Developer Course',
+		subtitle: 'Build modern reactive interfaces with Vue 3 and the Composition API',
+		shortDescription: 'A complete guide to building applications with Vue.js 3.',
+		description:
+			'Learn Vue.js 3 from the ground up, including the Composition API, Pinia for state management, and Vue Router. This course builds several real projects so concepts stick.',
+		outcomes: [
+			'Build reactive interfaces with the Vue 3 Composition API',
+			'Manage application state with Pinia',
+			'Implement client-side routing with Vue Router',
+			'Structure a maintainable Vue.js application'
+		],
+		requirements: ['Basic HTML, CSS, and JavaScript knowledge'],
+		tags: ['Vue.js', 'JavaScript', 'Frontend'],
+		categorySlug: 'web-development',
+		instructorSlug: 'sarah-mitchell',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 64.99,
+		discountUsd: 44.99,
+		durationMinutes: 1080,
+		rating: 4.6,
+		studentsCount: 8900,
+		certificateEnabled: true
+	},
+
+	// Mobile Development
+	{
+		title: 'Flutter Development: Build iOS and Android Apps',
+		subtitle: 'One codebase, two platforms - ship real mobile apps',
+		shortDescription: 'Learn to build cross-platform mobile apps with Flutter and Dart.',
+		description:
+			'Flutter lets you build for iOS and Android from a single codebase. This course covers Dart fundamentals, widgets, state management, and publishing your app to both app stores.',
+		outcomes: [
+			'Write applications in Dart',
+			'Build responsive UIs with Flutter widgets',
+			'Manage application state effectively',
+			'Connect a Flutter app to a REST API',
+			'Publish an app to the App Store and Google Play'
+		],
+		requirements: ['Basic programming knowledge in any language'],
+		tags: ['Flutter', 'Dart', 'Mobile', 'Cross-Platform'],
+		categorySlug: 'mobile-development',
+		instructorSlug: 'nina-kowalski',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 79.99,
+		discountUsd: 49.99,
+		durationMinutes: 1740,
+		rating: 4.7,
+		studentsCount: 13400,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'React Native for Mobile Engineers',
+		subtitle: 'Build native mobile apps using your React skills',
+		shortDescription: 'Take your React knowledge into native iOS and Android development.',
+		description:
+			'If you already know React, React Native lets you build real native apps with the same mental model. This course covers navigation, native modules, and performance considerations specific to mobile.',
+		outcomes: [
+			'Build native mobile UIs with React Native',
+			'Implement navigation and deep linking',
+			'Access native device features',
+			'Optimize app performance on mobile devices'
+		],
+		requirements: ['Working knowledge of React'],
+		tags: ['React Native', 'Mobile', 'JavaScript'],
+		categorySlug: 'mobile-development',
+		instructorSlug: 'nina-kowalski',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 74.99,
+		durationMinutes: 1260,
+		rating: 4.6,
+		studentsCount: 7300,
+		certificateEnabled: true
+	},
+	{
+		title: 'iOS App Development with Swift',
+		subtitle: 'Build native iOS apps with Swift and SwiftUI',
+		shortDescription: 'A complete introduction to native iOS development.',
+		description:
+			"Learn Swift and SwiftUI to build native iOS applications from scratch. This course covers the fundamentals of iOS architecture, Apple's design guidelines, and shipping to the App Store.",
+		outcomes: [
+			'Write applications in Swift',
+			'Build interfaces with SwiftUI',
+			"Follow Apple's Human Interface Guidelines",
+			'Submit an app to the App Store'
+		],
+		requirements: ['A Mac computer', 'No prior Swift experience required'],
+		tags: ['Swift', 'iOS', 'SwiftUI', 'Mobile'],
+		categorySlug: 'mobile-development',
+		instructorSlug: 'sophia-martinez',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 84.99,
+		durationMinutes: 1620,
+		rating: 4.7,
+		studentsCount: 5900,
+		certificateEnabled: true
+	},
+	{
+		title: 'Android Development with Kotlin',
+		subtitle: 'Build modern Android apps the Google-recommended way',
+		shortDescription: 'Learn Kotlin and Jetpack Compose for native Android development.',
+		description:
+			"This course teaches Android development using Kotlin and Jetpack Compose, Google's modern toolkit for building native UIs. You will build several apps that demonstrate real-world Android architecture.",
+		outcomes: [
+			'Write Android applications in Kotlin',
+			'Build UIs with Jetpack Compose',
+			'Manage app architecture with ViewModels',
+			'Publish an app to Google Play'
+		],
+		requirements: ['Basic programming experience'],
+		tags: ['Kotlin', 'Android', 'Mobile'],
+		categorySlug: 'mobile-development',
+		instructorSlug: 'sophia-martinez',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 1440,
+		rating: 4.5,
+		studentsCount: 4700,
+		certificateEnabled: false
+	},
+
+	// Data Science
+	{
+		title: 'Python for Data Science and Analytics',
+		subtitle: 'Analyze real datasets with Python, Pandas, and NumPy',
+		shortDescription: 'The practical path from raw data to actionable insight in Python.',
+		description:
+			'This course teaches data analysis with Python using real, messy datasets rather than toy examples. You will learn Pandas, NumPy, and how to communicate findings clearly with visualizations.',
+		outcomes: [
+			'Clean and transform data with Pandas',
+			'Perform exploratory data analysis',
+			'Create visualizations with Matplotlib and Seaborn',
+			'Apply basic statistical analysis to real datasets',
+			'Build a complete data analysis project end to end'
+		],
+		requirements: ['Basic Python knowledge'],
+		tags: ['Python', 'Data Analysis', 'Pandas'],
+		categorySlug: 'data-science',
+		instructorSlug: 'michael-torres',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 69.99,
+		discountUsd: 44.99,
+		durationMinutes: 1500,
+		rating: 4.8,
+		studentsCount: 24700,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'Data Visualization with Tableau',
+		subtitle: 'Turn spreadsheets into compelling, interactive dashboards',
+		shortDescription: 'Learn to build dashboards and visual stories with Tableau.',
+		description:
+			'Data is only as useful as your ability to communicate it. This course teaches Tableau from the ground up, covering chart types, dashboard design, and how to tell a clear story with data.',
+		outcomes: [
+			'Connect Tableau to real data sources',
+			'Build interactive dashboards',
+			'Choose the right chart type for the data',
+			'Design dashboards that communicate clearly'
+		],
+		requirements: ['No prior experience with Tableau required'],
+		tags: ['Tableau', 'Data Visualization', 'Analytics'],
+		categorySlug: 'data-science',
+		instructorSlug: 'michael-torres',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 54.99,
+		durationMinutes: 660,
+		rating: 4.6,
+		studentsCount: 8100,
+		certificateEnabled: true
+	},
+	{
+		title: 'R Programming for Statistical Analysis',
+		subtitle: 'Statistical computing and analysis with R',
+		shortDescription: 'Learn R for statistical modeling and data analysis.',
+		description:
+			'R remains a favorite among statisticians and researchers. This course covers R fundamentals, the tidyverse, and applying statistical methods to real data.',
+		outcomes: [
+			'Write data analysis scripts in R',
+			'Use the tidyverse for data manipulation',
+			'Apply statistical tests to real datasets',
+			'Create publication-quality visualizations with ggplot2'
+		],
+		requirements: ['Basic statistics knowledge is helpful but not required'],
+		tags: ['R', 'Statistics', 'Data Analysis'],
+		categorySlug: 'data-science',
+		instructorSlug: 'michael-torres',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 59.99,
+		durationMinutes: 900,
+		rating: 4.5,
+		studentsCount: 3400,
+		certificateEnabled: true
+	},
+
+	// AI / ML
+	{
+		title: 'Machine Learning A-Z: Foundations to Deployment',
+		subtitle: 'From core ML concepts to deploying models in production',
+		shortDescription: 'A complete, hands-on path through machine learning fundamentals.',
+		description:
+			'This course covers the full machine learning workflow - from understanding core algorithms to training, evaluating, and deploying models. Every concept is paired with a hands-on exercise using real datasets.',
+		outcomes: [
+			'Understand core machine learning algorithms',
+			'Train and evaluate models with scikit-learn',
+			'Handle feature engineering and data preprocessing',
+			'Avoid common pitfalls like overfitting',
+			'Deploy a trained model as an API'
+		],
+		requirements: ['Working knowledge of Python', 'Basic understanding of statistics is helpful'],
+		tags: ['Machine Learning', 'Python', 'scikit-learn'],
+		categorySlug: 'artificial-intelligence',
+		instructorSlug: 'priya-sharma',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 94.99,
+		discountUsd: 64.99,
+		durationMinutes: 1980,
+		rating: 4.8,
+		studentsCount: 19300,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'Artificial Intelligence: Concepts and Applications',
+		subtitle: 'Understand how AI systems actually work',
+		shortDescription: 'A conceptual and practical introduction to modern AI.',
+		description:
+			'This course demystifies artificial intelligence, covering the concepts behind modern AI systems - search, reasoning, neural networks, and where AI genuinely helps versus where it is overhyped.',
+		outcomes: [
+			'Understand the building blocks of modern AI systems',
+			'Differentiate between AI, machine learning, and deep learning',
+			'Evaluate where AI is a good fit for a problem',
+			'Build a simple AI-powered application'
+		],
+		requirements: ['No prior AI experience required'],
+		tags: ['Artificial Intelligence', 'Machine Learning'],
+		categorySlug: 'artificial-intelligence',
+		instructorSlug: 'priya-sharma',
+		difficulty: 'ALL_LEVELS',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 480,
+		rating: 4.5,
+		studentsCount: 15600,
+		certificateEnabled: false
+	},
+	{
+		title: 'Deep Learning with TensorFlow and PyTorch',
+		subtitle: 'Build and train neural networks with the two leading frameworks',
+		shortDescription: 'A hands-on deep learning course covering TensorFlow and PyTorch.',
+		description:
+			'Learn to build, train, and fine-tune neural networks using both TensorFlow and PyTorch. This course covers computer vision and natural language processing use cases with real datasets.',
+		outcomes: [
+			'Build neural networks with TensorFlow and PyTorch',
+			'Train computer vision models',
+			'Fine-tune pretrained models for new tasks',
+			'Understand when to use TensorFlow versus PyTorch'
+		],
+		requirements: ['Working knowledge of Python', 'Basic machine learning concepts'],
+		tags: ['Deep Learning', 'TensorFlow', 'PyTorch'],
+		categorySlug: 'artificial-intelligence',
+		instructorSlug: 'priya-sharma',
+		difficulty: 'ADVANCED',
+		language: 'English',
+		priceUsd: 109.99,
+		discountUsd: 79.99,
+		durationMinutes: 2100,
+		rating: 4.9,
+		studentsCount: 6800,
+		certificateEnabled: true
+	},
+
+	// Cloud Computing
+	{
+		title: 'Cloud Computing with AWS: Solutions Architect Path',
+		subtitle: 'Design scalable systems on AWS and prepare for certification',
+		shortDescription:
+			'A complete guide to AWS architecture and the Solutions Architect certification.',
+		description:
+			'This course covers the AWS services you will actually use in production - compute, storage, networking, and security - while preparing you for the AWS Certified Solutions Architect exam.',
+		outcomes: [
+			'Design scalable, fault-tolerant systems on AWS',
+			'Choose the right AWS service for a given problem',
+			'Implement security best practices in the cloud',
+			'Prepare for the AWS Solutions Architect certification exam'
+		],
+		requirements: ['Basic understanding of networking concepts'],
+		tags: ['AWS', 'Cloud Computing', 'System Design'],
+		categorySlug: 'cloud-computing',
+		instructorSlug: 'james-anderson',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 99.99,
+		discountUsd: 69.99,
+		durationMinutes: 2280,
+		rating: 4.8,
+		studentsCount: 21400,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'Microsoft Azure Fundamentals and Beyond',
+		subtitle: 'Build and deploy applications on Azure',
+		shortDescription: 'A practical introduction to Microsoft Azure cloud services.',
+		description:
+			'Learn the core Azure services used in real deployments, from virtual machines to managed databases and serverless functions, with a path toward the AZ-900 certification.',
+		outcomes: [
+			'Deploy applications on Azure',
+			'Understand core Azure compute and storage services',
+			'Implement identity and access management',
+			'Prepare for Azure Fundamentals (AZ-900) certification'
+		],
+		requirements: ['No prior cloud experience required'],
+		tags: ['Azure', 'Cloud Computing'],
+		categorySlug: 'cloud-computing',
+		instructorSlug: 'james-anderson',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 59.99,
+		durationMinutes: 900,
+		rating: 4.5,
+		studentsCount: 7200,
+		certificateEnabled: true
+	},
+	{
+		title: 'Google Cloud Platform for Developers',
+		subtitle: 'Deploy and scale applications on GCP',
+		shortDescription: 'A developer-focused guide to Google Cloud Platform.',
+		description:
+			'This course focuses on the GCP services developers use most - Compute Engine, Cloud Run, Cloud Storage, and BigQuery - with real deployment walkthroughs.',
+		outcomes: [
+			'Deploy containerized applications with Cloud Run',
+			'Manage storage and databases on GCP',
+			'Use BigQuery for large-scale data analysis',
+			'Implement CI/CD pipelines targeting GCP'
+		],
+		requirements: ['Basic command-line comfort'],
+		tags: ['Google Cloud', 'Cloud Computing', 'DevOps'],
+		categorySlug: 'cloud-computing',
+		instructorSlug: 'james-anderson',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 64.99,
+		durationMinutes: 840,
+		rating: 4.6,
+		studentsCount: 4100,
+		certificateEnabled: true
+	},
+
+	// DevOps
+	{
+		title: 'DevOps Engineering: CI/CD Pipelines and Automation',
+		subtitle: 'Automate the path from commit to production',
+		shortDescription: 'Build real CI/CD pipelines and adopt DevOps practices that scale.',
+		description:
+			'This course teaches DevOps as it is actually practiced - building CI/CD pipelines, automating testing and deployment, and monitoring systems in production.',
+		outcomes: [
+			'Build CI/CD pipelines with GitHub Actions',
+			'Automate testing and deployment workflows',
+			'Implement infrastructure monitoring and alerting',
+			'Apply DevOps culture and practices to a team'
+		],
+		requirements: ['Basic command-line and Git experience'],
+		tags: ['DevOps', 'CI/CD', 'Automation'],
+		categorySlug: 'devops',
+		instructorSlug: 'elena-petrova',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 84.99,
+		discountUsd: 59.99,
+		durationMinutes: 1380,
+		rating: 4.7,
+		studentsCount: 12900,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'Docker and Kubernetes for Developers',
+		subtitle: 'Containerize and orchestrate applications at scale',
+		shortDescription: 'A practical guide to Docker and Kubernetes for real applications.',
+		description:
+			'Learn to containerize applications with Docker and orchestrate them with Kubernetes. This course covers the concepts and commands you will actually use running production workloads.',
+		outcomes: [
+			'Containerize applications with Docker',
+			'Deploy and manage workloads on Kubernetes',
+			'Configure services, deployments, and ingress',
+			'Debug common Kubernetes issues'
+		],
+		requirements: ['Basic command-line experience'],
+		tags: ['Docker', 'Kubernetes', 'DevOps'],
+		categorySlug: 'devops',
+		instructorSlug: 'kevin-obrien',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 79.99,
+		durationMinutes: 1260,
+		rating: 4.8,
+		studentsCount: 10700,
+		certificateEnabled: true
+	},
+	{
+		title: 'Infrastructure as Code with Terraform',
+		subtitle: 'Manage cloud infrastructure with version-controlled code',
+		shortDescription: 'Learn Terraform to provision and manage infrastructure reliably.',
+		description:
+			'Manual infrastructure changes do not scale. This course teaches Terraform to define, version, and reliably apply infrastructure changes across cloud providers.',
+		outcomes: [
+			'Write Terraform configurations for cloud infrastructure',
+			'Manage state safely across a team',
+			'Apply modules for reusable infrastructure',
+			'Integrate Terraform into a CI/CD pipeline'
+		],
+		requirements: ['Basic cloud computing knowledge'],
+		tags: ['Terraform', 'Infrastructure as Code', 'DevOps'],
+		categorySlug: 'devops',
+		instructorSlug: 'elena-petrova',
+		difficulty: 'ADVANCED',
+		language: 'English',
+		priceUsd: 74.99,
+		durationMinutes: 960,
+		rating: 4.7,
+		studentsCount: 5300,
+		certificateEnabled: true
+	},
+	{
+		title: 'Linux System Administration Essentials',
+		subtitle: 'Manage and secure Linux servers with confidence',
+		shortDescription: 'Core Linux administration skills for developers and operators.',
+		description:
+			'This course covers the Linux fundamentals every engineer needs - the file system, permissions, process management, networking, and shell scripting for automation.',
+		outcomes: [
+			'Navigate and manage the Linux file system',
+			'Manage users, permissions, and processes',
+			'Write shell scripts to automate tasks',
+			'Configure basic networking and firewall rules'
+		],
+		requirements: ['No prior Linux experience required'],
+		tags: ['Linux', 'System Administration', 'DevOps'],
+		categorySlug: 'devops',
+		instructorSlug: 'kevin-obrien',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 780,
+		rating: 4.6,
+		studentsCount: 17300,
+		certificateEnabled: false
+	},
+
+	// Cybersecurity
+	{
+		title: 'Cyber Security Fundamentals',
+		subtitle: 'Build the foundation every security career needs',
+		shortDescription: 'Core security concepts, threats, and defensive practices.',
+		description:
+			'This course covers the fundamentals of cybersecurity - common threats, security principles, and defensive practices - as a foundation for any security specialization.',
+		outcomes: [
+			'Understand common attack vectors and threats',
+			'Apply core security principles to system design',
+			'Recognize social engineering and phishing attempts',
+			'Understand the basics of network security'
+		],
+		requirements: ['Basic computer literacy'],
+		tags: ['Cybersecurity', 'Security Fundamentals'],
+		categorySlug: 'cybersecurity',
+		instructorSlug: 'marcus-johnson',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 660,
+		rating: 4.6,
+		studentsCount: 26100,
+		certificateEnabled: false,
+		featured: true
+	},
+	{
+		title: 'Ethical Hacking and Penetration Testing',
+		subtitle: 'Learn offensive security the legal, professional way',
+		shortDescription: 'Hands-on penetration testing methodology and tools.',
+		description:
+			'Learn how professional penetration testers find vulnerabilities before attackers do. This course covers methodology, tooling, and reporting, all within a clear legal and ethical framework.',
+		outcomes: [
+			'Follow a professional penetration testing methodology',
+			'Use industry-standard tools like Nmap and Burp Suite',
+			'Identify and exploit common web vulnerabilities',
+			'Write a professional penetration test report'
+		],
+		requirements: ['Basic networking knowledge', 'Basic Linux command-line familiarity'],
+		tags: ['Ethical Hacking', 'Penetration Testing', 'Cybersecurity'],
+		categorySlug: 'cybersecurity',
+		instructorSlug: 'yuki-tanaka',
+		difficulty: 'ADVANCED',
+		language: 'English',
+		priceUsd: 94.99,
+		discountUsd: 69.99,
+		durationMinutes: 1620,
+		rating: 4.9,
+		studentsCount: 9200,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'Cloud Security Best Practices',
+		subtitle: 'Secure cloud infrastructure against real-world threats',
+		shortDescription: 'Practical cloud security for AWS, Azure, and GCP environments.',
+		description:
+			'Cloud misconfigurations are among the top causes of breaches. This course teaches how to secure cloud infrastructure - identity, network, and data protection - across major providers.',
+		outcomes: [
+			'Apply the principle of least privilege in cloud IAM',
+			'Secure cloud storage and databases',
+			'Detect and respond to cloud security incidents',
+			'Audit cloud environments for misconfigurations'
+		],
+		requirements: ['Basic cloud computing experience'],
+		tags: ['Cloud Security', 'AWS', 'Cybersecurity'],
+		categorySlug: 'cybersecurity',
+		instructorSlug: 'marcus-johnson',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 69.99,
+		durationMinutes: 780,
+		rating: 4.7,
+		studentsCount: 4600,
+		certificateEnabled: true
+	},
+	{
+		title: 'Network Security and Defense',
+		subtitle: 'Defend networks against modern attack techniques',
+		shortDescription: 'Learn network defense, monitoring, and incident response.',
+		description:
+			"This course covers defensive network security - firewalls, intrusion detection, monitoring, and incident response - from the defender's point of view.",
+		outcomes: [
+			'Configure firewalls and network segmentation',
+			'Set up intrusion detection systems',
+			'Monitor network traffic for anomalies',
+			'Respond to a security incident methodically'
+		],
+		requirements: ['Basic networking knowledge'],
+		tags: ['Network Security', 'Cybersecurity'],
+		categorySlug: 'cybersecurity',
+		instructorSlug: 'yuki-tanaka',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 64.99,
+		durationMinutes: 900,
+		rating: 4.6,
+		studentsCount: 3800,
+		certificateEnabled: true
+	},
+
+	// UI/UX Design
+	{
+		title: 'UI/UX Design Fundamentals',
+		subtitle: 'Design usable, beautiful products from research to prototype',
+		shortDescription: 'A complete introduction to UI/UX design principles and process.',
+		description:
+			'This course covers the full UX process - research, wireframing, prototyping, and usability testing - alongside the visual design principles that make interfaces feel polished.',
+		outcomes: [
+			'Conduct basic user research',
+			'Create wireframes and prototypes in Figma',
+			'Apply visual design principles (color, typography, spacing)',
+			'Run a usability test and act on the findings',
+			'Build a UX case study for a portfolio'
+		],
+		requirements: ['No prior design experience required'],
+		tags: ['UI/UX Design', 'Figma', 'User Research'],
+		categorySlug: 'ui-ux-design',
+		instructorSlug: 'olivia-bennett',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 74.99,
+		discountUsd: 49.99,
+		durationMinutes: 1440,
+		rating: 4.8,
+		studentsCount: 20300,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'Advanced Product Design with Figma',
+		subtitle: 'Design systems, components, and advanced prototyping',
+		shortDescription: 'Level up your Figma skills for real product design work.',
+		description:
+			'This course goes beyond Figma basics into components, variants, auto layout, and advanced prototyping - the skills that separate junior and senior product designers.',
+		outcomes: [
+			'Build reusable components with variants',
+			'Use auto layout for responsive designs',
+			'Create advanced interactive prototypes',
+			'Collaborate effectively with engineers using Figma'
+		],
+		requirements: ['Basic Figma experience'],
+		tags: ['Figma', 'Product Design', 'UI/UX Design'],
+		categorySlug: 'ui-ux-design',
+		instructorSlug: 'daniel-kim',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 64.99,
+		durationMinutes: 780,
+		rating: 4.7,
+		studentsCount: 8700,
+		certificateEnabled: true
+	},
+	{
+		title: 'Design Systems for Product Teams',
+		subtitle: 'Build and scale a design system that teams actually use',
+		shortDescription: 'Learn to design, document, and maintain a product design system.',
+		description:
+			'A design system is only useful if teams adopt it. This course covers building a design system from tokens to components, and the process of getting real adoption across a product team.',
+		outcomes: [
+			'Define design tokens for color, spacing, and typography',
+			'Build a component library in Figma',
+			'Document a design system for engineering handoff',
+			'Drive adoption of a design system across teams'
+		],
+		requirements: ['Experience with a design tool such as Figma'],
+		tags: ['Design Systems', 'Figma', 'UI/UX Design'],
+		categorySlug: 'ui-ux-design',
+		instructorSlug: 'daniel-kim',
+		difficulty: 'ADVANCED',
+		language: 'English',
+		priceUsd: 79.99,
+		durationMinutes: 900,
+		rating: 4.7,
+		studentsCount: 3100,
+		certificateEnabled: true
+	},
+	{
+		title: 'User Research and Usability Testing',
+		subtitle: 'Make design decisions based on evidence, not opinion',
+		shortDescription: 'Practical methods for user research and usability testing.',
+		description:
+			'Great design starts with understanding real users. This course covers interviews, surveys, and usability testing methods you can run even with a small budget and tight timeline.',
+		outcomes: [
+			'Plan and conduct user interviews',
+			'Design and analyze user surveys',
+			'Run moderated and unmoderated usability tests',
+			'Translate research findings into design decisions'
+		],
+		requirements: ['No prior research experience required'],
+		tags: ['User Research', 'Usability Testing', 'UI/UX Design'],
+		categorySlug: 'ui-ux-design',
+		instructorSlug: 'olivia-bennett',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 600,
+		rating: 4.5,
+		studentsCount: 6400,
+		certificateEnabled: false
+	},
+
+	// Programming Languages
+	{
+		title: 'Python Programming for Beginners',
+		subtitle: "Your first step into programming with the world's most popular language",
+		shortDescription: 'Learn Python from scratch with hands-on exercises.',
+		description:
+			'This course teaches Python programming from absolute zero - variables, control flow, functions, and object-oriented basics - through small, satisfying projects.',
+		outcomes: [
+			'Write Python programs using variables, loops, and functions',
+			'Understand object-oriented programming basics',
+			'Work with files and handle errors gracefully',
+			'Build small real-world Python projects'
+		],
+		requirements: ['No prior programming experience required'],
+		tags: ['Python', 'Programming Basics'],
+		categorySlug: 'programming-languages',
+		instructorSlug: 'fatima-al-sayed',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 900,
+		rating: 4.8,
+		studentsCount: 41200,
+		certificateEnabled: false,
+		featured: true
+	},
+	{
+		title: 'Java Enterprise Development',
+		subtitle: 'Build robust backend systems with Java and Spring Boot',
+		shortDescription: 'Enterprise Java development with Spring Boot and best practices.',
+		description:
+			'This course teaches Java the way it is used in enterprise environments - Spring Boot, dependency injection, and the architectural patterns behind large, long-lived systems.',
+		outcomes: [
+			'Build REST APIs with Spring Boot',
+			'Apply dependency injection and enterprise patterns',
+			'Work with JPA and relational databases',
+			'Write unit and integration tests in Java'
+		],
+		requirements: ['Basic programming experience'],
+		tags: ['Java', 'Spring Boot', 'Backend'],
+		categorySlug: 'programming-languages',
+		instructorSlug: 'rachel-green',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 89.99,
+		discountUsd: 59.99,
+		durationMinutes: 1680,
+		rating: 4.6,
+		studentsCount: 6900,
+		certificateEnabled: true
+	},
+	{
+		title: 'C# and .NET Development',
+		subtitle: 'Build modern applications with C# and the .NET platform',
+		shortDescription: 'A practical guide to building applications with C# and .NET.',
+		description:
+			'Learn C# and the .NET ecosystem to build web APIs and services. This course covers language fundamentals through building and deploying a working ASP.NET application.',
+		outcomes: [
+			'Write applications in C#',
+			'Build web APIs with ASP.NET Core',
+			'Work with Entity Framework for data access',
+			'Deploy a .NET application'
+		],
+		requirements: ['Basic programming experience'],
+		tags: ['C#', '.NET', 'Backend'],
+		categorySlug: 'programming-languages',
+		instructorSlug: 'rachel-green',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 79.99,
+		durationMinutes: 1320,
+		rating: 4.6,
+		studentsCount: 4200,
+		certificateEnabled: true
+	},
+	{
+		title: 'Rust Programming: Systems Development',
+		subtitle: 'Write fast, memory-safe systems code with Rust',
+		shortDescription: 'Learn Rust for systems programming without sacrificing safety.',
+		description:
+			'Rust offers C-like performance with memory safety guarantees. This course covers ownership, borrowing, and building real command-line tools and services in Rust.',
+		outcomes: [
+			"Understand Rust's ownership and borrowing model",
+			'Write safe, performant systems-level code',
+			'Build command-line tools in Rust',
+			'Handle errors idiomatically in Rust'
+		],
+		requirements: ['Experience with at least one programming language'],
+		tags: ['Rust', 'Systems Programming'],
+		categorySlug: 'programming-languages',
+		instructorSlug: 'fatima-al-sayed',
+		difficulty: 'ADVANCED',
+		language: 'English',
+		priceUsd: 74.99,
+		durationMinutes: 1140,
+		rating: 4.7,
+		studentsCount: 2800,
+		certificateEnabled: true
+	},
+	{
+		title: 'Go Programming for Backend Engineers',
+		subtitle: 'Build fast, concurrent backend services with Go',
+		shortDescription: 'Learn Go for building high-performance backend services.',
+		description:
+			'Go is the language behind much of modern cloud infrastructure. This course teaches Go fundamentals and concurrency patterns through building a real backend service.',
+		outcomes: [
+			'Write idiomatic Go code',
+			'Use goroutines and channels for concurrency',
+			'Build a REST API in Go',
+			'Write tests and benchmarks in Go'
+		],
+		requirements: ['Experience with at least one programming language'],
+		tags: ['Go', 'Backend', 'Concurrency'],
+		categorySlug: 'programming-languages',
+		instructorSlug: 'david-chen',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 69.99,
+		durationMinutes: 960,
+		rating: 4.7,
+		studentsCount: 3600,
+		certificateEnabled: true
+	},
+
+	// Database Systems
+	{
+		title: 'Database Design and Normalization',
+		subtitle: 'Design relational databases that scale cleanly',
+		shortDescription: 'Learn database design principles and normalization from first principles.',
+		description:
+			'Good database design prevents years of pain later. This course covers entity-relationship modeling, normalization, and indexing strategy for real applications.',
+		outcomes: [
+			'Design entity-relationship diagrams',
+			'Apply normalization to eliminate data anomalies',
+			'Choose appropriate indexes for query patterns',
+			'Design schemas that scale with application growth'
+		],
+		requirements: ['Basic SQL knowledge is helpful'],
+		tags: ['Database Design', 'SQL'],
+		categorySlug: 'database-systems',
+		instructorSlug: 'robert-wallace',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 54.99,
+		durationMinutes: 720,
+		rating: 4.7,
+		studentsCount: 9100,
+		certificateEnabled: true
+	},
+	{
+		title: 'Advanced PostgreSQL for Data Analysts',
+		subtitle: 'Write efficient, advanced queries against real datasets',
+		shortDescription: 'Advanced PostgreSQL querying, indexing, and performance tuning.',
+		description:
+			'This course goes beyond basic SELECT statements into window functions, CTEs, indexing strategy, and query performance tuning in PostgreSQL.',
+		outcomes: [
+			'Write advanced queries with window functions and CTEs',
+			'Diagnose slow queries with EXPLAIN ANALYZE',
+			'Design effective indexes for query patterns',
+			'Apply PostgreSQL-specific features for analytics'
+		],
+		requirements: ['Working knowledge of SQL'],
+		tags: ['PostgreSQL', 'SQL', 'Performance Tuning'],
+		categorySlug: 'database-systems',
+		instructorSlug: 'robert-wallace',
+		difficulty: 'ADVANCED',
+		language: 'English',
+		priceUsd: 74.99,
+		discountUsd: 54.99,
+		durationMinutes: 960,
+		rating: 4.9,
+		studentsCount: 5400,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'SQL for Data Analysis',
+		subtitle: 'Query and analyze data confidently with SQL',
+		shortDescription: 'Learn SQL from the ground up for data analysis work.',
+		description:
+			'SQL is the most in-demand data skill across every industry. This course teaches SQL fundamentals through joins, aggregations, and subqueries using realistic business datasets.',
+		outcomes: [
+			'Write SELECT queries with filtering and sorting',
+			'Join multiple tables to answer real questions',
+			'Use aggregate functions and GROUP BY effectively',
+			'Write subqueries and common table expressions'
+		],
+		requirements: ['No prior SQL experience required'],
+		tags: ['SQL', 'Data Analysis'],
+		categorySlug: 'database-systems',
+		instructorSlug: 'robert-wallace',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 540,
+		rating: 4.7,
+		studentsCount: 28900,
+		certificateEnabled: false
+	},
+
+	// Business & Management
+	{
+		title: 'Business Analysis Fundamentals',
+		subtitle: 'Bridge the gap between business needs and technical solutions',
+		shortDescription: 'Core business analysis skills for gathering and documenting requirements.',
+		description:
+			'Business analysts translate business needs into requirements that teams can build. This course covers requirements gathering, stakeholder management, and process documentation.',
+		outcomes: [
+			'Elicit requirements from stakeholders effectively',
+			'Document functional and non-functional requirements',
+			'Model business processes',
+			'Manage competing stakeholder priorities'
+		],
+		requirements: ['No prior business analysis experience required'],
+		tags: ['Business Analysis', 'Requirements Gathering'],
+		categorySlug: 'business-management',
+		instructorSlug: 'grace-liu',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 59.99,
+		durationMinutes: 780,
+		rating: 4.6,
+		studentsCount: 7800,
+		certificateEnabled: true
+	},
+	{
+		title: 'Project Management Professional (PMP) Prep',
+		subtitle: 'Prepare for the PMP exam with real project scenarios',
+		shortDescription: 'A structured path through PMP exam concepts and practice questions.',
+		description:
+			'This course prepares you for the PMP certification exam while teaching project management concepts you will actually use - scheduling, budgeting, risk management, and stakeholder communication.',
+		outcomes: [
+			'Understand the PMBOK process groups and knowledge areas',
+			'Apply risk management techniques to real projects',
+			'Build realistic project schedules and budgets',
+			'Prepare confidently for the PMP exam'
+		],
+		requirements: ['Some project experience is recommended for the actual PMP exam'],
+		tags: ['Project Management', 'PMP', 'Agile'],
+		categorySlug: 'business-management',
+		instructorSlug: 'carlos-mendes',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 84.99,
+		discountUsd: 59.99,
+		durationMinutes: 1380,
+		rating: 4.7,
+		studentsCount: 11200,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'Agile and Scrum Master Certification',
+		subtitle: 'Lead agile teams and prepare for Scrum Master certification',
+		shortDescription: 'Learn Agile and Scrum practices to lead high-performing teams.',
+		description:
+			'This course covers Agile principles and Scrum practices in depth, preparing you to lead sprints, facilitate ceremonies, and remove blockers as a Scrum Master.',
+		outcomes: [
+			'Facilitate Scrum ceremonies effectively',
+			'Coach teams on Agile principles',
+			'Manage a product backlog',
+			'Prepare for Scrum Master certification exams'
+		],
+		requirements: ['No prior Agile experience required'],
+		tags: ['Agile', 'Scrum', 'Project Management'],
+		categorySlug: 'business-management',
+		instructorSlug: 'carlos-mendes',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 64.99,
+		durationMinutes: 720,
+		rating: 4.6,
+		studentsCount: 8300,
+		certificateEnabled: true
+	},
+	{
+		title: 'Leadership and Team Management',
+		subtitle: 'Lead people, not just projects',
+		shortDescription: 'Practical leadership skills for managing and growing teams.',
+		description:
+			'Technical skill only gets you so far as a leader. This course covers communication, feedback, delegation, and the soft skills that make teams actually want to follow you.',
+		outcomes: [
+			'Give feedback that people can actually act on',
+			'Delegate effectively without micromanaging',
+			'Navigate difficult conversations with confidence',
+			'Build a culture of trust within a team'
+		],
+		requirements: ['No prior management experience required'],
+		tags: ['Leadership', 'Team Management'],
+		categorySlug: 'business-management',
+		instructorSlug: 'grace-liu',
+		difficulty: 'ALL_LEVELS',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 480,
+		rating: 4.5,
+		studentsCount: 12700,
+		certificateEnabled: false
+	},
+
+	// Digital Marketing
+	{
+		title: 'Digital Marketing Strategy',
+		subtitle: 'Build a marketing strategy that actually drives growth',
+		shortDescription: 'A complete framework for planning and executing digital marketing.',
+		description:
+			'This course covers digital marketing strategy end to end - channel selection, budgeting, and measurement - so you can build a plan that ties back to real business goals.',
+		outcomes: [
+			'Build a channel strategy aligned to business goals',
+			'Allocate marketing budget across channels effectively',
+			'Set up measurement and attribution',
+			'Present marketing results to stakeholders'
+		],
+		requirements: ['No prior marketing experience required'],
+		tags: ['Digital Marketing', 'Strategy'],
+		categorySlug: 'digital-marketing',
+		instructorSlug: 'ahmed-hassan',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 59.99,
+		durationMinutes: 780,
+		rating: 4.5,
+		studentsCount: 9600,
+		certificateEnabled: true
+	},
+	{
+		title: 'SEO Mastery: Rank Higher on Google',
+		subtitle: 'Practical, white-hat SEO that actually works in 2026',
+		shortDescription: 'A hands-on SEO course covering technical, on-page, and content strategy.',
+		description:
+			'Learn SEO the way it works today - technical fundamentals, on-page optimization, and content strategy - with real audits and case studies, not outdated tricks.',
+		outcomes: [
+			'Perform a technical SEO audit',
+			'Optimize on-page content for search intent',
+			'Build a sustainable content and link strategy',
+			'Track and report on SEO performance'
+		],
+		requirements: ['Basic familiarity with websites'],
+		tags: ['SEO', 'Content Marketing', 'Digital Marketing'],
+		categorySlug: 'digital-marketing',
+		instructorSlug: 'ahmed-hassan',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 69.99,
+		discountUsd: 49.99,
+		durationMinutes: 900,
+		rating: 4.6,
+		studentsCount: 14100,
+		certificateEnabled: true,
+		featured: true
+	},
+	{
+		title: 'Content Marketing and Copywriting',
+		subtitle: 'Write content that converts readers into customers',
+		shortDescription: 'Learn to plan, write, and measure content that drives results.',
+		description:
+			'This course covers content strategy and copywriting together - how to plan content that ranks and reads well, and write copy that actually persuades.',
+		outcomes: [
+			'Plan a content calendar aligned to business goals',
+			'Write persuasive marketing copy',
+			'Structure content for both readers and search engines',
+			'Measure content performance against real goals'
+		],
+		requirements: ['No prior writing experience required'],
+		tags: ['Content Marketing', 'Copywriting'],
+		categorySlug: 'digital-marketing',
+		instructorSlug: 'ahmed-hassan',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 0,
+		durationMinutes: 540,
+		rating: 4.4,
+		studentsCount: 6700,
+		certificateEnabled: false
+	},
+
+	// Graphic Design
+	{
+		title: 'Graphic Design Fundamentals',
+		subtitle: 'Learn the principles behind every great design',
+		shortDescription: 'Core design principles - layout, color, and typography.',
+		description:
+			'This course covers the fundamentals of graphic design - composition, color theory, and typography - so you can make confident, informed design decisions.',
+		outcomes: [
+			'Apply layout and composition principles',
+			'Choose effective color palettes',
+			'Pair and use typography effectively',
+			'Critique and improve existing designs'
+		],
+		requirements: ['No prior design experience required'],
+		tags: ['Graphic Design', 'Typography', 'Color Theory'],
+		categorySlug: 'graphic-design',
+		instructorSlug: 'isabella-rossi',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 49.99,
+		durationMinutes: 660,
+		rating: 4.6,
+		studentsCount: 10200,
+		certificateEnabled: true
+	},
+	{
+		title: 'Adobe Photoshop for Creatives',
+		subtitle: 'Master Photoshop for design and photo editing',
+		shortDescription: 'A practical guide to Adobe Photoshop for real creative work.',
+		description:
+			'Learn Photoshop through real projects - photo retouching, digital compositing, and creating marketing assets - rather than isolated tool tutorials.',
+		outcomes: [
+			'Retouch and edit photos professionally',
+			'Create composite images with layers and masks',
+			'Design marketing graphics and social media assets',
+			'Optimize files for web and print'
+		],
+		requirements: ['Access to Adobe Photoshop'],
+		tags: ['Photoshop', 'Graphic Design'],
+		categorySlug: 'graphic-design',
+		instructorSlug: 'isabella-rossi',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 54.99,
+		discountUsd: 39.99,
+		durationMinutes: 900,
+		rating: 4.7,
+		studentsCount: 8900,
+		certificateEnabled: true
+	},
+	{
+		title: 'Brand Identity and Logo Design',
+		subtitle: 'Design brand identities clients will love',
+		shortDescription: 'Learn the process behind professional brand and logo design.',
+		description:
+			'This course walks through the full brand identity process - discovery, concept development, logo design, and delivering a brand guideline document to a client.',
+		outcomes: [
+			'Run a brand discovery process with a client',
+			'Design and refine logo concepts',
+			'Build a cohesive visual identity system',
+			'Deliver a professional brand guideline document'
+		],
+		requirements: ['Basic design software experience'],
+		tags: ['Branding', 'Logo Design', 'Graphic Design'],
+		categorySlug: 'graphic-design',
+		instructorSlug: 'isabella-rossi',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 64.99,
+		durationMinutes: 780,
+		rating: 4.7,
+		studentsCount: 4300,
+		certificateEnabled: true
+	},
+
+	// Project Management (extra) + Software Testing
+	{
+		title: 'Software Testing and QA Automation',
+		subtitle: 'Build automated test suites that catch bugs early',
+		shortDescription: 'A hands-on introduction to software testing and QA automation.',
+		description:
+			'This course covers manual and automated testing fundamentals - writing test cases, automating them, and integrating tests into a CI/CD pipeline.',
+		outcomes: [
+			'Write clear, effective test cases',
+			'Automate tests with a modern testing framework',
+			'Integrate automated tests into CI/CD',
+			'Report and track bugs effectively'
+		],
+		requirements: ['Basic programming knowledge is helpful'],
+		tags: ['Software Testing', 'QA', 'Automation'],
+		categorySlug: 'software-testing',
+		instructorSlug: 'thomas-baker',
+		difficulty: 'BEGINNER',
+		language: 'English',
+		priceUsd: 54.99,
+		durationMinutes: 780,
+		rating: 4.5,
+		studentsCount: 6100,
+		certificateEnabled: true
+	},
+	{
+		title: 'Test Automation with Selenium and Cypress',
+		subtitle: 'Automate browser testing with two industry-standard tools',
+		shortDescription: 'A practical guide to automated end-to-end testing.',
+		description:
+			'This course compares and teaches both Selenium and Cypress for automated browser testing, so you can choose and apply the right tool for a given project.',
+		outcomes: [
+			'Write automated end-to-end tests with Selenium',
+			'Write fast, reliable tests with Cypress',
+			'Structure a maintainable test automation suite',
+			'Run automated tests in a CI/CD pipeline'
+		],
+		requirements: ['Basic JavaScript knowledge'],
+		tags: ['Selenium', 'Cypress', 'Test Automation'],
+		categorySlug: 'software-testing',
+		instructorSlug: 'thomas-baker',
+		difficulty: 'INTERMEDIATE',
+		language: 'English',
+		priceUsd: 64.99,
+		discountUsd: 44.99,
+		durationMinutes: 900,
+		rating: 4.6,
+		studentsCount: 3900,
+		certificateEnabled: true
+	}
+];

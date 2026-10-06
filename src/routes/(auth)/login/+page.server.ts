@@ -1,0 +1,50 @@
+import { redirect } from '@sveltejs/kit';
+import { APIError } from 'better-auth/api';
+import { eq } from 'drizzle-orm';
+import { fail, message, superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { auth, googleEnabled } from '$lib/server/auth';
+import { db } from '$lib/server/db';
+import { staffRole } from '$lib/server/db/schema';
+import { afterSignIn } from '$lib/safe-redirect';
+import { loginNotice } from './notice';
+import { loginSchema } from './schema';
+import type { Actions, PageServerLoad } from './$types';
+
+export const load: PageServerLoad = async ({ locals, url }) => {
+	if (locals.user) redirect(303, afterSignIn(url, locals.isSuperAdmin || locals.permList.includes('dashboard.view')));
+	return {
+		form: await superValidate(zod4(loginSchema)),
+		googleEnabled,
+		notice: loginNotice(url.searchParams)
+	};
+};
+
+export const actions: Actions = {
+	default: async ({ request, url }) => {
+		const form = await superValidate(request, zod4(loginSchema));
+		// The password never goes back to the browser, whatever happens.
+		const password = form.data.password;
+		form.data.password = '';
+		if (!form.valid) return fail(400, { form });
+
+		let userId: string;
+		try {
+			// The sveltekitCookies plugin sets the session cookie on this response.
+			const result = await auth.api.signInEmail({
+				body: { email: form.data.email, password, rememberMe: form.data.rememberMe },
+				headers: request.headers
+			});
+			userId = result.user.id;
+		} catch (err) {
+			if (err instanceof APIError) {
+				return message(form, { type: 'error', text: 'Wrong email or password.' }, { status: 400 });
+			}
+			throw err;
+		}
+
+		// The hook ran before sign-in, so staff standing is read here rather than from locals.
+		const [staff] = await db.select({ role: staffRole.role }).from(staffRole).where(eq(staffRole.userId, userId));
+		redirect(303, afterSignIn(url, Boolean(staff)));
+	}
+};

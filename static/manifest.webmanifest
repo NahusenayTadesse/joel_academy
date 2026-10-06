@@ -1,0 +1,78 @@
+{
+	"id": "/",
+	"name": "Joel Talargie Academy",
+	"short_name": "JT Academy",
+	"description": "Learn with purpose. Build with confidence. Self-paced courses in AI, technology and online work.",
+	"lang": "en",
+	"dir": "ltr",
+	"start_url": "/?source=pwa",
+	"scope": "/",
+	"display": "standalone",
+	"display_override": ["standalone", "minimal-ui"],
+	"orientation": "any",
+	"background_color": "#f7f9fd",
+	"theme_color": "#f7f9fd",
+	"categories": ["education", "productivity"],
+	"launch_handler": { "client_mode": ["navigate-existing", "auto"] },
+	"prefer_related_applications": false,
+	"icons": [
+		{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+		{ "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+		{ "src": "/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+		{ "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+		{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+	],
+	"shortcuts": [
+		{
+			"name": "My courses",
+			"short_name": "My courses",
+			"description": "Continue where you left off",
+			"url": "/my-courses?source=pwa-shortcut",
+			"icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+		},
+		{
+			"name": "Browse courses",
+			"short_name": "Courses",
+			"description": "Explore the course catalog",
+			"url": "/courses?source=pwa-shortcut",
+			"icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+		},
+		{
+			"name": "Verify a certificate",
+			"short_name": "Verify",
+			"description": "Check that a certificate is genuine",
+			"url": "/certificates/verify?source=pwa-shortcut",
+			"icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+		}
+	],
+	"screenshots": [
+		{
+			"src": "/screenshots/home-wide.webp",
+			"sizes": "1280x720",
+			"type": "image/webp",
+			"form_factor": "wide",
+			"label": "The academy home page"
+		},
+		{
+			"src": "/screenshots/courses-wide.webp",
+			"sizes": "1280x720",
+			"type": "image/webp",
+			"form_factor": "wide",
+			"label": "Browse and filter courses"
+		},
+		{
+			"src": "/screenshots/home-narrow.webp",
+			"sizes": "390x844",
+			"type": "image/webp",
+			"form_factor": "narrow",
+			"label": "Learn on your phone"
+		},
+		{
+			"src": "/screenshots/course-narrow.webp",
+			"sizes": "390x844",
+			"type": "image/webp",
+			"form_factor": "narrow",
+			"label": "Course details and curriculum"
+		}
+	]
+}
