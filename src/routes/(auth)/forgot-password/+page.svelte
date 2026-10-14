@@ -37,7 +37,7 @@
 			disabled={$submitting}
 		/>
 		{#if $message?.type === 'success'}
-			<p class="rounded-lg bg-success/10 p-3 text-sm text-success" role="status">{$message.text}</p>
+			<p class="rounded-lg bg-success/10 p-3 text-sm text-success-ink" role="status">{$message.text}</p>
 		{:else if $message?.text}
 			<p class="rounded-lg bg-destructive/10 p-3 text-sm text-destructive" role="alert">
 				{$message.text}
@@ -49,6 +49,6 @@
 	</form>
 
 	<div class="mt-6 text-center text-sm">
-		<a href={ROUTES.auth.login} class="font-medium text-brand hover:underline">Back to sign in</a>
+		<a href={ROUTES.auth.login} class="font-medium text-brand-ink hover:underline">Back to sign in</a>
 	</div>
 </div>

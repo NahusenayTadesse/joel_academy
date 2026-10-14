@@ -15,7 +15,7 @@
 	<div class="flex items-center justify-between">
 		<p class="text-sm font-medium text-muted-foreground">{label}</p>
 		{#if Icon}
-			<span class="flex size-9 items-center justify-center rounded-full bg-brand/10 text-brand">
+			<span class="flex size-9 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 				<Icon class="size-4" aria-hidden="true" />
 			</span>
 		{/if}

@@ -3,6 +3,7 @@ import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db';
 import { staffRole, user } from '$lib/server/db/schema';
 import { formatCurrency } from '$lib/format';
+import { createNotification } from '$lib/server/notifications';
 import { ROUTES, siteConfig } from '$lib/site';
 import {
 	certificateIssuedSms,
@@ -28,7 +29,8 @@ import { sendEmail } from './send';
  * `await` them after their own write has committed without guarding.
  *
  * Some also text the account's verified phone (or the staff numbers). The text and the email go
- * out side by side, and neither can stop the other; the result is still the email's.
+ * out side by side, and neither can stop the other; the result is still the email's. The
+ * student-facing ones also leave an in-app notification (the header bell), which never rejects.
  */
 
 const BRAND = '#6abf2a';
@@ -198,17 +200,29 @@ export function enrollmentConfirmedEmail(details: {
 	});
 	return withSms(
 		email,
-		textUser(
-			details.to,
-			'enrollment-confirmed',
-			enrollmentConfirmedSms({
-				courseTitle: details.courseTitle,
-				amount: details.amount,
-				currency: details.currency,
-				provider: details.provider,
-				url: learnUrl
+		Promise.all([
+			textUser(
+				details.to,
+				'enrollment-confirmed',
+				enrollmentConfirmedSms({
+					courseTitle: details.courseTitle,
+					amount: details.amount,
+					currency: details.currency,
+					provider: details.provider,
+					url: learnUrl
+				})
+			),
+			createNotification({
+				email: details.to,
+				kind: 'enrollment-confirmed',
+				title: `You're enrolled: ${details.courseTitle}`,
+				body:
+					paid && details.provider !== 'FREE'
+						? `Your payment of ${formatCurrency(details.amount, details.currency)} is confirmed. The course is unlocked.`
+						: 'You now have full access. Start learning at your own pace.',
+				link: ROUTES.student.learn(details.courseSlug)
 			})
-		)
+		])
 	);
 }
 
@@ -237,11 +251,20 @@ export function paymentRejectedEmail(details: {
 	});
 	return withSms(
 		email,
-		textUser(
-			details.to,
-			'payment-rejected',
-			paymentRejectedSms({ courseTitle: details.courseTitle, reason: details.reason, url: checkoutUrl })
-		)
+		Promise.all([
+			textUser(
+				details.to,
+				'payment-rejected',
+				paymentRejectedSms({ courseTitle: details.courseTitle, reason: details.reason, url: checkoutUrl })
+			),
+			createNotification({
+				email: details.to,
+				kind: 'payment-rejected',
+				title: `Payment not approved: ${details.courseTitle}`,
+				body: `${details.reason} You can submit a new receipt or pay online from checkout.`,
+				link: ROUTES.student.checkout(details.courseSlug)
+			})
+		])
 	);
 }
 
@@ -301,11 +324,20 @@ export function certificateIssuedEmail(details: {
 	});
 	return withSms(
 		email,
-		textUser(
-			details.to,
-			'certificate-issued',
-			certificateIssuedSms({ courseTitle: details.courseTitle, code: details.code, url: certificateUrl })
-		)
+		Promise.all([
+			textUser(
+				details.to,
+				'certificate-issued',
+				certificateIssuedSms({ courseTitle: details.courseTitle, code: details.code, url: certificateUrl })
+			),
+			createNotification({
+				email: details.to,
+				kind: 'certificate-issued',
+				title: `Certificate earned: ${details.courseTitle}`,
+				body: `Congratulations! Your certificate number is ${details.code}.`,
+				link: ROUTES.student.certificate(details.code)
+			})
+		])
 	);
 }
 
@@ -357,11 +389,20 @@ export function receiptReceivedEmail(details: {
 	});
 	return withSms(
 		email,
-		textUser(
-			details.to,
-			'receipt-received',
-			receiptReceivedSms({ courseTitle: details.courseTitle, amount: details.amount, currency: details.currency, url: statusUrl })
-		)
+		Promise.all([
+			textUser(
+				details.to,
+				'receipt-received',
+				receiptReceivedSms({ courseTitle: details.courseTitle, amount: details.amount, currency: details.currency, url: statusUrl })
+			),
+			createNotification({
+				email: details.to,
+				kind: 'receipt-received',
+				title: `Payment received: ${details.courseTitle}`,
+				body: `Your receipt for ${formatCurrency(details.amount, details.currency)} is with our team. We check every payment by hand, usually within a working day.`,
+				link: ROUTES.student.payments
+			})
+		])
 	);
 }
 
@@ -410,7 +451,19 @@ export function passwordChangedEmail(to: { email: string; name: string }) {
 			action: { label: 'Reset my password', url: resetUrl }
 		})
 	});
-	return withSms(email, textUser(to.email, 'password-changed', passwordChangedSms(resetUrl)));
+	return withSms(
+		email,
+		Promise.all([
+			textUser(to.email, 'password-changed', passwordChangedSms(resetUrl)),
+			createNotification({
+				email: to.email,
+				kind: 'password-changed',
+				title: 'Your password was changed',
+				body: "Other devices were signed out. If this wasn't you, reset your password straight away.",
+				link: ROUTES.student.account
+			})
+		])
+	);
 }
 
 /**
@@ -444,7 +497,16 @@ export function phoneChangedEmail(details: {
 	const sms = details.oldPhone
 		? sendSms({ to: details.oldPhone, kind: 'phone-changed', message: phoneChangedSms({ newPhone: details.newPhone, url: accountUrl }) })
 		: Promise.resolve(null);
-	return withSms(email, sms);
+	const inApp = createNotification({
+		email: details.to,
+		kind: 'phone-changed',
+		title: details.newPhone ? 'Your phone number was changed' : 'Your phone number was removed',
+		body: details.newPhone
+			? `Course and certificate texts now go to the number ending ${details.newPhone.slice(-3)}.`
+			: "You won't get texts until you add a number again.",
+		link: ROUTES.student.account
+	});
+	return withSms(email, Promise.all([sms, inApp]));
 }
 
 // ── Certificates (revoked) ──────────────────────────────────────────────────────────────────
@@ -472,6 +534,34 @@ export function certificateRevokedEmail(details: {
 	});
 	return withSms(
 		email,
-		textUser(details.to, 'certificate-revoked', certificateRevokedSms({ courseTitle: details.courseTitle, code: details.code, reason: details.reason }))
+		Promise.all([
+			textUser(details.to, 'certificate-revoked', certificateRevokedSms({ courseTitle: details.courseTitle, code: details.code, reason: details.reason })),
+			createNotification({
+				email: details.to,
+				kind: 'certificate-revoked',
+				title: `Certificate revoked: ${details.courseTitle}`,
+				body: `Certificate ${details.code} was revoked: ${details.reason}`,
+				link: ROUTES.student.certificates
+			})
+		])
 	);
+}
+
+// ── Staff test ──────────────────────────────────────────────────────────────────────────────
+
+/** A real email from the dashboard, to check the SMTP settings end to end. */
+export function testEmail(to: string, sentBy: string) {
+	return sendEmail({
+		to,
+		kind: 'test',
+		subject: `Test email from ${siteConfig.name}`,
+		html: layout({
+			heading: 'Your email settings work',
+			paragraphs: [
+				`This test was sent from the dashboard by ${escape(sentBy)}. If you are reading it, the academy's mail server is set up correctly.`,
+				'Students will receive their account, enrollment, payment and certificate emails from this same address.'
+			],
+			action: { label: 'Open the email log', url: siteUrl('/dashboard/emails') }
+		})
+	});
 }

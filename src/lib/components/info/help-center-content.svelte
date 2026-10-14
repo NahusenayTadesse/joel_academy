@@ -95,7 +95,7 @@
 				<div class="rounded-xl border border-border p-5">
 					<div class="mb-2 flex items-center gap-2">
 						<span
-							class="flex size-9 items-center justify-center rounded-full bg-brand/10 text-brand"
+							class="flex size-9 items-center justify-center rounded-full bg-brand/10 text-brand-ink"
 						>
 							<category.icon class="size-4" />
 						</span>

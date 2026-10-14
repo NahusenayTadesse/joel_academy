@@ -1,5 +1,11 @@
 <script lang="ts">
 	import Eye from '@lucide/svelte/icons/eye';
+	import Send from '@lucide/svelte/icons/send';
+	import { enhance } from '$app/forms';
+	import PageSection from '@nahu/admin-kit/components/PageSection.svelte';
+	import * as Card from '@nahu/admin-kit/components/ui/card/index.js';
+	import { Input } from '@nahu/admin-kit/components/ui/input/index.js';
+	import { Label } from '@nahu/admin-kit/components/ui/label/index.js';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import type { ColumnDef } from '@tanstack/table-core';
 	import PageHeader from '@nahu/admin-kit/components/PageHeader.svelte';
@@ -13,7 +19,8 @@
 	import { dateTime } from '../format';
 	import { kindLabel } from './preview';
 
-	let { data } = $props();
+	let { data, form } = $props();
+	let sending = $state(false);
 
 	type Row = (typeof data.rows)[number];
 
@@ -137,6 +144,49 @@
 		</Notice>
 	{/if}
 
+	<PageSection
+		title="Send a test email"
+		hint="Check the mail server settings with one real email. Limited to a few per address per hour."
+	>
+		<Card.Root>
+			<Card.Content class="pt-6">
+				<form
+					method="post"
+					action="?/test"
+					class="grid gap-4 md:grid-cols-[minmax(0,24rem)_auto] md:items-end"
+					use:enhance={() => {
+						sending = true;
+						return async ({ update }) => {
+							await update({ reset: false });
+							sending = false;
+						};
+					}}
+				>
+					<div class="flex flex-col gap-2">
+						<Label for="test-to">Send to</Label>
+						<Input id="test-to" name="to" type="email" placeholder="you@example.com" value={form?.to ?? ''} required />
+					</div>
+					<Button type="submit" disabled={sending}>
+						<Send class="size-4" />
+						{sending ? 'Sending…' : 'Send test'}
+					</Button>
+				</form>
+				<p class="mt-3 text-xs text-muted-foreground">
+					{data.sender ? `Sent from ${data.sender}.` : 'No sender address is set (MAIL_FROM or SMTP_USER).'}
+				</p>
+				{#if form?.error}
+					<Notice tone="danger" class="mt-4">{form.error}</Notice>
+				{:else if form?.status === 'SENT'}
+					<Notice tone="success" class="mt-4">The mail server accepted the email. Check the inbox (and the spam folder).</Notice>
+				{:else if form?.status === 'FAILED'}
+					<Notice tone="danger" title="The mail server refused the email." class="mt-4">{form.sendError}</Notice>
+				{:else if form?.status === 'SKIPPED'}
+					<Notice tone="info" class="mt-4">Logged as Skipped: no SMTP_HOST is set, so nothing was sent.</Notice>
+				{/if}
+			</Card.Content>
+		</Card.Root>
+	</PageSection>
+
 	<div class="flex flex-col gap-3">
 		<nav class="flex flex-wrap gap-2" aria-label="Filter by status">
 			{#each statusTabs as tab (tab.label)}
@@ -220,7 +270,7 @@
 										href={link}
 										target="_blank"
 										rel="noopener noreferrer"
-										class="inline-flex items-start gap-1 break-all text-primary hover:underline"
+										class="inline-flex items-start gap-1 break-all text-primary-ink hover:underline"
 									>
 										<ExternalLink class="mt-0.5 size-3 shrink-0" />{link}
 									</a>

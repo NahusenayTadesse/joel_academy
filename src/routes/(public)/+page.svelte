@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Reveal from '$lib/components/common/reveal.svelte';
+	import { jsonLdScript } from '$lib/json-ld';
 	import CategoriesSection from '$lib/components/home/categories-section.svelte';
 	import CtaBannerSection from '$lib/components/home/cta-banner-section.svelte';
 	import FaqPreviewSection from '$lib/components/home/faq-preview-section.svelte';
@@ -20,14 +21,16 @@
 </script>
 
 <svelte:head>
-	<title>Joel Talargie Academy - Learn with purpose. Build with confidence. · Joel Talargie Academy</title>
+	<title>Joel Talargie Academy - Learn with purpose. Build with confidence.</title>
 	<meta
 		name="description"
 		content="Explore a growing catalog of self-paced courses across a range of categories, taught by real instructors."
 	/>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- built on the server, `<` escaped -->
+	{@html jsonLdScript(data.jsonLd)}
 </svelte:head>
 
-<main>
+<div>
 	{#if show.hero}
 		<HeroSection hero={data.landing.hero} />
 	{/if}
@@ -95,4 +98,4 @@
 			<CtaBannerSection cta={data.landing.finalCta} />
 		</Reveal>
 	{/if}
-</main>
+</div>

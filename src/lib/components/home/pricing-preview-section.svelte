@@ -16,7 +16,7 @@
 	</div>
 	<div class="mx-auto grid max-w-3xl grid-cols-1 gap-5 sm:grid-cols-2">
 		<Card class="flex flex-col gap-3 p-6">
-			<span class="flex size-11 items-center justify-center rounded-full bg-success/10 text-success">
+			<span class="flex size-11 items-center justify-center rounded-full bg-success/10 text-success-ink">
 				<Gift class="size-5" />
 			</span>
 			<h3 class="text-base font-semibold text-foreground">Free courses</h3>
@@ -25,7 +25,7 @@
 			</p>
 		</Card>
 		<Card class="flex flex-col gap-3 p-6">
-			<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand">
+			<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 				<Tag class="size-5" />
 			</span>
 			<h3 class="text-base font-semibold text-foreground">Paid courses</h3>

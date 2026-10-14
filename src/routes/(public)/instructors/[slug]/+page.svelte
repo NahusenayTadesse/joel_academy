@@ -41,7 +41,7 @@
 					<img src={instructor.photoUrl} alt={instructor.name} class="size-full object-cover" />
 				</div>
 			{:else}
-				<span class="flex size-24 shrink-0 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+				<span class="flex size-24 shrink-0 items-center justify-center rounded-2xl bg-brand/10 text-brand-ink">
 					<UserRound class="size-12" />
 				</span>
 			{/if}
@@ -49,7 +49,7 @@
 			<div class="space-y-4">
 				<div>
 					<div class="flex items-center gap-2">
-						<Badge variant="secondary" class="bg-brand/10 text-xs font-medium text-brand">
+						<Badge variant="secondary" class="bg-brand/10 text-xs font-medium text-brand-ink">
 							MEET YOUR MENTOR
 						</Badge>
 					</div>
@@ -57,7 +57,7 @@
 						{instructor.name}
 					</h1>
 					{#if instructor.title}
-						<p class="mt-0.5 text-sm font-semibold text-brand">{instructor.title}</p>
+						<p class="mt-0.5 text-sm font-semibold text-brand-ink">{instructor.title}</p>
 					{/if}
 				</div>
 
@@ -71,7 +71,7 @@
 					<div class="space-y-1.5 pt-1">
 						{#each instructor.achievements as item, index (index)}
 							<div class="flex items-center gap-2 text-xs text-foreground/90">
-								<CircleCheck class="size-4 shrink-0 text-brand" />
+								<CircleCheck class="size-4 shrink-0 text-brand-ink" />
 								<span>{item}</span>
 							</div>
 						{/each}

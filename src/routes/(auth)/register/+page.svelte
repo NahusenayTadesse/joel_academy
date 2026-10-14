@@ -4,6 +4,7 @@
 	import Phone from '@lucide/svelte/icons/phone';
 	import User from '@lucide/svelte/icons/user';
 	import { page } from '$app/state';
+	import SpamGuard from '$lib/components/common/spam-guard.svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import AuthField from '$lib/components/auth/auth-field.svelte';
@@ -44,6 +45,7 @@
 		</div>
 	{/if}
 	<form method="post" use:enhance class={data.googleEnabled ? 'space-y-4' : 'mt-8 space-y-4'}>
+		<SpamGuard token={data.formToken} />
 		<div class="grid grid-cols-2 gap-3">
 			<AuthField
 				name="firstName"
@@ -124,7 +126,7 @@
 	</form>
 
 	<div class="mt-6 text-center text-sm">
-		<a href="{ROUTES.auth.login}{redirectQuery}" class="font-medium text-brand hover:underline">
+		<a href="{ROUTES.auth.login}{redirectQuery}" class="font-medium text-brand-ink hover:underline">
 			Back to sign in
 		</a>
 	</div>

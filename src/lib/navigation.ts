@@ -3,6 +3,7 @@ import BookOpen from '@lucide/svelte/icons/book-open';
 import Layers from '@lucide/svelte/icons/layers';
 import UserRound from '@lucide/svelte/icons/user-round';
 import Quote from '@lucide/svelte/icons/quote';
+import Star from '@lucide/svelte/icons/star';
 import ClipboardCheck from '@lucide/svelte/icons/clipboard-check';
 import Landmark from '@lucide/svelte/icons/landmark';
 import Award from '@lucide/svelte/icons/award';
@@ -21,6 +22,7 @@ export const NAVIGATION: NavItem[] = [
  { title: 'Categories', url: '/dashboard/categories', icon: Layers, section: 'Catalog' },
  { title: 'Instructors', url: '/dashboard/instructors', icon: UserRound, section: 'Catalog' },
  { title: 'Testimonials', url: '/dashboard/testimonials', icon: Quote, section: 'Catalog' },
+ { title: 'Reviews', url: '/dashboard/reviews', icon: Star, section: 'Catalog' },
  { title: 'Landing page', url: '/dashboard/landing', icon: PanelsTopLeft, section: 'Catalog' },
  { title: 'Enrollments', url: '/dashboard/enrollments', icon: ClipboardCheck, section: 'Students' },
  { title: 'Payment methods', url: '/dashboard/payment-methods', icon: Landmark, section: 'Students' },

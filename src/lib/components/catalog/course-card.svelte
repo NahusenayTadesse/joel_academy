@@ -18,13 +18,16 @@
 		course,
 		class: className = '',
 		view = 'grid',
-		href: hrefOverride
+		href: hrefOverride,
+		priority = 'lazy'
 	}: {
 		course: CourseSummary;
 		class?: string;
 		view?: 'grid' | 'list';
 		/** Overrides the default public `/courses/[slug]` link target. */
 		href?: string;
+		/** Image loading for this card's thumbnail (see CourseThumbnail). */
+		priority?: 'high' | 'eager' | 'lazy';
 	} = $props();
 
 	const href = $derived(hrefOverride ?? ROUTES.courses.detail(course.slug));
@@ -33,13 +36,18 @@
 {#snippet rating()}
 	{#if course.rating !== undefined}
 		<span class="flex items-center gap-1 text-xs font-medium text-foreground">
-			<Star class="size-3.5 fill-warning text-warning" />
-			{course.rating.toFixed(1)}
-			{#if course.studentsCount !== undefined}
-				<span class="font-normal text-muted-foreground">
-					({formatCompactNumber(course.studentsCount)})
+			<Star class="size-3.5 fill-warning text-warning" aria-hidden="true" />
+			<span aria-hidden="true">{course.rating.toFixed(1)}</span>
+			{#if course.reviewCount !== undefined}
+				<span class="font-normal text-muted-foreground" aria-hidden="true">
+					({formatCompactNumber(course.reviewCount)})
 				</span>
 			{/if}
+			<span class="sr-only">
+				Rated {course.rating.toFixed(1)} out of 5{course.reviewCount !== undefined
+					? ` from ${course.reviewCount} review${course.reviewCount === 1 ? '' : 's'}`
+					: ''}
+			</span>
 		</span>
 	{/if}
 {/snippet}
@@ -57,6 +65,7 @@
 	<Card class={cn('overflow-hidden transition-shadow hover:shadow-md', className)}>
 		<a {href} class="flex flex-col gap-4 sm:flex-row">
 			<CourseThumbnail
+				{priority}
 				title={course.title}
 				categoryName={course.categoryName}
 				categorySlug={course.categorySlug}
@@ -92,6 +101,7 @@
 		<a {href}>
 			<div class="relative">
 				<CourseThumbnail
+				{priority}
 					title={course.title}
 					categoryName={course.categoryName}
 					categorySlug={course.categorySlug}
@@ -107,17 +117,18 @@
 				{/if}
 			</div>
 			<div class="flex flex-col gap-2 p-4">
-				<h3 class="line-clamp-2 text-sm font-semibold text-foreground group-hover:text-brand">
+				<h3 class="line-clamp-2 text-sm font-semibold text-foreground group-hover:text-brand-ink">
 					{course.title}
 				</h3>
 				<p class="line-clamp-2 text-sm text-muted-foreground">{course.shortDescription}</p>
 				<p class="text-xs text-muted-foreground">by {course.presenterName}</p>
 				<div class="flex items-center gap-3 pt-1">
 					{@render rating()}
-					{#if course.studentsCount !== undefined && course.rating === undefined}
+					{#if course.studentsCount !== undefined}
 						<span class="flex items-center gap-1 text-xs text-muted-foreground">
-							<Users class="size-3.5" />
+							<Users class="size-3.5" aria-hidden="true" />
 							{formatCompactNumber(course.studentsCount)}
+							<span class="sr-only">students</span>
 						</span>
 					{/if}
 				</div>

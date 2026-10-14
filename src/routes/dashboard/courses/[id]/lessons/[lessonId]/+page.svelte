@@ -5,16 +5,16 @@
 	import PageHeader from '@nahu/admin-kit/components/PageHeader.svelte';
 	import PageSection from '@nahu/admin-kit/components/PageSection.svelte';
 	import ConfirmAction from '@nahu/admin-kit/components/ConfirmAction.svelte';
-	import LookupSection from '@nahu/admin-kit/components/lookup/LookupSection.svelte';
 	import RichEditor from '@nahu/admin-kit/formComponents/RichEditor.svelte';
 	import Errors from '@nahu/admin-kit/formComponents/Errors.svelte';
 	import LoadingBtn from '@nahu/admin-kit/formComponents/LoadingBtn.svelte';
 	import { Button } from '@nahu/admin-kit/components/ui/button/index.js';
 	import { Card, CardContent } from '@nahu/admin-kit/components/ui/card/index.js';
 	import { createForm } from '@nahu/admin-kit/forms/createForm';
-	import type { LookupConfig } from '@nahu/admin-kit/components/lookup/types';
 	import LessonFields from '../../LessonFields.svelte';
-	import { lessonEditSchema, resourceEditSchema, resourceSchema } from '../../schema';
+	import QuizBuilder from './QuizBuilder.svelte';
+	import ResourcesEditor from './ResourcesEditor.svelte';
+	import { lessonEditSchema } from '../../schema';
 
 	let { data } = $props();
 
@@ -25,16 +25,6 @@
 	});
 
 	const back = $derived(`/dashboard/courses/${data.course.id}`);
-
-	const resourceConfig: LookupConfig = {
-		entity: 'Resource',
-		plural: 'Resources',
-		fields: [
-			{ name: 'title', label: 'Title', type: 'text' },
-			{ name: 'url', label: 'Link', type: 'text', placeholder: 'https://…', long: 40 },
-			{ name: 'sortOrder', label: 'Order', type: 'number' }
-		]
-	};
 </script>
 
 <div class="flex flex-col gap-6">
@@ -94,18 +84,19 @@
 		</CardContent>
 	</Card>
 
+	{#if $form.lessonType === 'QUIZ' || data.lesson.lessonType === 'QUIZ'}
+		<QuizBuilder {...data.quiz} savedAsQuiz={data.lesson.lessonType === 'QUIZ'} />
+	{/if}
+
 	<PageSection
 		title="Resources"
-		hint="Links students get with this lesson: slides, files on a drive, a tool's sign-up page."
+		hint="Links and files students get with this lesson: slides, worksheets, audio, a tool's sign-up page. Files download only for students who can open the lesson."
 	>
-		<LookupSection
-			config={resourceConfig}
-			rows={data.resources}
+		<ResourcesEditor
+			resources={data.resources}
 			addForm={data.resourceAddForm}
 			editForm={data.resourceEditForm}
-			canDelete
-			actions={{ add: '?/addResource', edit: '?/editResource', delete: '?/deleteResource' }}
-			schemas={{ add: resourceSchema, edit: resourceEditSchema }}
+			maxUploadBytes={data.maxUploadBytes}
 		/>
 	</PageSection>
 </div>

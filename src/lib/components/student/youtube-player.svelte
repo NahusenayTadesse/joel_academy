@@ -80,21 +80,36 @@
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 	import { onMount } from 'svelte';
-	import { formatClock, WatchProgress } from './watch-progress.svelte';
+	import { formatClock, PositionReporter, resumeStart, WatchProgress } from './watch-progress.svelte';
 
 	let {
 		videoId,
 		start = 0,
 		title,
 		completed,
-		onWatched
+		onWatched,
+		lessonId,
+		resumeAt = 0,
+		startAt = 0,
+		positionUrl = null,
+		onResumed
 	}: {
 		videoId: string;
+		/** The start time in the link staff pasted (`?t=`). */
 		start?: number;
 		title: string;
 		/** The lesson is already complete: seeking is unrestricted. */
 		completed: boolean;
 		onWatched: () => void;
+		lessonId: number;
+		/** Where the student left off: counted as watched. */
+		resumeAt?: number;
+		/** Where to start this time (the resume point, or 0 after "Start over"). */
+		startAt?: number;
+		/** Where the position is saved, or `null` when it is not. */
+		positionUrl?: string | null;
+		/** The video was resumed part-way, at `seconds`. */
+		onResumed?: (seconds: number) => void;
 	} = $props();
 
 	/*
@@ -108,7 +123,13 @@
 	 */
 
 	// svelte-ignore state_referenced_locally
-	const progress = new WatchProgress(completed, () => onWatched());
+	const progress = new WatchProgress(completed, () => onWatched(), resumeAt);
+	// svelte-ignore state_referenced_locally
+	const reporter = new PositionReporter(positionUrl, lessonId);
+	// svelte-ignore state_referenced_locally
+	const firstFrame = startAt > 0 ? Math.floor(startAt) : start;
+	/* The saved point turned out to be the end: the first play starts from the top instead. */
+	let restartOnPlay = false;
 
 	let shell = $state<HTMLDivElement>();
 	let player: YTPlayer | undefined;
@@ -143,6 +164,7 @@
 		} else {
 			current = position;
 		}
+		if (started) reporter.report(current);
 	}
 
 	/** Builds the YouTube player inside `node`; rebuilt from scratch when "Try again" remounts it. */
@@ -168,13 +190,20 @@
 						playsinline: 1,
 						enablejsapi: 1,
 						origin: window.location.origin,
-						start
+						start: firstFrame
 					},
 					events: {
 						onReady: ({ target: ready }) => {
 							if (cancelled) return;
-							progress.observe(start, ready.getDuration());
-							current = start;
+							const length = ready.getDuration();
+							let from = firstFrame;
+							if (startAt > 0) {
+								from = resumeStart(firstFrame, length);
+								restartOnPlay = from === 0;
+								if (from > 0) onResumed?.(from);
+							}
+							progress.observe(from, length);
+							current = from;
 							muted = ready.isMuted();
 							volume = ready.getVolume();
 							status = 'ready';
@@ -190,6 +219,7 @@
 								clearInterval(poll);
 								poll = undefined;
 								tick();
+								if (started) reporter.flush();
 							}
 							if (data === YT.PlayerState.ENDED) {
 								ended = true;
@@ -221,15 +251,18 @@
 	onMount(() => {
 		const onFullscreenChange = () => (fullscreen = document.fullscreenElement === shell);
 		document.addEventListener('fullscreenchange', onFullscreenChange);
+		const detach = reporter.attach();
 		return () => {
 			clearTimeout(hideTimer);
 			document.removeEventListener('fullscreenchange', onFullscreenChange);
+			detach();
 		};
 	});
 
 	function togglePlay() {
 		if (!player || status !== 'ready') return;
-		if (ended) seek(0);
+		if (ended || restartOnPlay) seek(0);
+		restartOnPlay = false;
 		if (playing) player.pauseVideo();
 		else player.playVideo();
 	}

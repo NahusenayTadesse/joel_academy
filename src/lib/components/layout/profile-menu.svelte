@@ -1,6 +1,10 @@
 <script lang="ts">
 	import Award from '@lucide/svelte/icons/award';
+	import Bell from '@lucide/svelte/icons/bell';
 	import BookOpen from '@lucide/svelte/icons/book-open';
+	import CreditCard from '@lucide/svelte/icons/credit-card';
+	import GraduationCap from '@lucide/svelte/icons/graduation-cap';
+	import Heart from '@lucide/svelte/icons/heart';
 	import LayoutDashboard from '@lucide/svelte/icons/layout-dashboard';
 	import LogOut from '@lucide/svelte/icons/log-out';
 	import UserCog from '@lucide/svelte/icons/user-cog';
@@ -13,12 +17,21 @@
 	let { user }: { user: { name: string; email: string; image?: string | null; isStaff?: boolean } } =
 		$props();
 	let signOutForm = $state<HTMLFormElement>();
+
+	const STUDENT_LINKS = [
+		{ label: 'My learning home', href: ROUTES.student.home, icon: GraduationCap },
+		{ label: 'My courses', href: ROUTES.student.courses, icon: BookOpen },
+		{ label: 'My certificates', href: ROUTES.student.certificates, icon: Award },
+		{ label: 'Wishlist', href: ROUTES.student.wishlist, icon: Heart },
+		{ label: 'Payments', href: ROUTES.student.payments, icon: CreditCard },
+		{ label: 'Notifications', href: ROUTES.student.notifications, icon: Bell }
+	];
 </script>
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
 		class={cn(buttonVariants({ variant: 'ghost' }), 'h-9 gap-2 px-2')}
-		aria-label="Account menu"
+		aria-label="Account menu for {user.name}"
 	>
 		<span
 			class="relative flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-xs"
@@ -34,31 +47,26 @@
 	<DropdownMenu.Content align="end" class="w-56">
 		<DropdownMenu.Label class="truncate">{user.email}</DropdownMenu.Label>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item>
-			{#snippet child({ props })}
-				<a href={user.isStaff ? ROUTES.dashboard : ROUTES.student.courses} {...props}>
-					<LayoutDashboard class="size-4" />
-					Dashboard
-				</a>
-			{/snippet}
-		</DropdownMenu.Item>
-		{#if !user.isStaff}
+		{#if user.isStaff}
 			<DropdownMenu.Item>
 				{#snippet child({ props })}
-					<a href={ROUTES.student.courses} {...props}>
-						<BookOpen class="size-4" />
-						My courses
+					<a href={ROUTES.dashboard} {...props}>
+						<LayoutDashboard class="size-4" />
+						Dashboard
 					</a>
 				{/snippet}
 			</DropdownMenu.Item>
-			<DropdownMenu.Item>
-				{#snippet child({ props })}
-					<a href={ROUTES.student.certificates} {...props}>
-						<Award class="size-4" />
-						My certificates
-					</a>
-				{/snippet}
-			</DropdownMenu.Item>
+		{:else}
+			{#each STUDENT_LINKS as link (link.href)}
+				<DropdownMenu.Item>
+					{#snippet child({ props })}
+						<a href={link.href} {...props}>
+							<link.icon class="size-4" />
+							{link.label}
+						</a>
+					{/snippet}
+				</DropdownMenu.Item>
+			{/each}
 		{/if}
 		<DropdownMenu.Item>
 			{#snippet child({ props })}

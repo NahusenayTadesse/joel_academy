@@ -54,6 +54,8 @@
 					<img
 						src={photo}
 						alt={instructor.name}
+						loading="lazy"
+						decoding="async"
 						class="absolute inset-0 size-full object-cover"
 					/>
 				</div>
@@ -69,7 +71,7 @@
 			{/if}
 			<div class="flex flex-col gap-4">
 				<span
-					class="w-fit rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand uppercase"
+					class="w-fit rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand-ink uppercase"
 				>
 					Meet your mentor
 				</span>
@@ -81,7 +83,7 @@
 				<ul class="flex flex-col gap-2">
 					{#each achievements.slice(0, 3) as achievement (achievement)}
 						<li class="flex items-start gap-2 text-sm text-foreground">
-							<CircleCheck class="mt-0.5 size-4 shrink-0 text-brand" />
+							<CircleCheck class="mt-0.5 size-4 shrink-0 text-brand-ink" />
 							{achievement}
 						</li>
 					{/each}

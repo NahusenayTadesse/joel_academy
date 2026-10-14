@@ -25,6 +25,8 @@ import {
 	instructor,
 	lesson,
 	lessonResource,
+	quizOption,
+	quizQuestion,
 	testimonial
 } from '../src/lib/server/db/schema';
 
@@ -39,6 +41,39 @@ const LEAD = {
 		'Over 10+ years of high-scale software engineering leadership',
 		'Curriculum designed specifically for career placement & promotion',
 		'Trained and certified thousands of engineers across the continent'
+	]
+};
+
+/** A short example quiz, added at the end of the first free course so quizzes have a demo. */
+const DEMO_QUIZ = {
+	title: 'Check your understanding',
+	questions: [
+		{
+			prompt: 'What does a large language model do, at its core?',
+			explanation: 'It predicts likely next tokens; everything else is built on that.',
+			options: [
+				{ text: 'Predicts the next piece of text', isCorrect: true },
+				{ text: 'Looks answers up in a database', isCorrect: false },
+				{ text: 'Runs the code you type', isCorrect: false }
+			]
+		},
+		{
+			prompt: 'Which of these make a prompt better? Select all that apply.',
+			explanation: 'Context and a clear format both narrow what a good answer looks like.',
+			options: [
+				{ text: 'Giving relevant context', isCorrect: true },
+				{ text: 'Saying what format you want back', isCorrect: true },
+				{ text: 'Keeping the task vague', isCorrect: false }
+			]
+		},
+		{
+			prompt: 'An AI answer cites a fact you have not seen before. What should you do?',
+			explanation: 'Models can state wrong things confidently, so check what matters.',
+			options: [
+				{ text: 'Verify it against a reliable source', isCorrect: true },
+				{ text: 'Trust it, since it sounds confident', isCorrect: false }
+			]
+		}
 	]
 };
 
@@ -91,6 +126,7 @@ try {
 				instructorIds.set(profile.name, row.id);
 			}
 
+			let quizAdded = false;
 			for (const [index, record] of MOCK_COURSE_RECORDS.entries()) {
 				const seed = COURSE_SEEDS[index];
 				const [row] = await tx
@@ -157,6 +193,41 @@ try {
 									title: resource.title,
 									url: resource.externalUrl!,
 									sortOrder: resourceIndex
+								}))
+							);
+						}
+					}
+
+					if (!quizAdded && record.accessType === 'FREE' && sectionIndex === record.sections.length - 1) {
+						quizAdded = true;
+						const [quizLesson] = await tx
+							.insert(lesson)
+							.values({
+								sectionId: sectionRow.id,
+								courseId: row.id,
+								title: DEMO_QUIZ.title,
+								lessonType: 'QUIZ',
+								passingScore: 70,
+								sortOrder: section.lessons.length
+							})
+							.$returningId();
+						for (const [questionIndex, question] of DEMO_QUIZ.questions.entries()) {
+							const [questionRow] = await tx
+								.insert(quizQuestion)
+								.values({
+									lessonId: quizLesson.id,
+									prompt: question.prompt,
+									explanation: question.explanation,
+									allowMultiple: question.options.filter((option) => option.isCorrect).length > 1,
+									sortOrder: questionIndex
+								})
+								.$returningId();
+							await tx.insert(quizOption).values(
+								question.options.map((option, optionIndex) => ({
+									questionId: questionRow.id,
+									text: option.text,
+									isCorrect: option.isCorrect,
+									sortOrder: optionIndex
 								}))
 							);
 						}

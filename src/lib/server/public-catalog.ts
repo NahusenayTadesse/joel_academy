@@ -4,6 +4,7 @@ import {
 	category,
 	certificate,
 	course,
+	courseReview,
 	courseSection,
 	enrollment,
 	instructor,
@@ -23,6 +24,7 @@ import type {
 import type { Instructor } from '$lib/content/instructor.types';
 import type { Testimonial } from '$lib/content/testimonial.types';
 import { mediaUrl } from '$lib/media';
+import { averageRating } from '$lib/components/reviews/rules';
 
 /*
  * The public site's read model. Published courses, active categories and instructors are read once
@@ -62,7 +64,7 @@ const visible = (table: typeof category | typeof instructor) =>
 	and(eq(table.status, true), isNull(table.deletedAt));
 
 async function loadSnapshot(): Promise<Snapshot> {
-	const [categoryRows, instructorRows, courseRows, studentCounts] = await Promise.all([
+	const [categoryRows, instructorRows, courseRows, studentCounts, ratingRows] = await Promise.all([
 		db.select().from(category).where(visible(category)).orderBy(asc(category.sortOrder), asc(category.name)),
 		db.select().from(instructor).where(visible(instructor)).orderBy(asc(instructor.sortOrder), asc(instructor.name)),
 		db
@@ -78,12 +80,23 @@ async function loadSnapshot(): Promise<Snapshot> {
 			.select({ courseId: enrollment.courseId, students: count() })
 			.from(enrollment)
 			.where(eq(enrollment.status, 'ACTIVE'))
-			.groupBy(enrollment.courseId)
+			.groupBy(enrollment.courseId),
+		db
+			.select({ courseId: courseReview.courseId, reviews: count(), ratingSum: sql<number>`sum(${courseReview.rating})` })
+			.from(courseReview)
+			.where(eq(courseReview.status, 'PUBLISHED'))
+			.groupBy(courseReview.courseId)
 	]);
 
 	const categories = new Map(categoryRows.map((row) => [row.id, row]));
 	const instructors = new Map(instructorRows.map((row) => [row.id, row]));
 	const students = new Map(studentCounts.map((row) => [row.courseId, row.students]));
+	const ratings = new Map(
+		ratingRows.map((row) => [
+			row.courseId,
+			{ rating: averageRating(Number(row.ratingSum), Number(row.reviews)), reviewCount: Number(row.reviews) }
+		])
+	);
 	const presenterSlugs = new Map<string, string>();
 
 	const courses = courseRows.map(({ course: row, lessonCount, moduleCount }): CourseSummary => {
@@ -91,6 +104,8 @@ async function loadSnapshot(): Promise<Snapshot> {
 		const presenter = row.instructorId ? instructors.get(row.instructorId) : undefined;
 		if (presenter) presenterSlugs.set(String(row.id), presenter.slug);
 		const studentsCount = students.get(row.id);
+		// Only courses with at least one published review carry a rating.
+		const reviewed = ratings.get(row.id);
 		return {
 			id: String(row.id),
 			title: row.name,
@@ -112,8 +127,8 @@ async function loadSnapshot(): Promise<Snapshot> {
 			certificateEnabled: row.certificateEnabled,
 			featured: row.featured,
 			publishedAt: (row.publishedAt ?? row.createdAt).toISOString(),
-			// No reviews exist yet, so no rating is shown rather than an invented one.
-			rating: undefined,
+			rating: reviewed?.rating,
+			reviewCount: reviewed?.reviewCount,
 			studentsCount: studentsCount ? Number(studentsCount) : undefined,
 			language: row.language,
 			tags: splitLines(row.tags),

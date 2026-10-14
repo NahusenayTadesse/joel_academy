@@ -4,6 +4,7 @@
 	import Check from '@lucide/svelte/icons/check';
 	import Copy from '@lucide/svelte/icons/copy';
 	import Download from '@lucide/svelte/icons/download';
+	import Printer from '@lucide/svelte/icons/printer';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import Share2 from '@lucide/svelte/icons/share-2';
 	import { toast } from 'svelte-sonner';
@@ -84,6 +85,7 @@
 					code={certificate.code}
 					issuedAt={certificate.issuedAt}
 					verificationUrl={data.verificationUrl}
+					qr={data.qr}
 				/>
 			</div>
 		{/if}
@@ -92,7 +94,7 @@
 			<Card>
 				<CardContent class="space-y-4 p-5">
 					<div class="flex items-center gap-3">
-						<span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+						<span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 							<Award class="size-5" />
 						</span>
 						<div class="min-w-0">
@@ -135,7 +137,7 @@
 									title="Copy verification link"
 									aria-label="Copy verification link"
 								>
-									{#if copied === 'link'}<Check class="size-3.5 text-emerald-600" />{:else}<Copy class="size-3.5" />{/if}
+									{#if copied === 'link'}<Check class="size-3.5 text-emerald-700" />{:else}<Copy class="size-3.5" />{/if}
 								</button>
 							</dd>
 						</div>
@@ -152,7 +154,7 @@
 									title="Copy verification code"
 									aria-label="Copy verification code"
 								>
-									{#if copied === 'code'}<Check class="size-3.5 text-emerald-600" />{:else}<Copy class="size-3.5" />{/if}
+									{#if copied === 'code'}<Check class="size-3.5 text-emerald-700" />{:else}<Copy class="size-3.5" />{/if}
 								</button>
 							</dd>
 						</div>
@@ -162,9 +164,21 @@
 
 			<Card>
 				<CardContent class="space-y-2 p-5">
-					<Button class="w-full gap-2 font-medium" onclick={() => window.print()} disabled={revoked}>
-						<Download class="size-4" />
-						Download / Print Certificate
+					{#if data.pdfHref}
+						<!-- A file, not a page: `download` keeps SvelteKit's router out of it. -->
+						<Button class="w-full gap-2 font-medium" href={data.pdfHref} download data-sveltekit-reload>
+							<Download class="size-4" />
+							Download PDF
+						</Button>
+					{:else}
+						<Button class="w-full gap-2 font-medium" disabled>
+							<Download class="size-4" />
+							Download PDF
+						</Button>
+					{/if}
+					<Button variant="outline" class="w-full gap-2" onclick={() => window.print()} disabled={revoked}>
+						<Printer class="size-4" />
+						Print Certificate
 					</Button>
 					<Button variant="outline" class="w-full gap-2" href={data.verificationUrl} target="_blank" rel="noopener">
 						<ExternalLink class="size-4" />

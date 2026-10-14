@@ -69,6 +69,6 @@
 	</form>
 
 	<div class="mt-6 text-center text-sm">
-		<a href={ROUTES.auth.login} class="font-medium text-brand hover:underline">Back to sign in</a>
+		<a href={ROUTES.auth.login} class="font-medium text-brand-ink hover:underline">Back to sign in</a>
 	</div>
 </div>

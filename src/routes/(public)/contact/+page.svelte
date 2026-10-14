@@ -15,7 +15,7 @@
 	import Card from '$lib/components/ui/card.svelte';
 	import { ROUTES, siteConfig } from '$lib/site';
 
-	let { form } = $props();
+	let { data, form } = $props();
 
 	const DEPARTMENTS = [
 		{
@@ -65,10 +65,10 @@
 	<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
 		{#each DEPARTMENTS as department (department.title)}
 			<Card class="flex flex-col gap-3 p-5">
-				<span class="flex size-10 items-center justify-center rounded-full bg-brand/10 text-brand">
+				<span class="flex size-10 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 					<department.icon class="size-4.5" />
 				</span>
-				<h3 class="text-sm font-semibold text-foreground">{department.title}</h3>
+				<h2 class="text-sm font-semibold text-foreground">{department.title}</h2>
 				<p class="text-sm text-muted-foreground">{department.description}</p>
 			</Card>
 		{/each}
@@ -77,12 +77,12 @@
 	<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
 		<Card class="p-6 lg:col-span-2">
 			<h2 class="mb-4 text-lg font-semibold text-foreground">Send us a message</h2>
-			<ContactForm {form} />
+			<ContactForm {form} token={data.formToken} />
 		</Card>
 
 		<div class="flex flex-col gap-4">
 			<Card class="flex items-start gap-3 p-5">
-				<Clock class="mt-0.5 size-5 shrink-0 text-brand" />
+				<Clock class="mt-0.5 size-5 shrink-0 text-brand-ink" />
 				<div>
 					<h3 class="text-sm font-semibold text-foreground">Response times</h3>
 					<p class="text-sm text-muted-foreground">
@@ -92,23 +92,23 @@
 				</div>
 			</Card>
 			<Card class="flex items-start gap-3 p-5">
-				<CircleQuestionMark class="mt-0.5 size-5 shrink-0 text-brand" />
+				<CircleQuestionMark class="mt-0.5 size-5 shrink-0 text-brand-ink" />
 				<div>
 					<h3 class="text-sm font-semibold text-foreground">Common questions</h3>
 					<p class="text-sm text-muted-foreground">
 						Check our
-						<a href={ROUTES.faq} class="text-brand underline-offset-4 hover:underline">FAQ</a>
+						<a href={ROUTES.faq} class="text-brand-ink underline underline-offset-4 hover:no-underline">FAQ</a>
 						first - it may already have your answer.
 					</p>
 				</div>
 			</Card>
 			<Card class="flex items-start gap-3 p-5">
-				<LifeBuoy class="mt-0.5 size-5 shrink-0 text-brand" />
+				<LifeBuoy class="mt-0.5 size-5 shrink-0 text-brand-ink" />
 				<div>
 					<h3 class="text-sm font-semibold text-foreground">Need more help?</h3>
 					<p class="text-sm text-muted-foreground">
 						Visit the
-						<a href={ROUTES.helpCenter} class="text-brand underline-offset-4 hover:underline"
+						<a href={ROUTES.helpCenter} class="text-brand-ink underline underline-offset-4 hover:no-underline"
 							>Help Center</a
 						>
 						for guides and troubleshooting.
@@ -124,6 +124,7 @@
 				<div class="flex items-center gap-2">
 					{#each SOCIAL_LINKS as social (social.label)}
 						<span
+							role="img"
 							aria-label={social.label}
 							class="flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground"
 						>

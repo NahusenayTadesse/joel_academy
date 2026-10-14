@@ -63,7 +63,7 @@
 	<Card>
 		<CardContent class="flex flex-col items-center gap-4 p-8 text-center">
 			{#if data.state === 'paid'}
-				<span class="flex size-16 items-center justify-center rounded-full bg-success/10 text-success">
+				<span class="flex size-16 items-center justify-center rounded-full bg-success/10 text-success-ink">
 					<CircleCheck class="size-9" />
 				</span>
 				<div>

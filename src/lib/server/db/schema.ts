@@ -109,7 +109,7 @@ export const courseSection = mysqlTable(
 	(table) => [index('section_course_idx').on(table.courseId)]
 );
 
-export const LESSON_TYPES = ['VIDEO', 'TEXT', 'DOCUMENT', 'DOWNLOAD', 'EXTERNAL_LINK'] as const;
+export const LESSON_TYPES = ['VIDEO', 'TEXT', 'DOCUMENT', 'DOWNLOAD', 'EXTERNAL_LINK', 'QUIZ'] as const;
 
 export const lesson = mysqlTable(
 	'lesson',
@@ -129,6 +129,8 @@ export const lesson = mysqlTable(
 		isPreview: boolean('is_preview').notNull().default(false),
 		/** Counts toward completion and the certificate. */
 		isMandatory: boolean('is_mandatory').notNull().default(true),
+		/** QUIZ lessons: the percentage needed to pass (70 when unset). */
+		passingScore: int('passing_score'),
 		videoUrl: varchar('video_url', { length: 500 }),
 		externalUrl: varchar('external_url', { length: 500 }),
 		/** Sanitised HTML. */
@@ -146,7 +148,13 @@ export const lessonResource = mysqlTable(
 			.notNull()
 			.references(() => lesson.id, { onDelete: 'cascade' }),
 		title: varchar('title', { length: 200 }).notNull(),
-		url: varchar('url', { length: 500 }).notNull(),
+		/** An outside link; null when the resource is an uploaded file. */
+		url: varchar('url', { length: 500 }),
+		/** An uploaded file (kit-stored name), served only to students who may open the lesson. */
+		file: varchar('file', { length: 255 }),
+		fileName: varchar('file_name', { length: 255 }),
+		fileSize: int('file_size'),
+		mimeType: varchar('mime_type', { length: 120 }),
 		sortOrder: int('sort_order').notNull().default(0)
 	},
 	(table) => [index('resource_lesson_idx').on(table.lessonId)]
@@ -221,6 +229,9 @@ export const enrollment = mysqlTable(
 		/** When the money was confirmed (receipt approved or Chapa verified): the revenue date. */
 		paidAt: timestamp('paid_at'),
 		completedAt: timestamp('completed_at'),
+		/** Where the student was last, for "Continue learning". */
+		lastLessonId: int('last_lesson_id').references(() => lesson.id, { onDelete: 'set null' }),
+		lastActivityAt: timestamp('last_activity_at'),
 		createdAt: timestamp('created_at').defaultNow().notNull(),
 		updatedAt: timestamp('updated_at')
 			.defaultNow()
@@ -386,4 +397,139 @@ export const smsLog = mysqlTable(
 		createdAt: timestamp('created_at').defaultNow().notNull()
 	},
 	(table) => [index('sms_log_created_idx').on(table.createdAt), index('sms_log_to_idx').on(table.to)]
+);
+
+/** How far into a lesson's video the student got, to resume there. */
+export const lessonPosition = mysqlTable(
+	'lesson_position',
+	{
+		userId: varchar('user_id', { length: 36 })
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		lessonId: int('lesson_id')
+			.notNull()
+			.references(() => lesson.id, { onDelete: 'cascade' }),
+		positionSeconds: int('position_seconds').notNull().default(0),
+		updatedAt: timestamp('updated_at')
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull()
+	},
+	(table) => [primaryKey({ columns: [table.userId, table.lessonId] })]
+);
+
+/** A student's saved courses (the heart on course cards), kept on the account once signed in. */
+export const wishlistItem = mysqlTable(
+	'wishlist_item',
+	{
+		userId: varchar('user_id', { length: 36 })
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		courseId: int('course_id')
+			.notNull()
+			.references(() => course.id, { onDelete: 'cascade' }),
+		createdAt: timestamp('created_at').defaultNow().notNull()
+	},
+	(table) => [primaryKey({ columns: [table.userId, table.courseId] })]
+);
+
+/** In-app notifications: the bell in the header and the notifications page. */
+export const notification = mysqlTable(
+	'notification',
+	{
+		id: int('id').autoincrement().primaryKey(),
+		userId: varchar('user_id', { length: 36 })
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		/** Same vocabulary as email_log.kind: `enrollment-confirmed`, `certificate-issued`, ... */
+		kind: varchar('kind', { length: 60 }).notNull(),
+		title: varchar('title', { length: 200 }).notNull(),
+		body: varchar('body', { length: 500 }),
+		/** A path inside the site. */
+		link: varchar('link', { length: 500 }),
+		readAt: timestamp('read_at'),
+		createdAt: timestamp('created_at').defaultNow().notNull()
+	},
+	(table) => [index('notification_user_idx').on(table.userId, table.readAt)]
+);
+
+export const quizQuestion = mysqlTable(
+	'quiz_question',
+	{
+		id: int('id').autoincrement().primaryKey(),
+		lessonId: int('lesson_id')
+			.notNull()
+			.references(() => lesson.id, { onDelete: 'cascade' }),
+		prompt: text('prompt').notNull(),
+		/** Shown after an attempt, to teach rather than only grade. */
+		explanation: text('explanation'),
+		/** More than one option is correct; the student must pick exactly those. */
+		allowMultiple: boolean('allow_multiple').notNull().default(false),
+		sortOrder: int('sort_order').notNull().default(0)
+	},
+	(table) => [index('quiz_question_lesson_idx').on(table.lessonId)]
+);
+
+export const quizOption = mysqlTable(
+	'quiz_option',
+	{
+		id: int('id').autoincrement().primaryKey(),
+		questionId: int('question_id')
+			.notNull()
+			.references(() => quizQuestion.id, { onDelete: 'cascade' }),
+		text: varchar('text', { length: 500 }).notNull(),
+		isCorrect: boolean('is_correct').notNull().default(false),
+		sortOrder: int('sort_order').notNull().default(0)
+	},
+	(table) => [index('quiz_option_question_idx').on(table.questionId)]
+);
+
+/** One graded submission of a quiz. The lesson counts as complete once an attempt passes. */
+export const quizAttempt = mysqlTable(
+	'quiz_attempt',
+	{
+		id: int('id').autoincrement().primaryKey(),
+		userId: varchar('user_id', { length: 36 })
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		lessonId: int('lesson_id')
+			.notNull()
+			.references(() => lesson.id, { onDelete: 'cascade' }),
+		/** 0-100. */
+		score: int('score').notNull(),
+		passed: boolean('passed').notNull(),
+		/** { [questionId]: optionId[] } as submitted. */
+		answers: json('answers').notNull(),
+		createdAt: timestamp('created_at').defaultNow().notNull()
+	},
+	(table) => [index('quiz_attempt_user_lesson_idx').on(table.userId, table.lessonId)]
+);
+
+export const REVIEW_STATUSES = ['PUBLISHED', 'HIDDEN'] as const;
+
+/** A student's rating (1-5) and review of a course they are enrolled in. One per student and course. */
+export const courseReview = mysqlTable(
+	'course_review',
+	{
+		id: int('id').autoincrement().primaryKey(),
+		userId: varchar('user_id', { length: 36 })
+			.notNull()
+			.references(() => user.id, { onDelete: 'cascade' }),
+		courseId: int('course_id')
+			.notNull()
+			.references(() => course.id, { onDelete: 'cascade' }),
+		rating: int('rating').notNull(),
+		comment: text('comment'),
+		/** Staff can hide a review (abuse, spam) without deleting it. */
+		status: mysqlEnum('status', REVIEW_STATUSES).notNull().default('PUBLISHED'),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at')
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull()
+	},
+	(table) => [
+		unique('course_review_user_course_unique').on(table.userId, table.courseId),
+		index('course_review_course_idx').on(table.courseId, table.status)
+	]
 );

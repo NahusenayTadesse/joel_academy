@@ -28,5 +28,6 @@
 		description="Explore our full catalog and find the course that fits your goals."
 	/>
 	<CourseFilters query={data.query} categories={data.categories} bind:view />
+	<h2 class="sr-only">Courses</h2>
 	<CoursesGrid courses={data.courses} query={data.query} {view} />
 </div>

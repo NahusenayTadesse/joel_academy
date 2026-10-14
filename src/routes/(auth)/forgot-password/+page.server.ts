@@ -4,6 +4,7 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
 import { requestedEmailAllowed } from '$lib/server/email';
 import { forgotSchema } from './schema';
+import { clientAddress, hit, waitText } from '$lib/server/spam';
 import type { Actions, PageServerLoad } from './$types';
 
 /* The same answer whether or not an account uses the address, so the form cannot be used to find out. */
@@ -12,10 +13,17 @@ const SENT = "If an account uses that email, we've sent it a link to reset your 
 export const load: PageServerLoad = async () => ({ form: await superValidate(zod4(forgotSchema)) });
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	default: async (event) => {
+		const { request } = event;
 		const form = await superValidate(request, zod4(forgotSchema));
 		if (!form.valid) return fail(400, { form });
 		const email = form.data.email.trim().toLowerCase();
+
+		// Per connection too, so one client can't fan reset emails out across many addresses.
+		const wait = hit('passwordReset', clientAddress(event));
+		if (wait) {
+			return message(form, { type: 'error', text: `Too many requests. Try again in ${waitText(wait)}.` }, { status: 429 });
+		}
 
 		// A repeat within the limit gets the same answer and no email: the last link still works.
 		const limit = await requestedEmailAllowed(email, 'password-reset');

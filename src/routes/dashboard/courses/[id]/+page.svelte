@@ -79,7 +79,10 @@
 		{
 			id: 'type',
 			header: 'Type',
-			cell: ({ row }) => LESSON_TYPE_NAMES[row.original.lessonType as LessonType]
+			cell: ({ row }) =>
+				row.original.lessonType === 'QUIZ'
+					? `Quiz · ${row.original.questions} question${row.original.questions === 1 ? '' : 's'}`
+					: LESSON_TYPE_NAMES[row.original.lessonType as LessonType]
 		},
 		{
 			id: 'duration',
@@ -110,7 +113,7 @@
 			id: String(data.course.id),
 			lessonId: String(row.id)
 		})}
-		class="font-medium text-primary underline-offset-2 hover:underline">{row.title}</a
+		class="font-medium text-primary-ink underline-offset-2 hover:underline">{row.title}</a
 	>
 {/snippet}
 
@@ -120,6 +123,9 @@
 		{#if !row.isMandatory}<Badge variant="outline">Optional</Badge>{/if}
 		{#if row.lessonType === 'VIDEO' && !row.videoUrl}
 			<Badge variant="destructive">No video yet</Badge>
+		{/if}
+		{#if row.lessonType === 'QUIZ' && !row.questions}
+			<Badge variant="destructive">No questions yet</Badge>
 		{/if}
 	</div>
 {/snippet}

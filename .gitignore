@@ -5,3 +5,5 @@ build/
 .env.*
 !.env.example
 .tempFiles/
+build.tar.gz
+.deploy/

@@ -20,13 +20,13 @@
 			</Dialog.Description>
 			<ol class="mt-5 flex flex-col gap-4 text-sm text-foreground">
 				<li class="flex items-center gap-3">
-					<span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
+					<span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand-ink">
 						<Share class="size-4" />
 					</span>
 					<span>Tap <strong>Share</strong> in Safari's toolbar.</span>
 				</li>
 				<li class="flex items-center gap-3">
-					<span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
+					<span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand-ink">
 						<SquarePlus class="size-4" />
 					</span>
 					<span>Choose <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</span>

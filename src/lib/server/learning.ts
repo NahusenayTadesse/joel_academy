@@ -5,6 +5,9 @@ import { certificate, course, courseSection, lesson, lessonResource } from '$lib
 import { playableVideo } from '$lib/server/video';
 import { canAccessLesson, completedLessonIds, getEnrollment } from '$lib/server/enrollment';
 import { courseProgress } from '$lib/progress';
+import { studentQuiz } from '$lib/server/quiz';
+import { pickActiveLesson, resumeSeconds, savedPosition, touchLesson } from '$lib/server/resume';
+import { lessonFileHref } from '$lib/lesson-files';
 
 /*
  * The learning page's read model. Only the lesson being viewed carries a body, and only when the
@@ -88,33 +91,57 @@ export async function loadLearning(slug: string, userId: string, requestedLesson
 	}));
 	const flat = curriculum.flatMap((section) => section.lessons);
 
-	const requested = flat.find((item) => item.id === requestedLessonId);
-	const active =
-		requested ??
-		flat.find((item) => !item.locked && !item.completed) ??
-		flat.find((item) => !item.locked) ??
-		flat[0] ??
-		null;
+	// Without `?lesson=`, the course opens where the student left it (`$lib/server/resume`).
+	const active = pickActiveLesson(flat, { requested: requestedLessonId, last: current?.lastLessonId });
+	const tracked = current?.status === 'ACTIVE';
 
 	let lessonContent = null;
 	if (active && !active.locked) {
-		const [[body], resources] = await Promise.all([
+		const [[body], resources, position] = await Promise.all([
 			db
-				.select({ content: lesson.content, videoUrl: lesson.videoUrl, externalUrl: lesson.externalUrl })
+				.select({
+					content: lesson.content,
+					videoUrl: lesson.videoUrl,
+					externalUrl: lesson.externalUrl,
+					passingScore: lesson.passingScore
+				})
 				.from(lesson)
 				.where(eq(lesson.id, active.id)),
 			db
-				.select({ id: lessonResource.id, title: lessonResource.title, url: lessonResource.url })
+				.select({
+					id: lessonResource.id,
+					title: lessonResource.title,
+					url: lessonResource.url,
+					file: lessonResource.file,
+					fileName: lessonResource.fileName,
+					fileSize: lessonResource.fileSize
+				})
 				.from(lessonResource)
 				.where(inArray(lessonResource.lessonId, [active.id]))
-				.orderBy(asc(lessonResource.sortOrder), asc(lessonResource.id))
+				.orderBy(asc(lessonResource.sortOrder), asc(lessonResource.id)),
+			tracked ? savedPosition(userId, active.id) : 0,
+			tracked ? touchLesson(current.id, active.id) : undefined
 		]);
 		lessonContent = {
 			html: body?.content ? sanitizeLessonHtml(body.content) : '',
 			// Only the player's own input is sent: a YouTube id, or a (signed) embed address.
 			video: playableVideo(body?.videoUrl),
 			externalUrl: safeHref(body?.externalUrl),
-			resources: resources.map((resource) => ({ id: resource.id, title: resource.title, url: safeHref(resource.url) }))
+			// A file goes out as its download route and original name; the stored name stays here.
+			resources: resources.map((resource) => ({
+				id: resource.id,
+				title: resource.title,
+				url: resource.file ? null : safeHref(resource.url),
+				file: resource.file
+					? { href: lessonFileHref(resource.id), name: resource.fileName || resource.title, size: resource.fileSize ?? 0 }
+					: null
+			})),
+			// Where the video picks up; positions are kept only for ACTIVE students.
+			resumeAt: resumeSeconds(position),
+			/** Where the player sends the position as it plays, or `null` when it is not kept. */
+			positionUrl: tracked ? `/my-courses/${encodeURIComponent(row.slug)}/position` : null,
+			// Prompts and option texts only: which options are right is sent after grading.
+			quiz: active.lessonType === 'QUIZ' ? await studentQuiz(userId, active.id, body?.passingScore ?? null) : null
 		};
 	}
 

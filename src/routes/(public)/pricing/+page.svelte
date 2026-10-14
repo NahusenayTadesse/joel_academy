@@ -44,21 +44,21 @@
 	<div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
 		<Card class="flex flex-col gap-3 p-6">
 			<span
-				class="flex size-11 items-center justify-center rounded-full bg-success/10 text-success"
+				class="flex size-11 items-center justify-center rounded-full bg-success/10 text-success-ink"
 			>
 				<Gift class="size-5" />
 			</span>
-			<h3 class="text-base font-semibold text-foreground">Free courses</h3>
+			<h2 class="text-base font-semibold text-foreground">Free courses</h2>
 			<p class="text-sm text-muted-foreground">
 				{data.freeCount} free {data.freeCount === 1 ? 'course is' : 'courses are'} available right
 				now, with no payment required.
 			</p>
 		</Card>
 		<Card class="flex flex-col gap-3 p-6">
-			<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand">
+			<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 				<Tag class="size-5" />
 			</span>
-			<h3 class="text-base font-semibold text-foreground">Paid courses</h3>
+			<h2 class="text-base font-semibold text-foreground">Paid courses</h2>
 			<p class="text-sm text-muted-foreground">
 				{data.paidCount} paid {data.paidCount === 1 ? 'course' : 'courses'}{data.priceRange
 					? `, ranging from ${data.priceRange.lowest} to ${data.priceRange.highest}.`
@@ -69,7 +69,7 @@
 			<span class="flex size-11 items-center justify-center rounded-full bg-info/10 text-info">
 				<InfinityIcon class="size-5" />
 			</span>
-			<h3 class="text-base font-semibold text-foreground">Lifetime access</h3>
+			<h2 class="text-base font-semibold text-foreground">Lifetime access</h2>
 			<p class="text-sm text-muted-foreground">
 				Once you enroll, the course is yours to revisit any time, with no expiration.
 			</p>

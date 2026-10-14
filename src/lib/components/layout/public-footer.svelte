@@ -49,7 +49,7 @@
 
 		{#each FOOTER_SECTIONS as section (section.title)}
 			<div class="flex flex-col gap-3">
-				<h3 class="text-sm font-semibold text-foreground">{section.title}</h3>
+				<h2 class="text-sm font-semibold text-foreground">{section.title}</h2>
 				<ul class="flex flex-col gap-2">
 					{#each section.links as link (link.href)}
 						<li>

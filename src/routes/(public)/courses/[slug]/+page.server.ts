@@ -1,11 +1,25 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { buildBreadcrumbJsonLd, type BreadcrumbEntry } from '$lib/json-ld';
 import type { CourseDetail } from '$lib/content/catalog.types';
 import { EnrollmentError, enrollFree, getEnrollment, progressByCourse } from '$lib/server/enrollment';
 import { getCourse, listCourses } from '$lib/server/public-catalog';
+import {
+	courseRatingSummary,
+	deleteOwnReview,
+	ownReview,
+	parseReview,
+	publishedReviews,
+	reviewWriteWait,
+	saveReview
+} from '$lib/server/reviews';
+import { waitText } from '$lib/server/spam';
 import { requireActionUser } from '$lib/server/student';
 import { ROUTES, siteConfig } from '$lib/site';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions, PageServerLoad, RequestEvent } from './$types';
+
+/** Reviews shown at first, and added by each "show more". */
+const REVIEWS_PAGE = 5;
+const REVIEWS_MAX = 200;
 
 async function relatedCourses(course: CourseDetail) {
 	if (!course.categoryId) return [];
@@ -56,31 +70,71 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		{ label: course.title }
 	];
 
+	const courseId = Number(course.id);
+	const shown = Math.min(
+		REVIEWS_MAX,
+		Math.max(REVIEWS_PAGE, Math.ceil((Number(url.searchParams.get('reviews')) || 0) / REVIEWS_PAGE) * REVIEWS_PAGE)
+	);
+	const [enrollment, summary, reviews, own] = await Promise.all([
+		viewerEnrollment(locals.user?.id, courseId),
+		courseRatingSummary(courseId),
+		publishedReviews(courseId, shown),
+		locals.user ? ownReview(locals.user.id, courseId) : null
+	]);
+	// The live numbers, so a review just written shows here even before the catalog cache turns over.
+	course.rating = summary.count ? summary.average : undefined;
+	course.reviewCount = summary.count || undefined;
+
 	const courseJsonLd = {
 		'@context': 'https://schema.org',
 		'@type': 'Course',
 		name: course.title,
 		description: course.shortDescription,
 		provider: { '@type': 'Organization', name: siteConfig.name },
-		...(course.rating !== undefined
+		...(summary.count > 0
 			? {
 					aggregateRating: {
 						'@type': 'AggregateRating',
-						ratingValue: course.rating,
-						reviewCount: course.studentsCount ?? 0
-					}
+						ratingValue: summary.average,
+						reviewCount: summary.count,
+						bestRating: 5,
+						worstRating: 1
+					},
+					review: reviews.slice(0, 5).map((review) => ({
+						'@type': 'Review',
+						author: { '@type': 'Person', name: review.author },
+						datePublished: review.createdAt.slice(0, 10),
+						reviewRating: { '@type': 'Rating', ratingValue: review.rating, bestRating: 5, worstRating: 1 },
+						...(review.comment ? { reviewBody: review.comment } : {})
+					}))
 				}
 			: {})
 	};
 
 	return {
 		course,
-		enrollment: await viewerEnrollment(locals.user?.id, Number(course.id)),
+		enrollment,
+		reviews: {
+			summary,
+			items: reviews,
+			// The page takes no other query, so the link needs nothing but its own.
+			moreHref:
+				summary.count > reviews.length && shown < REVIEWS_MAX ? `?reviews=${shown + REVIEWS_PAGE}#reviews` : null,
+			own
+		},
 		breadcrumbs,
 		relatedCourses: await relatedCourses(course),
 		jsonLd: [courseJsonLd, buildBreadcrumbJsonLd(url.origin, breadcrumbs)]
 	};
 };
+
+/** The published course a review action is about, and the signed-in student writing it. */
+async function reviewTarget(event: RequestEvent) {
+	const user = requireActionUser(event);
+	const found = await getCourse(event.params.slug);
+	if (!found) error(404, 'Course not found');
+	return { user, courseId: Number(found.id) };
+}
 
 export const actions: Actions = {
 	/** Free courses enroll here and open straight into the first lesson. */
@@ -97,5 +151,31 @@ export const actions: Actions = {
 			throw err;
 		}
 		redirect(303, ROUTES.student.learn(found.slug));
+	},
+
+	/** Writes or replaces the student's review; only an ACTIVE enrollment may. */
+	review: async (event) => {
+		const { user, courseId } = await reviewTarget(event);
+		const enrollment = await getEnrollment(user.id, courseId);
+		if (enrollment?.status !== 'ACTIVE') {
+			return fail(403, { reviewError: 'Only students enrolled in this course can review it.' });
+		}
+		const parsed = parseReview(await event.request.formData());
+		if (!parsed.ok) return fail(400, { reviewError: parsed.error });
+		// Counted after validation, so fixing a mistake in the form does not use up attempts.
+		const wait = reviewWriteWait(user.id);
+		if (wait) return fail(429, { reviewError: `Too many changes. Try again in ${waitText(wait)}.` });
+		return { reviewSaved: await saveReview(user.id, courseId, parsed) };
+	},
+
+	/** The author may always remove their own review, enrolled or not. */
+	deleteReview: async (event) => {
+		const { user, courseId } = await reviewTarget(event);
+		const wait = reviewWriteWait(user.id);
+		if (wait) return fail(429, { reviewError: `Too many changes. Try again in ${waitText(wait)}.` });
+		if (!(await deleteOwnReview(user.id, courseId))) {
+			return fail(404, { reviewError: 'You have not reviewed this course.' });
+		}
+		return { reviewDeleted: true };
 	}
 };

@@ -20,7 +20,8 @@
 	const tabs = $derived([
 		{ label: 'Home', href: ROUTES.home, icon: House, match: (path: string) => path === '/' },
 		{ label: 'Courses', href: ROUTES.courses.list, icon: BookOpen, match: (path: string) => /^\/(courses|categories|instructors)/.test(path) },
-		{ label: 'Learning', href: ROUTES.student.courses, icon: GraduationCap, match: (path: string) => path.startsWith('/my-courses') },
+		// The student home, and the pages it leads to (My courses stays one tap away from there).
+		{ label: 'Learning', href: ROUTES.student.home, icon: GraduationCap, match: (path: string) => /^\/my(-(courses|wishlist|payments|notifications))?(\/|$)/.test(path) },
 		signedIn
 			? { label: 'Certificates', href: ROUTES.student.certificates, icon: Award, match: (path: string) => path.startsWith('/my-certificates') }
 			: { label: 'Verify', href: ROUTES.certificates.verifyLookup, icon: ShieldCheck, match: (path: string) => path.startsWith('/certificates') }
@@ -44,7 +45,7 @@
 					aria-current={active ? 'page' : undefined}
 					class={cn(
 						'flex flex-col items-center gap-0.5 rounded-lg py-1 text-[11px] font-medium transition-colors',
-						active ? 'text-brand' : 'text-muted-foreground'
+						active ? 'text-brand-ink' : 'text-muted-foreground'
 					)}
 				>
 					<tab.icon class={cn('size-5', active && 'stroke-[2.25]')} />

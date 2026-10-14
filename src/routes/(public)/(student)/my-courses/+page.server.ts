@@ -6,7 +6,9 @@ import { db } from '$lib/server/db';
 import { category, course, enrollment } from '$lib/server/db/schema';
 import { progressByCourse } from '$lib/server/enrollment';
 import { describeWait, requestedEmailAllowed } from '$lib/server/email';
+import { reviewedCourseIds } from '$lib/server/reviews';
 import { requireActionUser, requireUser } from '$lib/server/student';
+import { RATE_PROMPT_PERCENT } from '$lib/components/reviews/rules';
 import { mediaUrl } from '$lib/media';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -40,14 +42,18 @@ export const load: PageServerLoad = async (event) => {
 		.where(eq(enrollment.userId, user.id))
 		.orderBy(desc(enrollment.updatedAt));
 
-	const progress = await progressByCourse(
-		user.id,
-		rows.map((row) => row.courseId)
-	);
+	const [progress, reviewed] = await Promise.all([
+		progressByCourse(
+			user.id,
+			rows.map((row) => row.courseId)
+		),
+		reviewedCourseIds(user.id)
+	]);
 
 	const items = rows
 		.map((row) => {
 			const courseProgress = progress.get(row.courseId);
+			const progressPercent = row.completedAt ? 100 : (courseProgress?.percent ?? 0);
 			return {
 				id: row.id,
 				slug: row.slug,
@@ -58,7 +64,12 @@ export const load: PageServerLoad = async (event) => {
 				status: row.status,
 				completed: row.status === 'ACTIVE' && row.completedAt !== null,
 				rejectionReason: row.rejectionReason,
-				progressPercent: row.completedAt ? 100 : (courseProgress?.percent ?? 0),
+				progressPercent,
+				// Far enough in to have an opinion, and not asked twice.
+				askToRate:
+					row.status === 'ACTIVE' &&
+					(row.completedAt !== null || progressPercent >= RATE_PROMPT_PERCENT) &&
+					!reviewed.has(row.courseId),
 				completedLessons: courseProgress?.requiredDone ?? 0,
 				totalLessons: courseProgress?.required ?? 0
 			};

@@ -61,6 +61,7 @@
 		categorySlug,
 		thumbnailUrl,
 		showBadge = true,
+		priority = 'lazy',
 		class: className = ''
 	}: {
 		title: string;
@@ -68,6 +69,11 @@
 		categorySlug?: string;
 		thumbnailUrl?: string | null;
 		showBadge?: boolean;
+		/**
+		 * How urgently to fetch the image: `high` for a page's main image (the first card of a list),
+		 * `eager` for others visible on load, `lazy` (default) for the rest.
+		 */
+		priority?: 'high' | 'eager' | 'lazy';
 		class?: string;
 	} = $props();
 
@@ -90,7 +96,9 @@
 		<img
 			src={photo}
 			alt={categoryName ?? title}
-			loading="lazy"
+			loading={priority === 'lazy' ? 'lazy' : 'eager'}
+			fetchpriority={priority === 'high' ? 'high' : 'auto'}
+			decoding="async"
 			class="absolute inset-0 size-full object-cover"
 			onerror={() => (imageError = true)}
 		/>

@@ -15,13 +15,13 @@
 
 <Card class={cn('group overflow-hidden transition-shadow hover:shadow-md', className)}>
 	<a href={ROUTES.categories.detail(category.slug)} class="flex flex-col gap-3 p-5">
-		<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand">
+		<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 			<Layers class="size-5" aria-hidden="true" />
 		</span>
 		<div class="flex items-center justify-between gap-2">
-			<h3 class="text-sm font-semibold text-foreground group-hover:text-brand">{category.name}</h3>
+			<h3 class="text-sm font-semibold text-foreground group-hover:text-brand-ink">{category.name}</h3>
 			<ArrowRight
-				class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand"
+				class="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-ink"
 			/>
 		</div>
 		{#if category.description}

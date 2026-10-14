@@ -13,6 +13,9 @@ export interface OutgoingEmail {
 
 let transporter: Transporter | null | undefined;
 
+/** The SMTP login, under either name a deployment uses (SMTP_USER or SMTP_EMAIL). */
+const smtpUser = () => env.SMTP_USER || env.SMTP_EMAIL;
+
 /** The SMTP transport, or null when no SMTP server is configured (development). */
 function transport(): Transporter | null {
 	if (transporter !== undefined) return transporter;
@@ -23,7 +26,7 @@ function transport(): Transporter | null {
 		port,
 		// 465 is implicit TLS; anything else (587, a local catcher on 1025) negotiates STARTTLS.
 		secure: port === 465,
-		auth: env.SMTP_USER ? { user: env.SMTP_USER, pass: env.SMTP_PASSWORD } : undefined,
+		auth: smtpUser() ? { user: smtpUser(), pass: env.SMTP_PASSWORD } : undefined,
 		// nodemailer waits minutes by default; an unreachable server should fail (and be logged) fast.
 		connectionTimeout: 10_000,
 		greetingTimeout: 10_000,
@@ -59,7 +62,7 @@ export async function sendEmail(email: OutgoingEmail): Promise<'SENT' | 'FAILED'
 	if (mailer) {
 		try {
 			await mailer.sendMail({
-				from: env.MAIL_FROM || env.SMTP_USER,
+				from: env.MAIL_FROM || smtpUser(),
 				to: email.to,
 				subject: email.subject,
 				html: email.html,

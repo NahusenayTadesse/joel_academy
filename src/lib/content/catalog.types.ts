@@ -24,8 +24,10 @@ export interface CourseSummary {
 	certificateEnabled: boolean;
 	featured: boolean;
 	publishedAt: string | null;
-	/** Not part of the live backend contract yet - populated by mock data only. */
+	/** Average of the published reviews, one decimal; undefined until a course has one. */
 	rating?: number;
+	/** Published reviews behind `rating`. */
+	reviewCount?: number;
 	studentsCount?: number;
 	language?: string;
 	tags?: string[];
@@ -50,7 +52,7 @@ export interface CourseLessonResource {
 export interface CourseLesson {
 	id: string;
 	title: string;
-	lessonType: 'VIDEO' | 'TEXT' | 'DOCUMENT' | 'DOWNLOAD' | 'EXTERNAL_LINK';
+	lessonType: 'VIDEO' | 'TEXT' | 'DOCUMENT' | 'DOWNLOAD' | 'EXTERNAL_LINK' | 'QUIZ';
 	durationSeconds: number | null;
 	isMandatory: boolean;
 	isPreview: boolean;
@@ -88,8 +90,10 @@ export interface CourseDetail {
 	outcomes: string[];
 	requirements: string[];
 	sections: CourseSection[];
-	/** Not part of the live backend contract yet - populated by mock data only. */
+	/** Average of the published reviews, one decimal; undefined until a course has one. */
 	rating?: number;
+	/** Published reviews behind `rating`. */
+	reviewCount?: number;
 	studentsCount?: number;
 	language?: string;
 	tags?: string[];

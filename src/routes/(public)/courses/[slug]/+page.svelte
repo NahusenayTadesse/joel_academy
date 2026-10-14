@@ -6,13 +6,15 @@
 	import CourseChecklist from '$lib/components/courses/course-checklist.svelte';
 	import CourseCurriculum from '$lib/components/courses/course-curriculum.svelte';
 	import CourseEnrollCard from '$lib/components/courses/course-enroll-card.svelte';
+	import CourseReviews from '$lib/components/reviews/course-reviews.svelte';
+	import { reviewCountText } from '$lib/components/reviews/rules';
 	import { jsonLdScript } from '$lib/json-ld';
 	import Badge from '$lib/components/ui/badge.svelte';
 	import { DIFFICULTY_LABELS } from '$lib/content/catalog.constants';
 	import { formatCompactNumber } from '$lib/format';
 	import { siteConfig } from '$lib/site';
 
-	let { data } = $props();
+	let { data, form } = $props();
 
 	const course = $derived(data.course);
 </script>
@@ -47,10 +49,12 @@
 						by <span class="font-medium text-foreground">{course.presenterName}</span>
 					</span>
 					{#if course.rating !== undefined}
-						<span class="flex items-center gap-1">
-							<Star class="size-4 fill-warning text-warning" />
+						<a href="#reviews" class="flex items-center gap-1 hover:underline">
+							<Star class="size-4 fill-warning text-warning" aria-hidden="true" />
 							<span class="font-medium text-foreground">{course.rating.toFixed(1)}</span>
-						</span>
+							<span class="sr-only">out of 5,</span>
+							({reviewCountText(course.reviewCount ?? 0)})
+						</a>
 					{/if}
 					{#if course.studentsCount !== undefined}
 						<span class="flex items-center gap-1">
@@ -69,6 +73,13 @@
 			<CourseChecklist title="What you'll learn" items={course.outcomes} variant="check" />
 			<CourseChecklist title="Requirements" items={course.requirements} variant="dot" />
 			<CourseCurriculum sections={course.sections} />
+			<CourseReviews
+				summary={data.reviews.summary}
+				reviews={data.reviews.items}
+				moreHref={data.reviews.moreHref}
+				viewer={{ enrollment: data.enrollment?.status ?? null, own: data.reviews.own }}
+				error={form && 'reviewError' in form ? form.reviewError : undefined}
+			/>
 		</div>
 
 		<div class="lg:col-span-1">

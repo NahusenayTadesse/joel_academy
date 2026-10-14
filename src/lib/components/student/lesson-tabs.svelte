@@ -5,6 +5,8 @@
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import NotebookPen from '@lucide/svelte/icons/notebook-pen';
+	import Paperclip from '@lucide/svelte/icons/paperclip';
+	import { formatFileSize } from '$lib/lesson-files';
 	import Textarea from '$lib/components/ui/textarea.svelte';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
@@ -24,7 +26,13 @@
 		lessonType: string;
 		html: string;
 		externalUrl: string | null;
-		resources: { id: number; title: string; url: string | null }[];
+		/** A link, or a file served by `/lesson-files/[id]` (its href and original name, never the stored one). */
+		resources: {
+			id: number;
+			title: string;
+			url: string | null;
+			file: { href: string; name: string; size: number } | null;
+		}[];
 	} = $props();
 
 	const listClass =
@@ -108,13 +116,30 @@
 						<span
 							class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white/10 text-sidebar-foreground/70"
 						>
-							<FileText class="size-5" />
+							{#if resource.file}<Paperclip class="size-5" />{:else}<FileText class="size-5" />{/if}
 						</span>
 						<span class="min-w-0 flex-1">
 							<span class="block truncate text-sm font-medium text-white">{resource.title}</span>
+							{#if resource.file}
+								<span class="block truncate text-xs text-sidebar-foreground/60">
+									{resource.file.name}{resource.file.size ? ` · ${formatFileSize(resource.file.size)}` : ''}
+								</span>
+							{/if}
 						</span>
 					{/snippet}
-					{#if resource.url}
+					{#if resource.file}
+						<!-- A download, not a page: `download` also keeps SvelteKit's router out of it. -->
+						<a
+							href={resource.file.href}
+							download={resource.file.name}
+							data-sveltekit-reload
+							class="flex items-center gap-3 rounded-xl border border-sidebar-border bg-white/5 p-3 transition-colors hover:border-sidebar-primary"
+							aria-label="Download {resource.title} ({resource.file.name})"
+						>
+							{@render body()}
+							<Download class="size-4 shrink-0 text-sidebar-foreground/50" aria-hidden="true" />
+						</a>
+					{:else if resource.url}
 						<a
 							href={resource.url}
 							target="_blank"

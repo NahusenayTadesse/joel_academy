@@ -28,7 +28,7 @@
 						class={cn(
 							'mt-0.5 size-4 shrink-0',
 							variant === 'check'
-								? 'text-success'
+								? 'text-success-ink'
 								: 'fill-muted-foreground/40 text-muted-foreground/40'
 						)}
 						aria-hidden="true"

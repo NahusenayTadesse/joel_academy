@@ -15,11 +15,17 @@ export class WatchProgress {
 	duration = $state(0);
 	watched = $state(false);
 
+	/**
+	 * `resumedFrom` is where a returning student left off: what played before then counts as
+	 * watched, so resuming there (or scrubbing back) is never mistaken for a skip.
+	 */
 	constructor(
 		private readonly free: boolean,
-		private readonly onWatched: () => void
+		private readonly onWatched: () => void,
+		resumedFrom = 0
 	) {
 		if (free) this.watched = true;
+		this.maxWatched = Math.max(0, resumedFrom);
 	}
 
 	/** The furthest point the viewer may seek to right now. */
@@ -46,6 +52,76 @@ export class WatchProgress {
 		if (this.watched) return;
 		this.watched = true;
 		this.onWatched();
+	}
+}
+
+/** Where to start a resumed video: the saved point, unless it is at (or past) the end. */
+export function resumeStart(saved: number, duration: number): number {
+	if (!(saved > 0)) return 0;
+	return duration > 0 && saved >= duration - END_MARGIN_SECONDS ? 0 : saved;
+}
+
+/** A saved position this close to the end starts the video over rather than at its last frame. */
+const END_MARGIN_SECONDS = 5;
+/** How often the position is saved while a video plays. */
+const SAVE_EVERY_MS = 15_000;
+
+/**
+ * Sends a lesson video's position to the server: every 15 s while it plays, and whenever it
+ * pauses or the page is hidden or left — the last one by `sendBeacon`, which outlives the page.
+ * Players call `report` with the position as it plays and `flush` when it stops.
+ */
+export class PositionReporter {
+	private last = -1;
+	// The first timed save waits a full interval: a player's first reports can come before it has
+	// moved to the resume point, and must not overwrite it with 0.
+	private sentAt = Date.now();
+	private current = -1;
+
+	constructor(
+		private readonly url: string | null,
+		private readonly lessonId: number
+	) {}
+
+	/** The position now; sent when the last save is old enough. */
+	report(seconds: number) {
+		if (!Number.isFinite(seconds) || seconds < 0) return;
+		this.current = seconds;
+		if (Date.now() - this.sentAt >= SAVE_EVERY_MS) this.flush();
+	}
+
+	/** Sends the latest position now, unless it is the one already sent. */
+	flush() {
+		if (!this.url || this.current < 0) return;
+		const seconds = Math.floor(this.current);
+		this.sentAt = Date.now();
+		if (seconds === this.last) return;
+		this.last = seconds;
+		const body = new URLSearchParams({ lessonId: String(this.lessonId), seconds: String(seconds) });
+		try {
+			if (navigator.sendBeacon?.(this.url, body)) return;
+		} catch {
+			// Falls through to fetch.
+		}
+		void fetch(this.url, { method: 'POST', body, keepalive: true, credentials: 'same-origin' }).catch(() => {});
+	}
+
+	/**
+	 * Saves on the way out: tab hidden, page left. Returns the cleanup, which saves once more (the
+	 * player is going away — another lesson, or another page in the app).
+	 */
+	attach(): () => void {
+		const onHidden = () => {
+			if (document.visibilityState === 'hidden') this.flush();
+		};
+		const onLeave = () => this.flush();
+		document.addEventListener('visibilitychange', onHidden);
+		window.addEventListener('pagehide', onLeave);
+		return () => {
+			document.removeEventListener('visibilitychange', onHidden);
+			window.removeEventListener('pagehide', onLeave);
+			this.flush();
+		};
 	}
 }
 

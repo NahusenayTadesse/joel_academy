@@ -21,7 +21,7 @@
 </script>
 
 {#if accessType === 'FREE'}
-	<span class={cn('text-sm font-semibold text-success', className)}>Free</span>
+	<span class={cn('text-sm font-semibold text-success-ink', className)}>Free</span>
 {:else}
 	<span class={cn('flex items-baseline gap-2', className)}>
 		<span class="text-sm font-semibold text-foreground">

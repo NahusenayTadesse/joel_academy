@@ -29,6 +29,8 @@
 				<img
 					src={photo}
 					alt={instructor.name}
+					loading="lazy"
+					decoding="async"
 					class="size-full object-cover"
 					onerror={() => (imgError = true)}
 				/>
@@ -41,11 +43,11 @@
 			</span>
 		{/if}
 		<div>
-			<h3 class="text-sm font-semibold text-foreground transition-colors group-hover:text-brand">
+			<h3 class="text-sm font-semibold text-foreground transition-colors group-hover:text-brand-ink">
 				{instructor.name}
 			</h3>
 			{#if instructor.title}
-				<p class="mt-0.5 text-[11px] font-medium text-brand">{instructor.title}</p>
+				<p class="mt-0.5 text-[11px] font-medium text-brand-ink">{instructor.title}</p>
 			{/if}
 			<p class="mt-1 text-xs text-muted-foreground">
 				{instructor.courseCount}

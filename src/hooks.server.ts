@@ -11,6 +11,8 @@ import { staffRole } from '$lib/server/db/schema';
 import { access } from '$lib/access';
 import { roleGrant } from '$lib/permissions';
 import { invalidateCatalog } from '$lib/server/public-catalog';
+import { PRIVATE_PATHS, withSeoTags } from '$lib/server/seo';
+import { env } from '$env/dynamic/private';
 configureKit({ db, loginPath: '/login' });
 const authenticate: Handle = async ({ event, resolve }) => {
  const session = await auth.api.getSession({ headers: event.request.headers });
@@ -36,4 +38,10 @@ const personal: Handle = async ({ event, resolve }) => {
  if (event.locals.user && !response.headers.has('cache-control')) response.headers.set('cache-control', 'private, no-cache');
  return response;
 };
-export const handle = sequence(authenticate, authorize, invalidate, personal);
+// Public pages get their canonical URL and share-card tags filled in (see $lib/server/seo).
+const seo: Handle = ({ event, resolve }) => {
+ if (event.request.method !== 'GET' || PRIVATE_PATHS.test(event.url.pathname)) return resolve(event);
+ const origin = (env.ORIGIN || event.url.origin).replace(/\/$/, '');
+ return resolve(event, { transformPageChunk: ({ html }) => withSeoTags(html, event.url, origin) });
+};
+export const handle = sequence(authenticate, authorize, invalidate, personal, seo);

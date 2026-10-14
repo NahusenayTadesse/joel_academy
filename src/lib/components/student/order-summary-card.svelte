@@ -56,13 +56,13 @@
 				<dd class="font-medium text-foreground">{formatCurrency(course.price, course.currency)}</dd>
 			</div>
 			{#if Number(course.total) < Number(course.price)}
-				<div class="flex items-center justify-between text-success">
+				<div class="flex items-center justify-between text-success-ink">
 					<dt>Discount</dt>
 					<dd>-{formatCurrency(Number(course.price) - Number(course.total), course.currency)}</dd>
 				</div>
 			{/if}
 			{#if promo}
-				<div class="flex items-center justify-between text-success">
+				<div class="flex items-center justify-between text-success-ink">
 					<dt>Promo ({promo.code})</dt>
 					<dd>-{formatCurrency(promo.discountAmount, course.currency)}</dd>
 				</div>
@@ -73,7 +73,7 @@
 
 		<div class="flex items-center justify-between">
 			<span class="text-sm font-semibold text-foreground">Total</span>
-			<span class="text-lg font-bold text-brand">
+			<span class="text-lg font-bold text-brand-ink">
 				{Number(total) <= 0 ? 'Free' : formatCurrency(total, course.currency)}
 			</span>
 		</div>

@@ -47,7 +47,7 @@
 		<Card class="border-success/40 bg-success/5">
 			<CardContent class="flex flex-wrap items-center justify-between gap-3 p-5">
 				<div class="flex items-center gap-3">
-					<CircleCheck class="size-5 shrink-0 text-success" />
+					<CircleCheck class="size-5 shrink-0 text-success-ink" />
 					<div>
 						<p class="text-sm font-semibold text-foreground">{promo.code} applied</p>
 						<p class="text-xs text-muted-foreground">

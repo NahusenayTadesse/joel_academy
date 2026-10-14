@@ -2,6 +2,7 @@
 	import BookOpen from '@lucide/svelte/icons/book-open';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import SearchX from '@lucide/svelte/icons/search-x';
+	import Star from '@lucide/svelte/icons/star';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import VerifyEmailNotice from '$lib/components/auth/verify-email-notice.svelte';
@@ -49,7 +50,7 @@
 	<PageHeader title="My Courses" description="Courses you're enrolled in - active, in progress, and completed." />
 
 	{#if data.emailVerification === 'confirmed'}
-		<p class="flex items-center gap-2 rounded-lg bg-success/10 p-3 text-sm text-success" role="status">
+		<p class="flex items-center gap-2 rounded-lg bg-success/10 p-3 text-sm text-success-ink" role="status">
 			<CircleCheck class="size-4" aria-hidden="true" /> Email verified successfully.
 		</p>
 	{:else if data.emailVerification}
@@ -90,19 +91,30 @@
 	{:else}
 		<div class="flex flex-col gap-4">
 			{#each data.items as item (item.id)}
-				<CourseProgressCard
-					href={hrefFor(item)}
-					title={item.title}
-					category={item.categoryName}
-					categorySlug={item.categorySlug}
-					thumbnailUrl={item.thumbnailUrl}
-					progressPercent={item.progressPercent}
-					completedLessons={item.completedLessons}
-					totalLessons={item.totalLessons}
-					status={item.status}
-					completed={item.completed}
-					rejectionReason={item.rejectionReason}
-				/>
+				<div class="flex flex-col gap-1.5">
+					<CourseProgressCard
+						href={hrefFor(item)}
+						title={item.title}
+						category={item.categoryName}
+						categorySlug={item.categorySlug}
+						thumbnailUrl={item.thumbnailUrl}
+						progressPercent={item.progressPercent}
+						completedLessons={item.completedLessons}
+						totalLessons={item.totalLessons}
+						status={item.status}
+						completed={item.completed}
+						rejectionReason={item.rejectionReason}
+					/>
+					{#if item.askToRate}
+						<a
+							href="{ROUTES.courses.detail(item.slug)}#reviews"
+							class="flex items-center gap-1.5 self-end px-1 py-1 text-sm font-medium text-brand-ink hover:underline"
+						>
+							<Star class="size-4 fill-warning text-warning" aria-hidden="true" />
+							Rate this course<span class="sr-only">: {item.title}</span>
+						</a>
+					{/if}
+				</div>
 			{/each}
 		</div>
 	{/if}

@@ -16,7 +16,7 @@
 					<Icon class="size-5" />
 				</span>
 				<div>
-					<h3 class="text-sm font-semibold text-foreground">{value.title}</h3>
+					<h2 class="text-sm font-semibold text-foreground">{value.title}</h2>
 					<p class="mt-0.5 text-sm text-muted-foreground">{value.description}</p>
 				</div>
 			</div>

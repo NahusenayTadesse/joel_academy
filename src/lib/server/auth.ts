@@ -12,8 +12,12 @@ import { OTP_MINUTES, otpSms, sendSms } from '$lib/server/sms';
 import { isNormalizedEthPhone } from '$lib/phone';
 import { ROUTES } from '$lib/site';
 
+/** The Google OAuth client, under either name the deployment uses (GOOGLE_CLIENT_ID or GOOGLE_ID). */
+const googleClientId = env.GOOGLE_CLIENT_ID || env.GOOGLE_ID;
+const googleClientSecret = env.GOOGLE_CLIENT_SECRET || env.GOOGLE_SECRET;
+
 /** Google sign-in is offered only once both OAuth credentials are set. */
-export const googleEnabled = Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
+export const googleEnabled = Boolean(googleClientId && googleClientSecret);
 
 /** The verification text could not go out (GeezSMS failed, or a limit refused it). */
 export class SmsCodeNotSent extends Error {
@@ -43,6 +47,23 @@ export const auth = betterAuth({
 	],
 	secret: env.BETTER_AUTH_SECRET,
 	database: drizzleAdapter(db, { provider: 'mysql' }),
+	/*
+	 * The /api/auth HTTP endpoints can be called directly, past the site's own forms (whose actions
+	 * have their own limits in $lib/server/spam). On in every environment, not only production, and
+	 * strict where a script could guess passwords, mass-create accounts or fan out reset emails.
+	 */
+	rateLimit: {
+		enabled: true,
+		window: 60,
+		max: 100,
+		customRules: {
+			'/sign-in/email': { window: 15 * 60, max: 10 },
+			'/sign-up/email': { window: 60 * 60, max: 5 },
+			'/request-password-reset': { window: 60 * 60, max: 5 },
+			'/send-verification-email': { window: 60 * 60, max: 5 },
+			'/change-password': { window: 15 * 60, max: 10 }
+		}
+	},
 	// Anyone may register as a student. Dashboard access comes only from a `staff_role` row.
 	emailAndPassword: {
 		enabled: true,
@@ -74,8 +95,8 @@ export const auth = betterAuth({
 	socialProviders: googleEnabled
 		? {
 				google: {
-					clientId: env.GOOGLE_CLIENT_ID!,
-					clientSecret: env.GOOGLE_CLIENT_SECRET!,
+					clientId: googleClientId!,
+					clientSecret: googleClientSecret!,
 					prompt: 'select_account'
 				}
 			}

@@ -24,7 +24,7 @@
 		aria-busy={connecting}
 	>
 		{#if connecting}
-			<LoaderCircle class="size-4 animate-spin text-brand" aria-hidden="true" />
+			<LoaderCircle class="size-4 animate-spin text-brand-ink" aria-hidden="true" />
 			<span>Connecting to Google...</span>
 		{:else}
 			<svg aria-hidden="true" viewBox="0 0 24 24" class="size-4">

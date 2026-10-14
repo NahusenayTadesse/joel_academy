@@ -75,7 +75,7 @@
 		href={resolve('/(public)/certificates/verify/[token]', { token: row.code })}
 		target="_blank"
 		rel="noopener"
-		class="inline-flex items-center gap-1 font-mono text-sm text-primary hover:underline"
+		class="inline-flex items-center gap-1 font-mono text-sm text-primary-ink hover:underline"
 		title="Open the public verification page"
 	>
 		{row.code}

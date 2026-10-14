@@ -18,11 +18,11 @@ describe('safeRedirectPath', () => {
 describe('afterSignIn', () => {
 	it('sends staff to the dashboard and students to their courses by default', () => {
 		expect(afterSignIn(new URL('/login', origin), true)).toBe('/dashboard');
-		expect(afterSignIn(new URL('/login', origin), false)).toBe('/my-courses');
+		expect(afterSignIn(new URL('/login', origin), false)).toBe('/my');
 	});
 	it('honours a safe redirectTo and ignores an unsafe one', () => {
 		expect(afterSignIn(new URL('/login?redirectTo=%2Fcheckout%2Fa', origin), false)).toBe('/checkout/a');
-		expect(afterSignIn(new URL('/login?redirectTo=%2F%2Fevil.example', origin), false)).toBe('/my-courses');
+		expect(afterSignIn(new URL('/login?redirectTo=%2F%2Fevil.example', origin), false)).toBe('/my');
 	});
 });
 

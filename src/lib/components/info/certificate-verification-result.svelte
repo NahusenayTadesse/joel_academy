@@ -54,7 +54,7 @@
 			</div>
 			<div>
 				<div
-					class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold tracking-wider text-emerald-600 uppercase dark:text-emerald-400"
+					class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
 				>
 					Official Credential Verified
 				</div>
@@ -117,7 +117,7 @@
 		>
 			<div class="mb-4 flex items-center justify-between border-b border-border/60 pb-3">
 				<div class="flex items-center gap-2">
-					<span class="flex size-7 items-center justify-center rounded-md bg-brand/10 text-brand">
+					<span class="flex size-7 items-center justify-center rounded-md bg-brand/10 text-brand-ink">
 						<GraduationCap class="size-4" />
 					</span>
 					<span class="text-xs font-bold tracking-wider text-muted-foreground uppercase">
@@ -127,7 +127,7 @@
 				{#if result.state === 'VALID'}
 					<Badge
 						variant="default"
-						class="gap-1 bg-emerald-600 px-2.5 py-0.5 text-white hover:bg-emerald-600"
+						class="gap-1 bg-emerald-700 px-2.5 py-0.5 text-white hover:bg-emerald-700"
 					>
 						<CircleCheck class="size-3" />
 						VALID

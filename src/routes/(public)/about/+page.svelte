@@ -121,7 +121,7 @@
 				class="mx-auto grid w-full max-w-5xl grid-cols-1 gap-6 px-4 py-16 sm:grid-cols-2 sm:px-6"
 			>
 				<Card class="flex flex-col gap-3 p-6">
-					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand">
+					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 						<Compass class="size-5" />
 					</span>
 					<h3 class="text-lg font-semibold text-foreground">Our mission</h3>
@@ -131,7 +131,7 @@
 					</p>
 				</Card>
 				<Card class="flex flex-col gap-3 p-6">
-					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand">
+					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 						<Award class="size-5" />
 					</span>
 					<h3 class="text-lg font-semibold text-foreground">Our vision</h3>
@@ -163,7 +163,7 @@
 				class="mx-auto grid w-full max-w-5xl grid-cols-1 gap-8 px-4 py-16 sm:grid-cols-2 sm:px-6"
 			>
 				<div class="flex flex-col gap-3">
-					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand">
+					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 						<BookOpen class="size-5" />
 					</span>
 					<h3 class="text-lg font-semibold text-foreground">Teaching philosophy</h3>
@@ -173,7 +173,7 @@
 					</p>
 				</div>
 				<div class="flex flex-col gap-3">
-					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand">
+					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 						<Users class="size-5" />
 					</span>
 					<h3 class="text-lg font-semibold text-foreground">Learning methodology</h3>

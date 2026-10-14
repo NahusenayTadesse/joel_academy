@@ -28,14 +28,14 @@
 		<div class="flex flex-wrap items-center justify-center gap-3">
 			<a
 				href={ROUTES.faq}
-				class="flex items-center gap-1 text-sm font-medium text-brand underline-offset-4 hover:underline"
+				class="flex items-center gap-1 text-sm font-medium text-brand-ink underline-offset-4 hover:underline"
 			>
 				View FAQ
 				<ArrowRight class="size-3.5" />
 			</a>
 			<a
 				href={ROUTES.contact}
-				class="flex items-center gap-1 text-sm font-medium text-brand underline-offset-4 hover:underline"
+				class="flex items-center gap-1 text-sm font-medium text-brand-ink underline-offset-4 hover:underline"
 			>
 				Contact us
 				<ArrowRight class="size-3.5" />

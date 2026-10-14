@@ -8,21 +8,41 @@ import { normalizeEthPhone } from '$lib/phone';
 import { afterSignIn, safeRedirectPath } from '$lib/safe-redirect';
 import { ROUTES } from '$lib/site';
 import { registerSchema } from './schema';
+import { clientAddress, hit, issueFormToken, judgeSubmission, waitText } from '$lib/server/spam';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	if (locals.user) redirect(303, afterSignIn(url, locals.isSuperAdmin || locals.permList.includes('dashboard.view')));
-	return { form: await superValidate(zod4(registerSchema)), googleEnabled };
+	return { form: await superValidate(zod4(registerSchema)), googleEnabled, formToken: issueFormToken() };
 };
 
 export const actions: Actions = {
 	default: async (event) => {
 		const { request, url } = event;
-		const form = await superValidate(request, zod4(registerSchema));
+		const posted = await request.formData();
+		const form = await superValidate(posted, zod4(registerSchema));
 		const password = form.data.password;
 		form.data.password = '';
 		form.data.confirmPassword = '';
+
+		// Bots fill the honeypot or post at once; they get a vague refusal and no account.
+		const verdict = judgeSubmission(posted);
+		if (verdict === 'bad-token') {
+			return message(form, { type: 'error', text: 'This form has expired. Reload the page and try again.' }, { status: 400 });
+		}
+		if (verdict !== 'ok') {
+			return message(form, { type: 'error', text: 'Could not create your account. Please try again.' }, { status: 400 });
+		}
 		if (!form.valid) return fail(400, { form });
+
+		const wait = hit('register', clientAddress(event));
+		if (wait) {
+			return message(
+				form,
+				{ type: 'error', text: `Too many new accounts from your connection. Try again in ${waitText(wait)}.` },
+				{ status: 429 }
+			);
+		}
 
 		const phone = normalizeEthPhone(form.data.phone);
 		if (phone) {

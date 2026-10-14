@@ -12,6 +12,8 @@
 	const schema = z.string().trim().min(1, 'Please enter a valid email address.').email('Please enter a valid email address.');
 
 	let email = $state('');
+	/** Bound to the hidden honeypot; only a bot fills it. */
+	let website = $state('');
 	let error = $state<string>();
 	let submitting = $state(false);
 
@@ -28,7 +30,7 @@
 			const response = await fetch('/newsletter', {
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: JSON.stringify({ email: parsed.data })
+				body: JSON.stringify({ email: parsed.data, website })
 			});
 			const body = await response.json().catch(() => ({}));
 			if (!response.ok) throw new Error(body.message);
@@ -49,6 +51,9 @@
 </script>
 
 <form onsubmit={subscribe} novalidate class={cn('flex flex-col gap-2 sm:flex-row', className)}>
+	<div aria-hidden="true" class="pointer-events-none absolute -left-[9999px] h-px w-px overflow-hidden opacity-0">
+		<label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" bind:value={website} /></label>
+	</div>
 	<div class="flex-1">
 		<Input
 			type="email"

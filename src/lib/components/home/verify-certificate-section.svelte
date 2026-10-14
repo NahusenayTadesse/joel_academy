@@ -15,7 +15,7 @@
 			<!-- Left column: information & actions -->
 			<div class="space-y-6 text-left lg:col-span-7">
 				<div
-					class="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/5 px-3.5 py-1 text-xs font-semibold text-brand"
+					class="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/5 px-3.5 py-1 text-xs font-semibold text-brand-ink"
 				>
 					<ShieldCheck class="size-4" />
 					<span>Public Credential Verification</span>
@@ -24,7 +24,7 @@
 				<div class="space-y-3">
 					<h2 class="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
 						Already have a certificate? <br class="hidden sm:inline" />
-						<span class="text-brand">Verify its authenticity</span>
+						<span class="text-brand-ink">Verify its authenticity</span>
 					</h2>
 					<p class="max-w-2xl text-base text-muted-foreground">
 						Employers, recruiters, and academic partners can instantly authenticate any Joel Talargie
@@ -36,7 +36,7 @@
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<div class="flex items-start gap-3 rounded-xl border border-border/80 bg-card p-4 shadow-sm">
 						<div
-							class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand"
+							class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand-ink"
 						>
 							<Camera class="size-5" />
 						</div>
@@ -50,7 +50,7 @@
 
 					<div class="flex items-start gap-3 rounded-xl border border-border/80 bg-card p-4 shadow-sm">
 						<div
-							class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand"
+							class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand-ink"
 						>
 							<Search class="size-5" />
 						</div>
@@ -100,7 +100,7 @@
 							</div>
 						</div>
 						<span
-							class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400"
+							class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400"
 						>
 							<CircleCheck class="size-3" />
 							Verified

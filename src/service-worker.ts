@@ -12,7 +12,8 @@ import { build, files, version } from '$service-worker';
  * - Public pages (catalog, course details, about, FAQ, …) and their data: network first, the last
  *   good copy when offline. Never anything behind sign-in — learning pages, checkout, certificates,
  *   the dashboard — and never auth, payment or API traffic: those always go to the network.
- * - Images and fonts: cache first, since they never change under the same URL.
+ * - Images: cache first, since they never change under the same URL. (Fonts are self-hosted and
+ *   part of the app shell.)
  * - Anything else offline: the /offline page.
  */
 
@@ -32,8 +33,10 @@ const PRECACHE = [
 /** Paths whose responses may be personal, or that must always reach the server. */
 const PRIVATE = [
 	/^\/(dashboard|api|login|register|logout|forgot-password|reset-password|verify-email|newsletter)(\/|$)/,
-	/^\/(my-courses|my-certificates|checkout)(\/|$)/,
-	/^\/certificates\/verify(\/|$)/
+	/^\/(my|my-courses|my-certificates|my-wishlist|my-payments|my-notifications|checkout)(\/|$)/,
+	/^\/certificates\/verify(\/|$)/,
+	// Lesson attachments: only for students who may open the lesson, and never kept on the device.
+	/^\/lesson-files(\/|$)/
 ];
 
 /** Public pages worth keeping for offline reading. */
@@ -106,8 +109,7 @@ async function cacheFirst(request: Request): Promise<Response> {
 	const cached = await cache.match(request);
 	if (cached) return cached;
 	const response = await fetch(request);
-	// Opaque cross-origin responses (fonts) are fine to keep; they are immutable by URL.
-	if (response.ok || response.type === 'opaque') {
+	if (response.ok) {
 		await cache.put(request, response.clone());
 		void trim(ASSETS_CACHE, MAX_ASSETS);
 	}
@@ -119,11 +121,6 @@ sw.addEventListener('fetch', (event) => {
 	if (request.method !== 'GET') return;
 	const url = new URL(request.url);
 
-	// Google Fonts: stylesheet and font files never change for a given URL.
-	if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-		event.respondWith(cacheFirst(request));
-		return;
-	}
 	if (url.origin !== sw.location.origin) return;
 
 	// The app shell: precached at install.

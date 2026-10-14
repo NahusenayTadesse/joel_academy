@@ -18,9 +18,10 @@
 	import Input from '$lib/components/ui/input.svelte';
 	import Label from '$lib/components/ui/label.svelte';
 	import Textarea from '$lib/components/ui/textarea.svelte';
+	import SpamGuard from '$lib/components/common/spam-guard.svelte';
 	import { contactErrors, contactSchema } from './contact-schema';
 
-	let { form }: { form?: ContactFormResult | null } = $props();
+	let { form, token }: { form?: ContactFormResult | null; token?: string } = $props();
 
 	// Seeded once from a non-JS post-back so typed text survives the round trip.
 	// svelte-ignore state_referenced_locally
@@ -67,6 +68,7 @@
 		};
 	}}
 >
+	<SpamGuard {token} />
 	<div class="flex flex-col gap-1.5">
 		<Label for="contact-name">Name</Label>
 		<Input id="contact-name" name="name" aria-invalid={Boolean(errors.name)} bind:value={name} />
@@ -96,7 +98,7 @@
 	</div>
 	<!-- Without JavaScript there is no toast, so the action's message is shown inline instead. -->
 	{#if form?.message}<p class="text-xs text-destructive">{form.message}</p>{/if}
-	{#if form?.sent}<p class="text-xs text-success">Message sent. We'll reply to your email soon.</p>{/if}
+	{#if form?.sent}<p class="text-xs text-success-ink">Message sent. We'll reply to your email soon.</p>{/if}
 	<Button type="submit" disabled={submitting} class="self-start">
 		<Send class="size-4" />
 		Send message

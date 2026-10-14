@@ -4,6 +4,7 @@
 	import Download from '@lucide/svelte/icons/download';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Link2 from '@lucide/svelte/icons/link-2';
+	import ListChecks from '@lucide/svelte/icons/list-checks';
 	import type { CourseLesson, CourseSection } from '$lib/content/catalog.types';
 
 	const LESSON_ICONS: Record<CourseLesson['lessonType'], Component> = {
@@ -11,7 +12,8 @@
 		TEXT: FileText,
 		DOCUMENT: FileText,
 		DOWNLOAD: Download,
-		EXTERNAL_LINK: Link2
+		EXTERNAL_LINK: Link2,
+		QUIZ: ListChecks
 	};
 </script>
 
@@ -31,6 +33,12 @@
 	const lessonCount = $derived(
 		sections.reduce((total, section) => total + section.lessons.length, 0)
 	);
+	const quizCount = $derived(
+		sections.reduce(
+			(total, section) => total + section.lessons.filter((lesson) => lesson.lessonType === 'QUIZ').length,
+			0
+		)
+	);
 </script>
 
 {#snippet lessonRow(lesson: CourseLesson)}
@@ -41,6 +49,9 @@
 		<div class="flex min-w-0 items-center gap-2.5">
 			<Icon class="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
 			<span class="truncate text-sm text-foreground">{lesson.title}</span>
+			{#if lesson.lessonType === 'QUIZ'}
+				<Badge variant="outline" class="shrink-0">Quiz</Badge>
+			{/if}
 			{#if lesson.isPreview}
 				<Badge variant="info" class="shrink-0">Preview</Badge>
 			{/if}
@@ -61,7 +72,9 @@
 		<div class="mb-3 flex items-center justify-between">
 			<h2 class="text-lg font-semibold text-foreground">Curriculum</h2>
 			<span class="text-sm text-muted-foreground">
-				{sections.length} sections • {lessonCount} lessons
+				{sections.length} sections • {lessonCount} lessons{quizCount
+					? ` • ${quizCount} ${quizCount === 1 ? 'quiz' : 'quizzes'}`
+					: ''}
 			</span>
 		</div>
 		<Accordion.Root

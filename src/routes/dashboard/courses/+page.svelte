@@ -198,7 +198,7 @@
 
 {#snippet priceCell(row: CourseRow)}
 	{#if row.accessType === 'FREE'}
-		<span class="text-emerald-600">Free</span>
+		<span class="text-emerald-700">Free</span>
 	{:else if row.discountPrice !== null}
 		<span class="whitespace-nowrap">
 			{formatCurrency(row.discountPrice, row.currency)}
@@ -213,7 +213,7 @@
 	<div class="flex items-center gap-3 whitespace-nowrap">
 		<a
 			href={resolve('/dashboard/courses/[id]', { id: String(row.id) })}
-			class="inline-flex items-center gap-1 text-sm text-primary underline-offset-2 hover:underline"
+			class="inline-flex items-center gap-1 text-sm text-primary-ink underline-offset-2 hover:underline"
 		>
 			<ListTree class="size-4" />
 			{row.sections} sections · {row.lessons} lessons

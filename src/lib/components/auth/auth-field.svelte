@@ -74,7 +74,7 @@
 				type="button"
 				{disabled}
 				onclick={() => (visible = !visible)}
-				class="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-50"
+				class="absolute top-1/2 right-1 flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground disabled:opacity-50"
 				aria-label={visible ? 'Hide password' : 'Show password'}
 			>
 				{#if visible}<EyeOff class="size-4" />{:else}<Eye class="size-4" />{/if}

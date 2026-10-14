@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { formatClock, WatchProgress } from './watch-progress.svelte';
+import { formatClock, resumeStart, WatchProgress } from './watch-progress.svelte';
 
 describe('WatchProgress', () => {
 	it('sends a skip ahead back to the furthest point watched', () => {
@@ -25,6 +25,35 @@ describe('WatchProgress', () => {
 		expect(progress.watched).toBe(true);
 		expect(progress.observe(80, 100)).toBeNull();
 		expect(progress.seekLimit).toBe(Infinity);
+	});
+});
+
+describe('resuming', () => {
+	it('counts what played before the saved position as watched', () => {
+		const progress = new WatchProgress(false, () => {}, 272);
+		expect(progress.seekLimit).toBe(272);
+		// Starting at the saved point, or scrubbing anywhere before it, is not a skip.
+		expect(progress.observe(272, 600)).toBeNull();
+		expect(progress.observe(30)).toBeNull();
+		expect(progress.maxWatched).toBe(272);
+		// Beyond it still is.
+		expect(progress.observe(400)).toBe(272);
+	});
+
+	it('marks a lesson watched when the saved position was already near the end', () => {
+		const onWatched = vi.fn();
+		const progress = new WatchProgress(false, onWatched, 98);
+		progress.observe(0, 100);
+		expect(onWatched).toHaveBeenCalledTimes(1);
+	});
+
+	it('starts at the saved position, or over when it is at the end', () => {
+		expect(resumeStart(272, 600)).toBe(272);
+		expect(resumeStart(272, 0)).toBe(272);
+		expect(resumeStart(597, 600)).toBe(0);
+		expect(resumeStart(700, 600)).toBe(0);
+		expect(resumeStart(0, 600)).toBe(0);
+		expect(resumeStart(Number.NaN, 600)).toBe(0);
 	});
 });
 

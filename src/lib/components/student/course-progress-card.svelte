@@ -88,7 +88,7 @@
 	{:else if status === 'REJECTED'}
 		<Badge variant="destructive" class="shrink-0">Resubmit</Badge>
 	{:else if isComplete}
-		<Badge class="shrink-0 gap-1 border border-primary/20 bg-primary/10 text-primary hover:bg-primary/10">
+		<Badge class="shrink-0 gap-1 border border-primary/20 bg-primary/10 text-primary-ink hover:bg-primary/10">
 			<CircleCheck class="size-3.5" />
 			Completed
 		</Badge>

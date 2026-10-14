@@ -44,7 +44,7 @@
 	}
 
 	const sectionClass = 'rounded-xl border border-border bg-card p-5 shadow-card sm:p-6';
-	const successClass = 'flex items-center gap-2 rounded-lg bg-success/10 p-3 text-sm text-success';
+	const successClass = 'flex items-center gap-2 rounded-lg bg-success/10 p-3 text-sm text-success-ink';
 	const errorClass = 'rounded-lg bg-destructive/10 p-3 text-sm text-destructive';
 
 	const passwordError = $derived(form?.password && 'error' in form.password ? form.password : null);
@@ -63,7 +63,7 @@
 	<!-- Profile -->
 	<section class={sectionClass} aria-labelledby="profile-heading">
 		<div class="mb-5 flex items-center gap-3">
-			<span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+			<span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 				<User class="size-4" aria-hidden="true" />
 			</span>
 			<h2 id="profile-heading" class="text-lg font-bold text-foreground">Profile</h2>
@@ -106,7 +106,7 @@
 	<!-- Phone -->
 	<section class={sectionClass} aria-labelledby="phone-heading">
 		<div class="mb-5 flex items-start gap-3">
-			<span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+			<span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 				<MessageSquareText class="size-4" aria-hidden="true" />
 			</span>
 			<div>
@@ -120,7 +120,7 @@
 		<div class="space-y-4">
 			{#if form?.verifyCode && 'verified' in form.verifyCode}
 				<div class="flex flex-col gap-3 rounded-lg bg-success/10 p-3 sm:flex-row sm:items-center sm:justify-between" role="status">
-					<p class="flex items-center gap-2 text-sm text-success">
+					<p class="flex items-center gap-2 text-sm text-success-ink">
 						<CircleCheck class="size-4 shrink-0" aria-hidden="true" />
 						Phone number verified. You'll get SMS updates at {localPhone(form.verifyCode.verified)}.
 					</p>
@@ -169,7 +169,7 @@
 							<input type="hidden" name="phone" value={data.pendingPhone} />
 							<button
 								type="submit"
-								class="font-medium text-brand hover:underline disabled:opacity-50"
+								class="font-medium text-brand-ink hover:underline disabled:opacity-50"
 								disabled={busy === 'resend'}
 							>
 								{busy === 'resend' ? 'Sending...' : 'Send a new code'}
@@ -268,7 +268,7 @@
 	<!-- Password -->
 	<section class={sectionClass} aria-labelledby="password-heading">
 		<div class="mb-5 flex items-start gap-3">
-			<span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+			<span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 				<Lock class="size-4" aria-hidden="true" />
 			</span>
 			<div>

@@ -220,7 +220,7 @@
 
 {#snippet statusCell(row: Row)}
 	<Statuses status={row.status} label={STATUS_LABELS[row.status]} />
-	{#if row.completedAt}<p class="mt-1 text-xs text-emerald-600">Completed</p>{/if}
+	{#if row.completedAt}<p class="mt-1 text-xs text-emerald-700">Completed</p>{/if}
 {/snippet}
 
 {#snippet providerCell(row: Row)}
@@ -252,7 +252,7 @@
 			href={fileUrl(row.receipt)}
 			target="_blank"
 			rel="noopener"
-			class="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+			class="inline-flex items-center gap-1 text-sm text-primary-ink hover:underline"
 		>
 			<FileText class="size-4" /> View
 		</a>

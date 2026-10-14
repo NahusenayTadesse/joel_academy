@@ -8,6 +8,7 @@
 	import { ROUTES, siteConfig } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import InstallButton from '$lib/components/pwa/install-button.svelte';
+	import NotificationBell from '$lib/components/student/home/notification-bell.svelte';
 	import BrandMark from './brand-mark.svelte';
 	import { mobileMenu } from './menu.svelte';
 	import CoursesMegaMenu from './courses-mega-menu.svelte';
@@ -16,10 +17,12 @@
 
 	let {
 		user,
-		categories
+		categories,
+		unreadNotifications = 0
 	}: {
 		user: { name: string; email: string; image?: string | null; isStaff?: boolean } | null;
 		categories: Pick<Category, 'id' | 'name' | 'slug'>[];
+		unreadNotifications?: number;
 	} = $props();
 
 	const NAV_LINKS = [
@@ -31,8 +34,15 @@
 		{ label: 'Contact', href: ROUTES.contact }
 	];
 
-	// Staff work in the dashboard; students' home is their own courses.
-	const homeHref = $derived(user?.isStaff ? ROUTES.dashboard : ROUTES.student.courses);
+	// Staff work in the dashboard; students' home is their learning area.
+	const homeHref = $derived(user?.isStaff ? ROUTES.dashboard : ROUTES.student.home);
+	const STUDENT_LINKS = [
+		{ label: 'My courses', href: ROUTES.student.courses },
+		{ label: 'Wishlist', href: ROUTES.student.wishlist },
+		{ label: 'Payments', href: ROUTES.student.payments },
+		{ label: 'Notifications', href: ROUTES.student.notifications },
+		{ label: 'Certificates', href: ROUTES.student.certificates }
+	];
 	const mobileLink = 'rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent';
 </script>
 
@@ -65,6 +75,7 @@
 					<Button variant="ghost" href={homeHref} class="hidden sm:inline-flex">
 						Dashboard
 					</Button>
+					<NotificationBell unreadCount={unreadNotifications} />
 					<ProfileMenu {user} />
 				</div>
 			{:else}
@@ -86,7 +97,7 @@
 						class="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=open]:fade-in-0"
 					/>
 					<Dialog.Content
-						class="fixed inset-y-0 left-0 z-50 flex h-full w-3/4 flex-col gap-1 border-r bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:slide-in-from-left sm:max-w-sm lg:hidden"
+						class="fixed inset-y-0 left-0 z-50 flex h-full w-3/4 flex-col gap-1 overflow-y-auto border-r bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=open]:duration-500 data-[state=open]:slide-in-from-left sm:max-w-sm lg:hidden"
 					>
 						<div class="flex flex-col space-y-2 text-center sm:text-left">
 							<Dialog.Title class="text-lg font-semibold text-foreground">
@@ -105,8 +116,21 @@
 						{#if user}
 							<div class="mt-4 flex flex-col gap-1 border-t border-border pt-4">
 								<a href={homeHref} class={mobileLink} onclick={() => (mobileMenu.open = false)}>
-									Dashboard
+									{user.isStaff ? 'Dashboard' : 'My learning'}
 								</a>
+								{#if !user.isStaff}
+									{#each STUDENT_LINKS as link (link.href)}
+										<a href={link.href} class={mobileLink} onclick={() => (mobileMenu.open = false)}>
+											{link.label}
+											{#if link.href === ROUTES.student.notifications && unreadNotifications > 0}
+												<span class="ml-1 rounded-full bg-destructive px-1.5 py-0.5 text-[10px] font-semibold text-destructive-foreground">
+													{unreadNotifications > 9 ? '9+' : unreadNotifications}
+													<span class="sr-only">unread</span>
+												</span>
+											{/if}
+										</a>
+									{/each}
+								{/if}
 								<a href={ROUTES.student.account} class={mobileLink} onclick={() => (mobileMenu.open = false)}>
 									Account
 								</a>

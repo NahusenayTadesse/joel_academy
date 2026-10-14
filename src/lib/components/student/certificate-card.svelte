@@ -25,7 +25,7 @@
 <Card class={cn('overflow-hidden transition-shadow hover:shadow-md', className)}>
 	<a {href} class="flex h-full flex-col gap-4 p-5">
 		<div class="flex items-start justify-between gap-3">
-			<span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand">
+			<span class="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 				<Award class="size-5" aria-hidden="true" />
 			</span>
 			{#if certificate.status === 'ISSUED'}

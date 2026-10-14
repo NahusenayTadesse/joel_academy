@@ -47,7 +47,7 @@
 			type="button"
 			onclick={install}
 			class={cn(
-				'flex items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm font-medium text-brand hover:bg-accent',
+				'flex items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm font-medium text-brand-ink hover:bg-accent',
 				className
 			)}
 		>

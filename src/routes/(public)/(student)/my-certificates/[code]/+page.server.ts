@@ -3,6 +3,8 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { certificate, course } from '$lib/server/db/schema';
 import { requireUser } from '$lib/server/student';
+import { verificationQrPath } from '$lib/server/certificate-pdf';
+import { siteUrl } from '$lib/server/email/notify';
 import { ROUTES } from '$lib/site';
 import type { PageServerLoad } from './$types';
 
@@ -17,6 +19,8 @@ export const load: PageServerLoad = async (event) => {
 		.limit(1);
 	if (!row) error(404, 'Certificate not found');
 	const { certificate: found } = row;
+	// The configured site address, as in the emails and the PDF, so all three show the same link.
+	const verificationUrl = siteUrl(ROUTES.certificates.verify(found.token));
 
 	return {
 		certificate: {
@@ -30,6 +34,8 @@ export const load: PageServerLoad = async (event) => {
 			revokedReason: found.revokedReason,
 			courseSlug: row.courseSlug
 		},
-		verificationUrl: new URL(ROUTES.certificates.verify(found.token), event.url.origin).href
+		verificationUrl,
+		qr: found.revokedAt ? null : verificationQrPath(verificationUrl),
+		pdfHref: found.revokedAt ? null : `${ROUTES.student.certificate(found.code)}/pdf`
 	};
 };

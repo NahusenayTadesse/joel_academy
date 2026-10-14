@@ -42,7 +42,7 @@
 				<a
 					href={ROUTES.courses.list}
 					onclick={() => (open = false)}
-					class="flex items-center justify-between rounded-md px-2 py-1.5 text-sm font-medium text-brand hover:bg-accent"
+					class="flex items-center justify-between rounded-md px-2 py-1.5 text-sm font-medium text-brand-ink hover:bg-accent"
 				>
 					Browse all courses
 					<ArrowRight class="size-3.5" />

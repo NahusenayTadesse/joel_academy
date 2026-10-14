@@ -34,6 +34,7 @@
 	{#if data.categories.length === 0}
 		<EmptyState icon={Layers} title="No categories yet" />
 	{:else}
+		<h2 class="sr-only">All categories</h2>
 		<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
 			{#each data.categories as category (category.id)}
 				<CategoryCard {category} />

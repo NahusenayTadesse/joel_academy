@@ -26,7 +26,7 @@
 	<div class="mx-auto flex w-full max-w-xl flex-col items-center gap-6 px-4 sm:px-6">
 		<div class="space-y-2 text-center">
 			<div
-				class="inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand/5 px-3 py-1 text-xs font-semibold text-brand"
+				class="inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand/5 px-3 py-1 text-xs font-semibold text-brand-ink"
 			>
 				<ShieldCheck class="size-3.5" />
 				Official Credential Verification

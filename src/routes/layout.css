@@ -8,6 +8,12 @@
  * `color-mix(in srgb, var(--x) 35%, transparent)`; in classes, Tailwind's `bg-x/35` works as usual.
  */
 @import 'tailwindcss';
+/*
+ * Fonts are self-hosted (same origin, cached with the app) rather than loaded from Google Fonts:
+ * a render-blocking third-party stylesheet cost ~1.2 s on mobile, and visitors' IPs stay with us.
+ */
+@import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/space-grotesk';
 @import 'tw-animate-css';
 
 /* The kit's components, so Tailwind generates the classes they use. */
@@ -38,19 +44,25 @@
 	--popover-foreground: hsl(204 9% 11%);
 
 	--primary: hsl(94 65% 45%);
-	--primary-foreground: hsl(0 0% 100%);
+	/*
+	 * Text on the bright brand green is near-black green, not white: white on #69bd28 is 2.4:1,
+	 * this is 6.2:1 (WCAG AA). Green *text* on light surfaces uses the deeper `-ink` shades below.
+	 */
+	--on-brand: #1a2e05;
+	--primary-foreground: var(--on-brand);
 	--secondary: hsl(220 20% 95%);
 	--secondary-foreground: hsl(230 20% 15%);
 
 	--muted: hsl(216 24% 96%);
-	--muted-foreground: hsl(218 12% 48%);
+	/* 45% (was 48%): the smallest step that reads at WCAG AA (4.5:1) on the page and muted surfaces. */
+	--muted-foreground: hsl(218 12% 45%);
 	--accent: hsl(218 27% 94%);
 	--accent-foreground: hsl(204 9% 11%);
 
 	--destructive: hsl(4 86% 58%);
 	--destructive-foreground: hsl(0 0% 100%);
 	--success: hsl(94 65% 45%);
-	--success-foreground: hsl(0 0% 100%);
+	--success-foreground: var(--on-brand);
 	--warning: hsl(44 100% 48%);
 	--warning-foreground: hsl(24 10% 10%);
 	--info: hsl(217 91% 60%);
@@ -61,7 +73,11 @@
 	--ring: hsl(94 65% 45%);
 
 	--brand: hsl(94 65% 45%);
-	--brand-foreground: hsl(0 0% 100%);
+	--brand-foreground: var(--on-brand);
+	/* Green text on white (5.5:1) and on the pale green chips (4.8:1). */
+	--brand-ink: hsl(94 65% 28%);
+	--success-ink: hsl(94 65% 28%);
+	--primary-ink: hsl(94 65% 28%);
 	/* Dark green - active nav text/icons on a light chip, headings on light backgrounds. */
 	--brand-dark: hsl(91 100% 21%);
 	/* Primary button gradient stops: linear-gradient(135deg, light -> primary). */
@@ -88,7 +104,7 @@
 	--sidebar: hsl(226 74% 15%);
 	--sidebar-foreground: hsl(229 87% 85%);
 	--sidebar-primary: hsl(94 65% 45%);
-	--sidebar-primary-foreground: hsl(0 0% 100%);
+	--sidebar-primary-foreground: var(--on-brand);
 	--sidebar-accent: hsl(226 40% 22%);
 	--sidebar-accent-foreground: hsl(0 0% 100%);
 	--sidebar-border: hsl(226 40% 22%);
@@ -128,7 +144,7 @@
 	--destructive: hsl(4 70% 45%);
 	--destructive-foreground: hsl(0 0% 98%);
 	--success: hsl(94 55% 48%);
-	--success-foreground: hsl(0 0% 98%);
+	--success-foreground: hsl(230 25% 8%);
 	--warning: hsl(44 100% 48%);
 	--warning-foreground: hsl(24 10% 10%);
 	--info: hsl(217 91% 65%);
@@ -141,6 +157,10 @@
 	--brand: hsl(94 60% 52%);
 	--brand-foreground: hsl(230 25% 8%);
 	--brand-dark: hsl(91 70% 60%);
+	/* On dark surfaces the bright green already reads well as text. */
+	--brand-ink: var(--brand);
+	--success-ink: var(--success);
+	--primary-ink: var(--primary);
 	--brand-gradient-from: hsl(94 55% 60%);
 	--brand-gradient-to: hsl(94 60% 52%);
 
@@ -192,6 +212,9 @@
 
 	--color-brand: var(--brand);
 	--color-brand-foreground: var(--brand-foreground);
+	--color-brand-ink: var(--brand-ink);
+	--color-success-ink: var(--success-ink);
+	--color-primary-ink: var(--primary-ink);
 	--color-brand-dark: var(--brand-dark);
 	--color-brand-gradient-from: var(--brand-gradient-from);
 	--color-brand-gradient-to: var(--brand-gradient-to);
@@ -234,8 +257,9 @@
 	--radius-2xl: 1rem;
 	--radius-3xl: 1.25rem;
 
-	--font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-	--font-heading: 'Space Grotesk', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+	--font-sans: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+	--font-heading:
+		'Space Grotesk Variable', 'Space Grotesk', 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
 
 	--shadow-xs: 0 1px 2px 0 hsl(230 25% 9% / 0.03);
 	--shadow-sm: 0 1px 3px 0 hsl(230 25% 9% / 0.05), 0 1px 2px -1px hsl(230 25% 9% / 0.05);

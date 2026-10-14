@@ -163,7 +163,7 @@
 								<ul class="grid gap-2.5 sm:grid-cols-2">
 									{#each course.outcomes.slice(0, 8) as outcome (outcome)}
 										<li class="flex items-start gap-2 text-sm text-muted-foreground">
-											<CircleCheck class="mt-0.5 size-4 shrink-0 text-brand" />
+											<CircleCheck class="mt-0.5 size-4 shrink-0 text-brand-ink" />
 											<span>{outcome}</span>
 										</li>
 									{/each}
@@ -196,7 +196,7 @@
 					<input type="hidden" name="promoCode" value={promoCode} />
 					<Card class="border-success/40 bg-success/5">
 						<CardContent class="flex flex-col items-center gap-4 p-8 text-center">
-							<span class="flex size-16 items-center justify-center rounded-full bg-success/10 text-success">
+							<span class="flex size-16 items-center justify-center rounded-full bg-success/10 text-success-ink">
 								<Gift class="size-9" />
 							</span>
 							<div>
@@ -462,7 +462,7 @@
 				<div class="space-y-6">
 					<Card>
 						<CardContent class="flex flex-col items-center gap-4 p-8 text-center">
-							<span class="flex size-16 items-center justify-center rounded-full bg-success/10 text-success">
+							<span class="flex size-16 items-center justify-center rounded-full bg-success/10 text-success-ink">
 								<Clock class="size-9" />
 							</span>
 							<div>

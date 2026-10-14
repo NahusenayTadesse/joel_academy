@@ -7,7 +7,7 @@ export const MOCK_INSTRUCTORS: InstructorProfile[] = [
 		name: 'Joel Talargie',
 		title: 'Founder & Lead Instructor',
 		avatarColor: 'from-amber-500 to-orange-600',
-		photoUrl: '/images/instructors/joel-talargie.png',
+		photoUrl: '/images/instructors/joel-talargie.jpg',
 		bio: 'Joel founded the academy to make practical, project-based learning accessible to anyone serious about building real skills. He teaches select flagship courses and works directly with every instructor to keep quality high across the catalog.',
 		skills: ['Curriculum Design', 'Full-Stack Development', 'Team Leadership'],
 		yearsExperience: 12,

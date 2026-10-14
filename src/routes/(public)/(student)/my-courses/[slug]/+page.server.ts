@@ -1,6 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { EnrollmentError, markLessonComplete } from '$lib/server/enrollment';
 import { loadLearning } from '$lib/server/learning';
+import { QuizError, submitQuizAttempt } from '$lib/server/quiz';
 import { requireActionUser, requireUser } from '$lib/server/student';
 import { ROUTES } from '$lib/site';
 import type { Actions, PageServerLoad } from './$types';
@@ -46,6 +47,23 @@ export const actions: Actions = {
 			};
 		} catch (err) {
 			if (err instanceof EnrollmentError) return fail(403, { error: err.message });
+			throw err;
+		}
+	},
+
+	/** Grades a quiz attempt; a pass completes the lesson (and may issue the certificate). */
+	quiz: async (event) => {
+		const user = requireActionUser(event);
+		const posted = await event.request.formData();
+		const lessonId = lessonParam(String(posted.get('lessonId') ?? ''));
+		if (!lessonId) return fail(400, { quizError: 'Choose a quiz to submit.', retryAfter: 0 });
+		try {
+			return { quiz: await submitQuizAttempt(user.id, lessonId, posted) };
+		} catch (err) {
+			if (err instanceof QuizError) {
+				return fail(err.code === 'TOO_SOON' ? 429 : 403, { quizError: err.message, retryAfter: err.retryAfter });
+			}
+			if (err instanceof EnrollmentError) return fail(403, { quizError: err.message, retryAfter: 0 });
 			throw err;
 		}
 	}

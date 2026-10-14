@@ -242,7 +242,7 @@
 										{#if item.href}
 											·
 											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- dashboard path -->
-											<a href={item.href} class="text-primary hover:underline">manage</a>
+											<a href={item.href} class="text-primary-ink hover:underline">manage</a>
 										{/if}
 									</p>
 								</div>
@@ -391,7 +391,7 @@
 							<div class="flex items-center justify-between gap-2">
 								<span class="flex items-center gap-2 text-sm font-semibold">
 									<span
-										class="flex size-8 items-center justify-center rounded-lg bg-brand/10 text-brand"
+										class="flex size-8 items-center justify-center rounded-lg bg-brand/10 text-brand-ink"
 									>
 										<Icon class="size-4" />
 									</span>
@@ -505,7 +505,7 @@
 						Which instructor the home page features. Their name, photo, bio and achievements come
 						from
 						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- dashboard path -->
-						<a href="/dashboard/instructors" class="text-primary hover:underline">their profile</a>.
+						<a href="/dashboard/instructors" class="text-primary-ink hover:underline">their profile</a>.
 					</Card.Description>
 					<Card.Action>{@render resetButton('mentor')}</Card.Action>
 				</Card.Header>
@@ -635,7 +635,7 @@
 					<Card.Description>
 						Shown in full on the
 						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- public page -->
-						<a href="/faq" target="_blank" rel="noopener" class="text-primary hover:underline">FAQ page</a>;
+						<a href="/faq" target="_blank" rel="noopener" class="text-primary-ink hover:underline">FAQ page</a>;
 						the first four also appear on the home page.
 					</Card.Description>
 					<Card.Action>{@render resetButton('faqs')}</Card.Action>

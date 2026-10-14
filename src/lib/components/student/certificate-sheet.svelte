@@ -5,20 +5,24 @@
 	/*
 	 * The certificate itself, redrawn as SVG from the original's PDF generator (A4 landscape,
 	 * 842 x 595 pt, the same coordinates and colours) so it scales on screen and prints crisply.
-	 * The original's QR code is replaced by the written verification link: no QR library here.
+	 * The QR code (drawn from the server's module grid, `verificationQrPath`) and the layout match
+	 * the downloadable PDF (`$lib/server/certificate-pdf`); without one the card shows a shield.
 	 */
 	let {
 		recipientName,
 		courseTitle,
 		code,
 		issuedAt,
-		verificationUrl
+		verificationUrl,
+		qr = null
 	}: {
 		recipientName: string;
 		courseTitle: string;
 		code: string;
 		issuedAt: string;
 		verificationUrl: string;
+		/** The verification link's QR code: a `size`-module square drawn by one path. */
+		qr?: { size: number; path: string } | null;
 	} = $props();
 
 	const primary = '#336B00';
@@ -47,6 +51,7 @@
 
 	const academy = siteConfig.name;
 	const shortUrl = $derived(verificationUrl.replace(/^https?:\/\//, ''));
+	const footer = $derived(`Issued by ${academy} · Verify at ${verificationUrl}`);
 	const corners = [
 		{ x: 28, y: 28, angle: 0 },
 		{ x: 814, y: 28, angle: 90 },
@@ -136,21 +141,33 @@
 	<text x="420" y="452" text-anchor="middle" fill={darkInk} font-size="9.5" font-weight="700">AUTHORIZED SIGNATURE</text>
 	<text x="420" y="464" text-anchor="middle" fill={mutedInk} font-size="8">Academic Governing Board</text>
 
-	<!-- Verification card (the original's QR code panel) -->
+	<!-- Verification card: the QR code links to the public verification page -->
 	<rect x="615" y="345" width="148" height="160" rx="6" fill={cardBg} stroke={borderGold} stroke-width="1" />
-	<g transform="translate(689 405)">
-		<circle r="34" fill="none" stroke={borderGold} stroke-width="1" />
-		<path
-			d="M0,-24 L19,-16 L19,2 C19,15 10,23 0,27 C-10,23 -19,15 -19,2 L-19,-16 Z"
-			fill={primary}
-		/>
-		<path d="M-8,1 L-2,7 L9,-5" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-	</g>
-	<text x="689" y="467" text-anchor="middle" fill={primary} font-size="7.5" font-weight="700">VERIFY ONLINE</text>
+	{#if qr}
+		<a href={verificationUrl} target="_blank" rel="noopener" aria-label="Verify this certificate online">
+			<!-- One module of white margin around the code, as in the PDF. -->
+			<g transform="translate(639 357) scale({100 / (qr.size + 2)})">
+				<rect width={qr.size + 2} height={qr.size + 2} fill="#FFFFFF" />
+				<path d={qr.path} transform="translate(1 1)" fill="#000000" shape-rendering="crispEdges" />
+			</g>
+		</a>
+	{:else}
+		<g transform="translate(689 405)">
+			<circle r="34" fill="none" stroke={borderGold} stroke-width="1" />
+			<path
+				d="M0,-24 L19,-16 L19,2 C19,15 10,23 0,27 C-10,23 -19,15 -19,2 L-19,-16 Z"
+				fill={primary}
+			/>
+			<path d="M-8,1 L-2,7 L9,-5" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+		</g>
+	{/if}
+	<text x="689" y="467" text-anchor="middle" fill={primary} font-size="7.5" font-weight="700">
+		{qr ? 'SCAN TO VERIFY' : 'VERIFY ONLINE'}
+	</text>
 	<text x="689" y="479" text-anchor="middle" fill={mutedInk} font-size="6.5" font-weight="700">ID: {code}</text>
 	<text x="689" y="491" text-anchor="middle" fill={accent} font-size={fit(shortUrl, 6.5, 140, 0.5)}>{shortUrl}</text>
 
-	<text x="421" y="549" text-anchor="middle" fill={mutedInk} font-size="8">
-		Issued by {academy}
+	<text x="421" y="549" text-anchor="middle" fill={mutedInk} font-size={fit(footer, 8, 740, 0.5)}>
+		{footer}
 	</text>
 </svg>

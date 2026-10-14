@@ -90,7 +90,7 @@
 					</span>
 					{#if isSectionComplete}
 						<span
-							class="inline-flex shrink-0 items-center gap-1 rounded-full bg-brand/20 px-2 py-0.5 text-[10px] font-medium text-brand"
+							class="inline-flex shrink-0 items-center gap-1 rounded-full bg-brand/20 px-2 py-0.5 text-[10px] font-medium text-brand-ink"
 						>
 							<Check class="size-3" />
 							<span>Completed</span>
@@ -119,7 +119,7 @@
 								)}
 							>
 								{#if lesson.completed}
-									<CircleCheck class="size-4 shrink-0 text-brand" />
+									<CircleCheck class="size-4 shrink-0 text-brand-ink" />
 								{:else if lesson.locked}
 									<Lock class="size-4 shrink-0 text-sidebar-foreground/30" />
 								{:else if isActive}

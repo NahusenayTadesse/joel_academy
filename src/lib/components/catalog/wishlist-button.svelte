@@ -12,13 +12,18 @@
 	}: { courseId: string; courseTitle: string; class?: string } = $props();
 
 	const isWishlisted = $derived(wishlist.has(courseId));
+	let busy = $state(false);
 
-	function toggle(event: MouseEvent) {
+	async function toggle(event: MouseEvent) {
 		event.preventDefault();
 		event.stopPropagation();
+		if (busy) return;
 		const removing = isWishlisted;
-		wishlist.toggle(courseId);
-		if (removing) toast.info('Removed from wishlist', { description: courseTitle });
+		busy = true;
+		const saved = await wishlist.toggle(courseId);
+		busy = false;
+		if (!saved) toast.error('Could not update your wishlist', { description: 'Please try again.' });
+		else if (removing) toast.info('Removed from wishlist', { description: courseTitle });
 		else toast.success('Added to wishlist', { description: courseTitle });
 	}
 </script>
@@ -29,6 +34,7 @@
 	class={cn('size-8 shrink-0 rounded-full', className)}
 	aria-label={isWishlisted ? `Remove ${courseTitle} from wishlist` : `Add ${courseTitle} to wishlist`}
 	aria-pressed={isWishlisted}
+	aria-busy={busy}
 	onclick={toggle}
 >
 	<Heart class={cn('size-4', isWishlisted && 'fill-destructive text-destructive')} />

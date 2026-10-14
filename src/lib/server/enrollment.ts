@@ -1,6 +1,15 @@
 import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { certificate, course, enrollment, lesson, lessonProgress, paymentMethod, user } from '$lib/server/db/schema';
+import {
+	certificate,
+	course,
+	enrollment,
+	lesson,
+	lessonProgress,
+	paymentMethod,
+	quizAttempt,
+	user
+} from '$lib/server/db/schema';
 import { issueCertificate } from '$lib/server/certificates';
 import { certificateIssuedEmail, enrollmentConfirmedEmail } from '$lib/server/email';
 import { quoteCourse } from '$lib/server/promo';
@@ -32,7 +41,8 @@ export class EnrollmentError extends Error {
 			| 'NO_PAYMENT_DUE'
 			| 'PAYMENT_DUE'
 			| 'LESSON_NOT_FOUND'
-			| 'NOT_ENROLLED',
+			| 'NOT_ENROLLED'
+			| 'QUIZ_NOT_PASSED',
 		message: string
 	) {
 		super(message);
@@ -286,12 +296,13 @@ export interface CompletionResult {
  * Marks a lesson done for an ACTIVE enrollment. Marking it again changes nothing. When the last
  * required lesson is done, the enrollment is stamped complete and — if the course awards one — the
  * certificate issued, in the same transaction, so a completed course never lacks its certificate.
- * A newly issued certificate is emailed once the transaction has committed.
+ * A newly issued certificate is emailed once the transaction has committed. A quiz lesson is
+ * complete only once the student has passed it (`$lib/server/quiz`), whoever asks.
  */
 export async function markLessonComplete(userId: string, lessonId: number): Promise<CompletionResult> {
 	const { result, issued } = await db.transaction(async (tx) => {
 		const [target] = await tx
-			.select({ id: lesson.id, courseId: lesson.courseId })
+			.select({ id: lesson.id, courseId: lesson.courseId, lessonType: lesson.lessonType })
 			.from(lesson)
 			.where(eq(lesson.id, lessonId))
 			.limit(1);
@@ -305,6 +316,15 @@ export async function markLessonComplete(userId: string, lessonId: number): Prom
 			.for('update');
 		if (current?.status !== 'ACTIVE')
 			throw new EnrollmentError('NOT_ENROLLED', 'Enroll in this course to track your progress.');
+
+		if (target.lessonType === 'QUIZ') {
+			const [pass] = await tx
+				.select({ id: quizAttempt.id })
+				.from(quizAttempt)
+				.where(and(eq(quizAttempt.userId, userId), eq(quizAttempt.lessonId, lessonId), eq(quizAttempt.passed, true)))
+				.limit(1);
+			if (!pass) throw new EnrollmentError('QUIZ_NOT_PASSED', 'Pass the quiz to complete this lesson.');
+		}
 
 		await tx.insert(lessonProgress).ignore().values({ userId, lessonId });
 

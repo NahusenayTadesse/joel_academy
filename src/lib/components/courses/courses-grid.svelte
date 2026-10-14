@@ -43,7 +43,7 @@
 			<button
 				type="button"
 				onclick={resetFilters}
-				class="text-sm font-medium text-brand underline-offset-4 hover:underline"
+				class="text-sm font-medium text-brand-ink underline-offset-4 hover:underline"
 			>
 				Reset filters
 			</button>
@@ -58,10 +58,12 @@
 					: 'flex flex-col gap-4'
 			)}
 		>
-			{#each courses.items as course (course.id)}
+			{#each courses.items as course, index (course.id)}
+				<!-- The first card is the page's main image; the rest of the first row is on screen too. -->
 				<CourseCard
 					{course}
 					{view}
+					priority={index === 0 ? 'high' : index < 4 ? 'eager' : 'lazy'}
 					href={linkBase ? `${linkBase}/${course.slug}` : undefined}
 				/>
 			{/each}

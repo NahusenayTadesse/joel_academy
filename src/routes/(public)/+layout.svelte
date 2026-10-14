@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
 	import AnnouncementBar from '$lib/components/layout/announcement-bar.svelte';
 	import PublicFooter from '$lib/components/layout/public-footer.svelte';
@@ -9,7 +8,10 @@
 
 	let { data, children } = $props();
 
-	onMount(() => wishlist.load());
+	// Hearts follow the account once signed in (and the browser's own list when not).
+	$effect(() => {
+		wishlist.sync(data.user ? data.wishlistIds : null);
+	});
 </script>
 
 <Toaster position="top-right" richColors closeButton expand />
@@ -19,8 +21,8 @@
 	class="public-site flex min-h-screen flex-col standalone:max-md:pb-[calc(4rem+env(safe-area-inset-bottom))]"
 >
 	<AnnouncementBar announcement={data.announcement} />
-	<PublicHeader user={data.user} categories={data.menuCategories} />
-	<div class="flex-1">{@render children()}</div>
+	<PublicHeader user={data.user} categories={data.menuCategories} unreadNotifications={data.unreadNotifications} />
+	<main id="main-content" class="flex-1">{@render children()}</main>
 	<PublicFooter />
 </div>
 <AppTabBar signedIn={Boolean(data.user)} />

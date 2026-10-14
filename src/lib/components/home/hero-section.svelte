@@ -38,7 +38,7 @@
 	>
 		<div class="flex flex-col gap-6">
 			<span
-				class="inline-flex w-fit items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand uppercase"
+				class="inline-flex w-fit items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand-ink uppercase"
 			>
 				<Sparkles class="size-3.5" />
 				{hero.badge}
@@ -90,7 +90,16 @@
 		<div
 			class="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-surface-dark lg:aspect-square"
 		>
-			<img src={heroImage} alt={hero.imageAlt} class="size-full object-cover" />
+			<!-- The page's largest image: fetched first rather than discovered late. -->
+			<img
+				src={heroImage}
+				alt={hero.imageAlt}
+				class="size-full object-cover"
+				width="1200"
+				height="637"
+				fetchpriority="high"
+				decoding="async"
+			/>
 			<div
 				class="absolute inset-0 opacity-60 mix-blend-multiply"
 				style:background-image="radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--chart-1) 50%, transparent), transparent 45%), radial-gradient(circle at 80% 30%, color-mix(in srgb, var(--surface-dark) 60%, transparent), transparent 50%)"

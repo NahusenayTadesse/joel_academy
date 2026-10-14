@@ -16,6 +16,7 @@
 	import LessonPlayer from '$lib/components/student/lesson-player.svelte';
 	import LessonSidebar from '$lib/components/student/lesson-sidebar.svelte';
 	import LessonTabs from '$lib/components/student/lesson-tabs.svelte';
+	import QuizPlayer from '$lib/components/student/quiz/quiz-player.svelte';
 	import Button from '$lib/components/ui/button.svelte';
 	import { ROUTES, siteConfig } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
@@ -49,6 +50,8 @@
 			watchedLessonId !== data.activeLessonId
 	);
 	const hasPreview = $derived(flatLessons.some((lesson) => !lesson.locked));
+	/* A quiz is completed by passing it, never by the footer button alone. */
+	const quizGate = $derived(activeLesson?.lessonType === 'QUIZ' && !data.lessonContent?.quiz?.passed);
 	const courseHref = $derived(ROUTES.courses.detail(data.course.slug));
 	const checkoutHref = $derived(ROUTES.student.checkout(data.course.slug));
 
@@ -168,7 +171,7 @@
 					/>
 				</aside>
 			{/if}
-			<main class="flex-1 overflow-y-auto">
+			<div class="flex-1 overflow-y-auto">
 				<div class="mx-auto w-full max-w-5xl px-4 py-8 pb-28 sm:px-6">
 					{#if !activeLesson}
 						<p class="text-sm text-sidebar-foreground/60">This course has no lessons yet.</p>
@@ -189,6 +192,9 @@
 									title={activeLesson.title}
 									completed={activeLesson.completed}
 									onWatched={() => (watchedLessonId = activeLesson.id)}
+									lessonId={activeLesson.id}
+									resumeAt={data.lessonContent.resumeAt}
+									positionUrl={data.lessonContent.positionUrl}
 								/>
 							{/key}
 						{/if}
@@ -200,6 +206,11 @@
 						>
 							{activeLesson.title}
 						</h1>
+						{#if data.lessonContent.quiz}
+							{#key activeLesson.id}
+								<QuizPlayer lessonId={activeLesson.id} quiz={data.lessonContent.quiz} canSubmit={isActive} />
+							{/key}
+						{/if}
 						{#key activeLesson.id}
 							<LessonTabs
 								lessonId={activeLesson.id}
@@ -211,7 +222,7 @@
 						{/key}
 					{/if}
 				</div>
-			</main>
+			</div>
 		</div>
 
 		<div class="flex flex-none items-center justify-between border-t border-sidebar-border bg-sidebar px-4 py-4 sm:px-6">
@@ -246,6 +257,14 @@
 					<span>Enroll to Track Progress</span>
 					<ArrowRight class="size-4" />
 				</Button>
+			{:else if quizGate}
+				<div class="flex items-center gap-3">
+					<span class="hidden text-xs text-sidebar-foreground/60 sm:inline">Pass the quiz to continue</span>
+					<Button disabled class="gap-2 bg-sidebar-primary bg-none text-sidebar-primary-foreground shadow-none">
+						Complete & Next
+						<ArrowRight class="size-4" />
+					</Button>
+				</div>
 			{:else}
 				<form
 					method="post"

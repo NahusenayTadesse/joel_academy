@@ -12,6 +12,7 @@ import {
 	sectionOf
 } from '$lib/server/dashboard/curriculum';
 import { blankToNull, flashFail, flashOk, postedId } from '$lib/server/dashboard/values';
+import { questionCounts } from '$lib/server/quiz';
 import { lessonColumns } from './lessons.server';
 import { lessonSchema, moveSchema, sectionEditSchema, sectionSchema } from './schema';
 import type { Actions, PageServerLoad } from './$types';
@@ -61,6 +62,9 @@ export const load: PageServerLoad = async ({ params }) => {
 					.groupBy(lessonProgress.lessonId)
 			])
 		: [[], []];
+	const questionCount = await questionCounts(
+		lessons.filter((row) => row.lessonType === 'QUIZ').map((row) => row.id)
+	);
 	const resourceCount = new Map(resources.map((row) => [row.lessonId, row.total]));
 	const progressCount = new Map(progress.map((row) => [row.lessonId, row.total]));
 
@@ -73,6 +77,7 @@ export const load: PageServerLoad = async ({ params }) => {
 				.map((row) => ({
 					...row,
 					resources: resourceCount.get(row.id) ?? 0,
+					questions: questionCount.get(row.id) ?? 0,
 					completions: progressCount.get(row.id) ?? 0
 				}))
 		})),

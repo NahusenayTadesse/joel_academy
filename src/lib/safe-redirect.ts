@@ -10,7 +10,7 @@ export function safeRedirectPath(target: string | null | undefined, origin: stri
 
 /** Where someone lands after signing in or registering: the page they came from, else their home. */
 export function afterSignIn(url: URL, isStaff: boolean): string {
-	return safeRedirectPath(url.searchParams.get('redirectTo'), url.origin) ?? (isStaff ? '/dashboard' : '/my-courses');
+	return safeRedirectPath(url.searchParams.get('redirectTo'), url.origin) ?? (isStaff ? '/dashboard' : '/my');
 }
 
 /** The sign-in page, set to bring the visitor back to `url` afterwards. */

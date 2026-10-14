@@ -29,6 +29,13 @@
       "when": 1791305898806,
       "tag": "0003_sms",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1791312782866,
+      "tag": "0004_lms_features",
+      "breakpoints": true
     }
   ]
 }

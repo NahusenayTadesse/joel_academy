@@ -14,7 +14,7 @@ export const buttonVariants = tv({
 			outline: 'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
 			secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
 			ghost: 'hover:bg-accent hover:text-accent-foreground',
-			link: 'text-primary underline-offset-4 hover:underline'
+			link: 'text-primary-ink underline-offset-4 hover:underline'
 		},
 		size: {
 			default: 'h-11 px-5 py-3',
@@ -37,9 +37,12 @@ export const badgeVariants = tv({
 			secondary: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
 			destructive:
 				'border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
-			success: 'border-transparent bg-success/15 text-success hover:bg-success/25',
-			warning: 'border-transparent bg-warning/15 text-warning hover:bg-warning/25',
-			info: 'border-transparent bg-info/15 text-info hover:bg-info/25',
+			// Tinted badges darken their text so it stays readable (WCAG AA) on the pale tint.
+			success:
+				'border-transparent bg-success/15 text-[color-mix(in_srgb,var(--success)_55%,black)] hover:bg-success/25 dark:text-success-ink',
+			warning:
+				'border-transparent bg-warning/15 text-[color-mix(in_srgb,var(--warning)_45%,black)] hover:bg-warning/25 dark:text-warning',
+			info: 'border-transparent bg-info/15 text-[color-mix(in_srgb,var(--info)_65%,black)] hover:bg-info/25 dark:text-info',
 			outline: 'text-foreground'
 		}
 	},

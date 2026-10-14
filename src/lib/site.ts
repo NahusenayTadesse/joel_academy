@@ -32,13 +32,18 @@ export const ROUTES = {
 		verifyEmail: '/verify-email'
 	},
 	student: {
+		/** The student's home: progress, payments, certificates and notifications at a glance. */
+		home: '/my',
 		courses: '/my-courses',
 		learn: (slug: string, lessonId?: number | string) =>
 			lessonId === undefined ? `/my-courses/${slug}` : `/my-courses/${slug}?lesson=${lessonId}`,
 		certificates: '/my-certificates',
 		certificate: (code: string) => `/my-certificates/${code}`,
 		checkout: (slug: string) => `/checkout/${slug}`,
-		account: '/account'
+		account: '/account',
+		wishlist: '/my-wishlist',
+		payments: '/my-payments',
+		notifications: '/my-notifications'
 	},
 	dashboard: '/dashboard'
 } as const;

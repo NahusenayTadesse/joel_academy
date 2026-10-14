@@ -68,7 +68,7 @@
 			disabled={$submitting}
 		>
 			{#snippet labelExtra()}
-				<a href={ROUTES.auth.forgotPassword} class="text-xs font-medium text-brand hover:underline">
+				<a href={ROUTES.auth.forgotPassword} class="text-xs font-medium text-brand-ink hover:underline">
 					Forgot Password?
 				</a>
 			{/snippet}
@@ -94,7 +94,7 @@
 				{$message.text}
 			</p>
 		{:else if data.notice?.type === 'success'}
-			<p class="rounded-lg bg-success/10 p-3 text-sm text-success" role="status">{data.notice.text}</p>
+			<p class="rounded-lg bg-success/10 p-3 text-sm text-success-ink" role="status">{data.notice.text}</p>
 		{:else if data.notice}
 			<p class="rounded-lg bg-destructive/10 p-3 text-sm text-destructive" role="alert">
 				{data.notice.text}
@@ -108,7 +108,7 @@
 	<div class="mt-6 text-center text-sm">
 		<p class="text-muted-foreground">
 			Don't have an account?
-			<a href="{ROUTES.auth.register}{redirectQuery}" class="font-medium text-brand hover:underline">
+			<a href="{ROUTES.auth.register}{redirectQuery}" class="font-medium text-brand-ink hover:underline">
 				Create an Account
 			</a>
 		</p>
