@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import BadgeCheck from '@lucide/svelte/icons/badge-check';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import KeyRound from '@lucide/svelte/icons/key-round';
@@ -8,7 +10,6 @@
 	import Phone from '@lucide/svelte/icons/phone';
 	import User from '@lucide/svelte/icons/user';
 	import type { SubmitFunction } from '@sveltejs/kit';
-	import { enhance } from '$app/forms';
 	import AuthField from '$lib/components/auth/auth-field.svelte';
 	import PageHeader from '$lib/components/common/page-header.svelte';
 	import Badge from '$lib/components/ui/badge.svelte';
@@ -68,7 +69,7 @@
 			</span>
 			<h2 id="profile-heading" class="text-lg font-bold text-foreground">Profile</h2>
 		</div>
-		<form method="post" action="?/profile" class="space-y-4" use:enhance={submit('profile', false)}>
+		<ActionForm action="?/profile" class="space-y-4" submit={submit('profile', false)}>
 			<AuthField
 				name="name"
 				label="Full name"
@@ -100,7 +101,7 @@
 				<p class={successClass} role="status"><CircleCheck class="size-4" aria-hidden="true" /> Profile saved.</p>
 			{/if}
 			<LoadingButton type="submit" loading={busy === 'profile'} loadingText="Saving...">Save profile</LoadingButton>
-		</form>
+		</ActionForm>
 	</section>
 
 	<!-- Phone -->
@@ -141,12 +142,7 @@
 						Enter the 6-digit code we sent to
 						<span class="font-semibold">{localPhone(data.pendingPhone)}</span>. It's valid for 5 minutes.
 					</p>
-					<form
-						method="post"
-						action="?/verifyCode"
-						class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start"
-						use:enhance={submit('verifyCode')}
-					>
+					<ActionForm action="?/verifyCode" class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start" submit={submit('verifyCode')}>
 						<div class="sm:w-48">
 							<AuthField
 								name="code"
@@ -163,10 +159,10 @@
 						<LoadingButton type="submit" class="sm:mt-6" loading={busy === 'verifyCode'} loadingText="Checking...">
 							Verify number
 						</LoadingButton>
-					</form>
+					</ActionForm>
 					<div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-						<form method="post" action="?/sendCode" use:enhance={submit('resend')}>
-							<input type="hidden" name="phone" value={data.pendingPhone} />
+						<ActionForm action="?/sendCode" submit={submit('resend')}>
+							<HiddenField name="phone" value={data.pendingPhone} />
 							<button
 								type="submit"
 								class="font-medium text-brand-ink hover:underline disabled:opacity-50"
@@ -174,12 +170,12 @@
 							>
 								{busy === 'resend' ? 'Sending...' : 'Send a new code'}
 							</button>
-						</form>
-						<form method="post" action="?/cancelCode" use:enhance={submit('cancel')}>
+						</ActionForm>
+						<ActionForm action="?/cancelCode" submit={submit('cancel')}>
 							<button type="submit" class="text-muted-foreground hover:text-foreground hover:underline">
 								Use a different number
 							</button>
-						</form>
+						</ActionForm>
 					</div>
 					{#if form?.sendCode && 'error' in form.sendCode}
 						<p class="mt-3 {errorClass}" role="alert">{form.sendCode.error}</p>
@@ -207,12 +203,7 @@
 					</div>
 				</div>
 				{#if confirmingRemove}
-					<form
-						method="post"
-						action="?/removePhone"
-						class="flex flex-col gap-3 rounded-lg bg-destructive/5 p-4 sm:flex-row sm:items-center sm:justify-between"
-						use:enhance={submit('remove')}
-					>
+					<ActionForm action="?/removePhone" class="flex flex-col gap-3 rounded-lg bg-destructive/5 p-4 sm:flex-row sm:items-center sm:justify-between" submit={submit('remove')}>
 						<p class="text-sm text-foreground">Remove this number? You'll stop getting SMS updates.</p>
 						<div class="flex shrink-0 gap-2">
 							<Button size="sm" variant="ghost" onclick={() => (confirmingRemove = false)}>Keep it</Button>
@@ -220,7 +211,7 @@
 								Remove number
 							</LoadingButton>
 						</div>
-					</form>
+					</ActionForm>
 				{/if}
 			{:else}
 				<!-- Step one: the number. -->
@@ -229,12 +220,7 @@
 						Your account is ready, but we couldn't send a code to this number just now. Please try again.
 					</p>
 				{/if}
-				<form
-					method="post"
-					action="?/sendCode"
-					class="flex flex-col gap-3 sm:flex-row sm:items-start"
-					use:enhance={submit('sendCode', false)}
-				>
+				<ActionForm action="?/sendCode" class="flex flex-col gap-3 sm:flex-row sm:items-start" submit={submit('sendCode', false)}>
 					<div class="flex-1">
 						<AuthField
 							name="phone"
@@ -260,7 +246,7 @@
 							<Button variant="ghost" onclick={() => (changing = false)}>Cancel</Button>
 						{/if}
 					</div>
-				</form>
+				</ActionForm>
 			{/if}
 		</div>
 	</section>
@@ -282,7 +268,7 @@
 				</p>
 			</div>
 		</div>
-		<form method="post" action="?/password" class="space-y-4" use:enhance={submit('password')}>
+		<ActionForm action="?/password" class="space-y-4" submit={submit('password')}>
 			{#if account.hasPassword}
 				<AuthField
 					name="currentPassword"
@@ -328,6 +314,6 @@
 			<LoadingButton type="submit" loading={busy === 'password'} loadingText="Saving...">
 				{account.hasPassword ? 'Change password' : 'Set password'}
 			</LoadingButton>
-		</form>
+		</ActionForm>
 	</section>
 </div>

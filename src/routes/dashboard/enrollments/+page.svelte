@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import Check from '@lucide/svelte/icons/check';
 	import X from '@lucide/svelte/icons/x';
 	import FileText from '@lucide/svelte/icons/file-text';
@@ -460,7 +461,7 @@
 	resetOnSuccess
 >
 	{#snippet fields({ form, errors, values })}
-		<input type="hidden" name="id" value={values.id} />
+		<HiddenField name="id" value={values.id} />
 		<InputComp
 			{form}
 			{errors}

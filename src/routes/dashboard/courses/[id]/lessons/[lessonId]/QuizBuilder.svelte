@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import Check from '@lucide/svelte/icons/check';
 	import Save from '@lucide/svelte/icons/save';
 	import SquarePen from '@lucide/svelte/icons/square-pen';
@@ -177,7 +178,7 @@
 	hideTrigger
 >
 	{#snippet fields({ form, errors, values })}
-		<input type="hidden" name="id" value={values.id} />
+		<HiddenField name="id" value={values.id} />
 		<QuestionFields {form} {errors} {values} />
 	{/snippet}
 </FormDialog>

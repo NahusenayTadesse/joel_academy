@@ -3,9 +3,13 @@
 	import { ROUTES, siteConfig } from '$lib/site';
 </script>
 
-<a href={ROUTES.home} class="flex items-center gap-2">
-	<span class="flex size-8 items-center justify-center rounded-lg bg-brand text-brand-foreground">
-		<GraduationCap class="size-4" />
+<a href={ROUTES.home} class="group flex items-center gap-2.5">
+	<span
+		class="flex size-9 items-center justify-center rounded-xl bg-linear-to-br from-brand-gradient-from to-brand-gradient-to text-primary-foreground shadow-glow transition-transform duration-500 group-hover:-rotate-8 group-hover:scale-105"
+	>
+		<GraduationCap class="size-4.5" />
 	</span>
-	<span class="text-sm font-semibold tracking-tight">{siteConfig.name}</span>
+	<span class="text-sm font-bold tracking-tight" style="font-family: var(--font-heading)">
+		{siteConfig.name}
+	</span>
 </a>

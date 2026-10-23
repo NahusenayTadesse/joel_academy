@@ -5,13 +5,16 @@ import { tv, type VariantProps } from 'tailwind-variants';
  * so the pages match exactly. The dashboard keeps using the kit's own components.
  */
 export const buttonVariants = tv({
-	base: 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+	base: 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
 	variants: {
 		variant: {
 			default:
-				'bg-gradient-to-br from-brand-gradient-from to-brand-gradient-to text-primary-foreground shadow-[0_8px_20px_-6px_color-mix(in_srgb,var(--primary)_45%,transparent)] hover:brightness-95',
+				'bg-gradient-to-br from-brand-gradient-from to-brand-gradient-to text-primary-foreground shadow-[0_8px_24px_-8px_color-mix(in_srgb,var(--primary)_60%,transparent)] hover:-translate-y-0.5 hover:shadow-glow-strong hover:brightness-105',
 			destructive: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
-			outline: 'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
+			outline:
+				'border border-input bg-background/60 shadow-sm backdrop-blur hover:border-primary/40 hover:bg-accent hover:text-accent-foreground',
+			glass:
+				'glass text-foreground hover:-translate-y-0.5 hover:text-brand-ink hover:shadow-glow',
 			secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
 			ghost: 'hover:bg-accent hover:text-accent-foreground',
 			link: 'text-primary-ink underline-offset-4 hover:underline'

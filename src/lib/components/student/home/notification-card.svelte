@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import { ROUTES } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import { formatRelativeTime } from './format';
@@ -31,8 +32,8 @@
 	const Icon = $derived(notificationIcon(notification.kind));
 </script>
 
-<form method="post" action="{ROUTES.student.notifications}?/open" use:enhance class="contents">
-	<input type="hidden" name="id" value={notification.id} />
+<ActionForm action="{ROUTES.student.notifications}?/open" class="contents">
+	<HiddenField name="id" value={notification.id} />
 	<button
 		{...buttonProps}
 		type="submit"
@@ -71,4 +72,4 @@
 			<span class="sr-only">Unread</span>
 		{/if}
 	</button>
-</form>
+</ActionForm>

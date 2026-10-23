@@ -1,9 +1,9 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
 	import Bell from '@lucide/svelte/icons/bell';
 	import CheckCheck from '@lucide/svelte/icons/check-check';
 	import SearchX from '@lucide/svelte/icons/search-x';
 	import { toast } from 'svelte-sonner';
-	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import EmptyState from '$lib/components/common/empty-state.svelte';
@@ -48,10 +48,7 @@
 	<PageHeader title="Notifications" description="Updates about your courses and account.">
 		{#snippet actions()}
 			{#if hasUnread}
-				<form
-					method="post"
-					action="?/readAll"
-					use:enhance={() => {
+				<ActionForm action="?/readAll" submit={() => {
 						marking = true;
 						return async ({ result, update }) => {
 							marking = false;
@@ -59,13 +56,12 @@
 							else toast.error('Could not mark notifications as read', { description: 'Please try again.' });
 							await update();
 						};
-					}}
-				>
+					}}>
 					<Button type="submit" variant="outline" size="sm" class="gap-2" disabled={marking}>
 						<CheckCheck class="size-4" />
 						Mark all as read
 					</Button>
-				</form>
+				</ActionForm>
 			{/if}
 		{/snippet}
 	</PageHeader>

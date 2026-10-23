@@ -18,8 +18,16 @@
 
 <!-- Installed on a phone, the tab bar sits over the bottom: leave room for it. -->
 <div
-	class="public-site flex min-h-screen flex-col standalone:max-md:pb-[calc(4rem+env(safe-area-inset-bottom))]"
+	class="public-site relative isolate flex min-h-screen flex-col overflow-x-clip standalone:max-md:pb-[calc(4rem+env(safe-area-inset-bottom))]"
 >
+	<!-- Two soft colour clouds behind every page; gradients, so scrolling never repaints them. -->
+	<div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+		<div class="glow absolute -top-1/4 -left-1/4 size-[80vmax] opacity-[0.07]"></div>
+		<div
+			class="glow absolute -right-1/4 -bottom-1/4 size-[70vmax] opacity-[0.06]"
+			style:--glow-color="var(--tertiary)"
+		></div>
+	</div>
 	<AnnouncementBar announcement={data.announcement} />
 	<PublicHeader user={data.user} categories={data.menuCategories} unreadNotifications={data.unreadNotifications} />
 	<main id="main-content" class="flex-1">{@render children()}</main>

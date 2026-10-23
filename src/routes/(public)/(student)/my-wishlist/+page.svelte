@@ -1,9 +1,10 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import Heart from '@lucide/svelte/icons/heart';
 	import ShoppingCart from '@lucide/svelte/icons/shopping-cart';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
-	import { enhance } from '$app/forms';
 	import CourseCard from '$lib/components/catalog/course-card.svelte';
 	import EmptyState from '$lib/components/common/empty-state.svelte';
 	import PageHeader from '$lib/components/common/page-header.svelte';
@@ -55,10 +56,7 @@
 							<ShoppingCart class="size-4" />
 							{step.label}
 						</Button>
-						<form
-							method="post"
-							action="?/remove"
-							use:enhance={() => {
+						<ActionForm action="?/remove" submit={() => {
 								removing = item.course.id;
 								return async ({ result, update }) => {
 									removing = null;
@@ -66,9 +64,8 @@
 									else toast.error('Could not update your wishlist', { description: 'Please try again.' });
 									await update();
 								};
-							}}
-						>
-							<input type="hidden" name="courseId" value={item.course.id} />
+							}}>
+							<HiddenField name="courseId" value={item.course.id} />
 							<Button
 								type="submit"
 								variant="outline"
@@ -80,7 +77,7 @@
 							>
 								<Trash2 class="size-4" />
 							</Button>
-						</form>
+						</ActionForm>
 					</div>
 				</div>
 			{/each}

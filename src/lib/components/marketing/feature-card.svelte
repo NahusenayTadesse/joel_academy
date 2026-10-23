@@ -11,8 +11,8 @@
 	}: { icon: Component; title: string; description: string; class?: string } = $props();
 </script>
 
-<Card class={cn('flex flex-col gap-3 p-6', className)}>
-	<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
+<Card class={cn('lift flex flex-col gap-3 p-6', className)}>
+	<span class="flex size-11 items-center justify-center rounded-xl bg-brand/10 text-brand-ink ring-1 ring-primary/15">
 		<Icon class="size-5" aria-hidden="true" />
 	</span>
 	<h3 class="text-base font-semibold text-foreground">{title}</h3>

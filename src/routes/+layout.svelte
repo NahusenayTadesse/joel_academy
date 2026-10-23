@@ -12,7 +12,7 @@
 	defaultMode="light"
 	track={false}
 	disableTransitions
-	themeColors={{ light: '#f7f9fd', dark: '#120c08' }}
+	themeColors={{ light: '#f6fafd', dark: '#050b17' }}
 />
 <PwaManager />
 {@render children()}

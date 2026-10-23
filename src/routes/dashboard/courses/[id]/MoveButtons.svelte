@@ -1,7 +1,8 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import ArrowUp from '@lucide/svelte/icons/arrow-up';
 	import ArrowDown from '@lucide/svelte/icons/arrow-down';
-	import { enhance } from '$app/forms';
 	import { Button } from '@nahu/admin-kit/components/ui/button/index.js';
 
 	/** Up and down arrows that post `{ id, direction }` to a reorder action. */
@@ -24,8 +25,8 @@
 	};
 </script>
 
-<form method="post" {action} use:enhance={submit} class="inline-flex items-center">
-	<input type="hidden" name="id" value={id} />
+<ActionForm {action} submit={submit} class="inline-flex items-center">
+	<HiddenField name="id" value={id} />
 	<Button
 		type="submit"
 		name="direction"
@@ -52,4 +53,4 @@
 	>
 		<ArrowDown class="size-4" />
 	</Button>
-</form>
+</ActionForm>

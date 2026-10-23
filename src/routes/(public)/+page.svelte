@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Reveal from '$lib/components/common/reveal.svelte';
 	import { jsonLdScript } from '$lib/json-ld';
 	import CategoriesSection from '$lib/components/home/categories-section.svelte';
 	import CtaBannerSection from '$lib/components/home/cta-banner-section.svelte';
@@ -38,64 +37,42 @@
 		<ValuePillsSection items={data.landing.valuePills} />
 	{/if}
 	{#if show.whyChooseUs && data.landing.whyChooseUs.length > 0}
-		<Reveal>
-			<WhyChooseUsSection items={data.landing.whyChooseUs} />
-		</Reveal>
+		<WhyChooseUsSection items={data.landing.whyChooseUs} />
 	{/if}
 	{#if show.howItWorks && data.landing.howItWorks.length > 0}
-		<Reveal>
-			<HowItWorksSection items={data.landing.howItWorks} />
-		</Reveal>
+		<HowItWorksSection items={data.landing.howItWorks} />
 	{/if}
 	{#if show.featuredCourses && data.featured.length > 0}
-		<Reveal>
-			<FeaturedCoursesSection courses={data.featured} />
-		</Reveal>
+		<FeaturedCoursesSection courses={data.featured} />
 	{/if}
 	{#if show.categories && data.categories.length > 0}
-		<Reveal>
-			<CategoriesSection categories={data.categories} />
-		</Reveal>
+		<CategoriesSection categories={data.categories} />
 	{/if}
 	{#if show.mentor && data.topMentor}
-		<Reveal>
-			<MentorSpotlightSection instructor={data.topMentor} />
-		</Reveal>
+		<MentorSpotlightSection instructor={data.topMentor} />
 	{/if}
 	{#if show.stats}
-		<Reveal>
-			<StatsBandSection
-				items={[
-					{ value: data.platformStats.totalCourses, label: 'Courses available', kind: 'number' },
-					{ value: data.platformStats.instructorCount, label: 'Expert instructors', kind: 'number' },
-					{ value: data.platformStats.studentsEnrolled, label: 'Students enrolled', kind: 'number' }
-				]}
-			/>
-		</Reveal>
+		<StatsBandSection
+			items={[
+				{ value: data.platformStats.totalCourses, label: 'Courses available', kind: 'number' },
+				{ value: data.platformStats.instructorCount, label: 'Expert instructors', kind: 'number' },
+				{ value: data.platformStats.studentsEnrolled, label: 'Students enrolled', kind: 'number' }
+			]}
+		/>
 	{/if}
 	{#if show.pricing}
-		<Reveal>
-			<PricingPreviewSection />
-		</Reveal>
+		<PricingPreviewSection />
 	{/if}
 	{#if show.testimonials && data.testimonials.length > 0}
-		<Reveal>
-			<TestimonialsSection testimonials={data.testimonials} />
-		</Reveal>
+		<TestimonialsSection testimonials={data.testimonials} />
 	{/if}
 	{#if show.certificateVerify}
-		<Reveal>
-			<VerifyCertificateSection />
-		</Reveal>
+		<VerifyCertificateSection />
 	{/if}
 	{#if show.faq && data.landing.faqs.length > 0}
-		<Reveal>
-			<FaqPreviewSection items={data.landing.faqs} />
-		</Reveal>
+		<FaqPreviewSection items={data.landing.faqs} />
 	{/if}
 	{#if show.finalCta}
-		<Reveal>
-			<CtaBannerSection cta={data.landing.finalCta} />
-		</Reveal>
+		<CtaBannerSection cta={data.landing.finalCta} />
 	{/if}
 </div>

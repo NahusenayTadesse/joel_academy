@@ -62,7 +62,7 @@
 {/snippet}
 
 {#if view === 'list'}
-	<Card class={cn('overflow-hidden transition-shadow hover:shadow-md', className)}>
+	<Card class={cn('lift overflow-hidden', className)}>
 		<a {href} class="flex flex-col gap-4 sm:flex-row">
 			<CourseThumbnail
 				{priority}
@@ -97,7 +97,7 @@
 		</a>
 	</Card>
 {:else}
-	<Card class={cn('group overflow-hidden transition-shadow hover:shadow-md', className)}>
+	<Card class={cn('lift group h-full overflow-hidden', className)}>
 		<a {href}>
 			<div class="relative">
 				<CourseThumbnail
@@ -113,7 +113,7 @@
 					class="absolute top-2 right-2"
 				/>
 				{#if course.featured}
-					<Badge class="absolute top-2 left-2 bg-brand text-brand-foreground">Featured</Badge>
+					<Badge class="absolute top-2 left-2 rounded-full border-0 bg-linear-to-r from-brand-gradient-from to-brand-gradient-to px-2.5 text-primary-foreground shadow-glow">Featured</Badge>
 				{/if}
 			</div>
 			<div class="flex flex-col gap-2 p-4">

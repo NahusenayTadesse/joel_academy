@@ -46,14 +46,14 @@ const hex = (value: string): RGB =>
 	rgb(parseInt(value.slice(1, 3), 16) / 255, parseInt(value.slice(3, 5), 16) / 255, parseInt(value.slice(5, 7), 16) / 255);
 
 const C = {
-	primary: hex('#336B00'),
-	accent: hex('#69BE28'),
+	primary: hex('#0B2A5C'),
+	accent: hex('#1D6FE0'),
 	gold: hex('#C5A059'),
 	borderGold: hex('#DFC68E'),
 	darkInk: hex('#0F172A'),
 	mutedInk: hex('#64748B'),
-	cardBg: hex('#F8FAF6'),
-	canvas: hex('#FCFCF9'),
+	cardBg: hex('#F5F9FD'),
+	canvas: hex('#FBFCFE'),
 	sealBg: hex('#FBF8EE'),
 	rule: hex('#E2E8F0'),
 	white: rgb(1, 1, 1),
@@ -248,7 +248,7 @@ export async function certificatePdf(input: CertificatePdfInput): Promise<Uint8A
 	rect(page, 26, 26, 790, 543, { stroke: C.gold, width: 1 });
 	rect(page, 30, 30, 782, 535, { stroke: C.borderGold, width: 0.5 });
 
-	// Corner ornaments: a gold diamond around a green one, with two ticks, turned to each corner.
+	// Corner ornaments: a gold diamond around a blue one, with two ticks, turned to each corner.
 	for (const [x, y, angle] of [
 		[28, 28, 0],
 		[814, 28, 90],

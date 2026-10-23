@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
 	/** The signed-in viewer's place on the course, from the page's load. */
 	export interface ViewerEnrollment {
 		status: 'PENDING' | 'ACTIVE' | 'REJECTED';
@@ -15,7 +16,6 @@
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import Signal from '@lucide/svelte/icons/signal';
 	import { toast } from 'svelte-sonner';
-	import { enhance } from '$app/forms';
 	import CourseThumbnail from '$lib/components/catalog/course-thumbnail.svelte';
 	import PriceTag from '$lib/components/catalog/price-tag.svelte';
 	import WishlistButton from '$lib/components/catalog/wishlist-button.svelte';
@@ -124,10 +124,7 @@
 		{:else if ctaHref}
 			<Button href={ctaHref} size="lg" class="w-full">{ctaLabel}</Button>
 		{:else}
-			<form
-				method="post"
-				action="?/enroll"
-				use:enhance={() => {
+			<ActionForm action="?/enroll" submit={() => {
 					enrolling = true;
 					return async ({ result, update }) => {
 						if (result.type === 'success' && typeof result.data?.enrollError === 'string') {
@@ -138,13 +135,12 @@
 						await update();
 						enrolling = false;
 					};
-				}}
-			>
+				}}>
 				<Button type="submit" size="lg" class="w-full" disabled={enrolling}>
 					{#if enrolling}<LoaderCircle class="mr-2 size-4 animate-spin" />{/if}
 					{enrolling ? 'Enrolling…' : ctaLabel}
 				</Button>
-			</form>
+			</ActionForm>
 		{/if}
 
 		<ul class="flex flex-col gap-2.5 text-sm text-muted-foreground">

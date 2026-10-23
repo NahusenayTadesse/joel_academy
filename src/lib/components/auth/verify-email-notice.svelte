@@ -1,6 +1,6 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
 	import MailCheck from '@lucide/svelte/icons/mail-check';
-	import { enhance } from '$app/forms';
 	import LoadingButton from '$lib/components/ui/loading-button.svelte';
 
 	/* Asks an unverified student to confirm their address, with a way to get the link again. */
@@ -34,20 +34,15 @@
 			{#if error}<p class="mt-1 text-destructive">{error}</p>{/if}
 		</div>
 	</div>
-	<form
-		method="post"
-		action="?/resendVerification"
-		class="shrink-0"
-		use:enhance={() => {
+	<ActionForm action="?/resendVerification" class="shrink-0" submit={() => {
 			sending = true;
 			return async ({ update }) => {
 				await update({ reset: false });
 				sending = false;
 			};
-		}}
-	>
+		}}>
 		<LoadingButton type="submit" variant="outline" size="sm" loading={sending} loadingText="Sending...">
 			Resend email
 		</LoadingButton>
-	</form>
+	</ActionForm>
 </div>

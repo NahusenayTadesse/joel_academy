@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import CircleX from '@lucide/svelte/icons/circle-x';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
@@ -65,7 +66,7 @@
 		<Card>
 			<CardContent class="p-5">
 				<form method="GET" class="space-y-4" data-sveltekit-keepfocus data-sveltekit-noscroll>
-					<input type="hidden" name="step" value="2" />
+					<HiddenField name="step" value="2" />
 					<div class="space-y-2">
 						<Label for="promo-code">Promo code</Label>
 						<div class="flex gap-2">

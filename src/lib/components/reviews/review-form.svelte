@@ -1,11 +1,11 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
 	import EyeOff from '@lucide/svelte/icons/eye-off';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import Pencil from '@lucide/svelte/icons/pencil';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { toast } from 'svelte-sonner';
-	import { enhance } from '$app/forms';
 	import Button from '$lib/components/ui/button.svelte';
 	import Label from '$lib/components/ui/label.svelte';
 	import Textarea from '$lib/components/ui/textarea.svelte';
@@ -70,7 +70,7 @@
 
 <div class="rounded-xl border border-border bg-card p-5">
 	{#if showForm}
-		<form method="post" action="?/review" class="flex flex-col gap-4" use:enhance={submit(own ? 'Review updated.' : 'Thanks for your review!')}>
+		<ActionForm action="?/review" class="flex flex-col gap-4" submit={submit(own ? 'Review updated.' : 'Thanks for your review!')}>
 			<h3 class="text-base font-semibold text-foreground">{own ? 'Edit your review' : 'Rate this course'}</h3>
 			<StarPicker bind:value={rating} legend="Your rating" />
 			<div class="flex flex-col gap-1.5">
@@ -100,7 +100,7 @@
 					<Button variant="outline" onclick={() => (editing = false)} disabled={busy}>Cancel</Button>
 				{/if}
 			</div>
-		</form>
+		</ActionForm>
 	{:else if own}
 		<div class="flex flex-col gap-3">
 			<div class="flex flex-wrap items-center justify-between gap-2">
@@ -120,12 +120,7 @@
 				<p class="text-sm text-destructive" role="alert">{shownError}</p>
 			{/if}
 			{#if confirmingDelete}
-				<form
-					method="post"
-					action="?/deleteReview"
-					class="flex flex-wrap items-center gap-2"
-					use:enhance={submit('Review deleted.')}
-				>
+				<ActionForm action="?/deleteReview" class="flex flex-wrap items-center gap-2" submit={submit('Review deleted.')}>
 					<p class="w-full text-sm text-foreground sm:w-auto">Delete your review?</p>
 					<Button type="submit" size="sm" variant="destructive" disabled={busy}>
 						{#if busy}<LoaderCircle class="size-4 animate-spin" aria-hidden="true" />{/if}
@@ -134,7 +129,7 @@
 					<Button size="sm" variant="outline" onclick={() => (confirmingDelete = false)} disabled={busy}>
 						Keep it
 					</Button>
-				</form>
+				</ActionForm>
 			{:else}
 				<div class="flex flex-wrap gap-2">
 					{#if canEdit}

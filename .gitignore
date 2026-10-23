@@ -7,3 +7,4 @@ build/
 .tempFiles/
 build.tar.gz
 .deploy/
+.playwright-mcp/

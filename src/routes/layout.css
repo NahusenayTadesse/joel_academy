@@ -34,153 +34,169 @@
 	}
 }
 
+/*
+ * The icy-blue theme of Joel's own site (../joel), so the academy reads as the same brand: a cool
+ * blue primary drifting to cyan, frosted-glass surfaces, and a near-black navy for dark mode.
+ */
 :root {
-	--background: hsl(216 45% 98%);
-	--foreground: hsl(204 9% 11%);
+	--background: oklch(0.985 0.006 230);
+	--foreground: oklch(0.22 0.035 245);
 
-	--card: hsl(0 0% 100%);
-	--card-foreground: hsl(204 9% 11%);
-	--popover: hsl(0 0% 100%);
-	--popover-foreground: hsl(204 9% 11%);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.22 0.035 245);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.22 0.035 245);
 
-	--primary: hsl(94 65% 45%);
-	/*
-	 * Text on the bright brand green is near-black green, not white: white on #69bd28 is 2.4:1,
-	 * this is 6.2:1 (WCAG AA). Green *text* on light surfaces uses the deeper `-ink` shades below.
-	 */
-	--on-brand: #1a2e05;
+	/* A shade deep enough that white text on it, and it as text on white, both pass WCAG AA. */
+	--primary: oklch(0.52 0.16 248);
+	--on-brand: oklch(1 0 0);
 	--primary-foreground: var(--on-brand);
-	--secondary: hsl(220 20% 95%);
-	--secondary-foreground: hsl(230 20% 15%);
+	--secondary: oklch(0.95 0.014 232);
+	--secondary-foreground: oklch(0.25 0.04 245);
 
-	--muted: hsl(216 24% 96%);
-	/* 45% (was 48%): the smallest step that reads at WCAG AA (4.5:1) on the page and muted surfaces. */
-	--muted-foreground: hsl(218 12% 45%);
-	--accent: hsl(218 27% 94%);
-	--accent-foreground: hsl(204 9% 11%);
+	--muted: oklch(0.955 0.012 232);
+	--muted-foreground: oklch(0.47 0.035 242);
+	--accent: oklch(0.94 0.022 236);
+	--accent-foreground: oklch(0.22 0.035 245);
 
-	--destructive: hsl(4 86% 58%);
+	--destructive: hsl(4 80% 54%);
 	--destructive-foreground: hsl(0 0% 100%);
-	--success: hsl(94 65% 45%);
-	--success-foreground: var(--on-brand);
-	--warning: hsl(44 100% 48%);
+	/* Success stays a (cool, teal-leaning) green: it means "done", it is not the brand. */
+	--success: oklch(0.6 0.12 170);
+	--success-foreground: oklch(1 0 0);
+	--warning: hsl(40 96% 50%);
 	--warning-foreground: hsl(24 10% 10%);
-	--info: hsl(217 91% 60%);
+	--info: oklch(0.6 0.13 225);
 	--info-foreground: hsl(0 0% 100%);
 
-	--border: hsl(216 28% 90%);
-	--input: hsl(216 28% 90%);
-	--ring: hsl(94 65% 45%);
+	--border: oklch(0.91 0.016 236);
+	--input: oklch(0.89 0.02 236);
+	--ring: oklch(0.52 0.16 248);
 
-	--brand: hsl(94 65% 45%);
+	--brand: oklch(0.52 0.16 248);
 	--brand-foreground: var(--on-brand);
-	/* Green text on white (5.5:1) and on the pale green chips (4.8:1). */
-	--brand-ink: hsl(94 65% 28%);
-	--success-ink: hsl(94 65% 28%);
-	--primary-ink: hsl(94 65% 28%);
-	/* Dark green - active nav text/icons on a light chip, headings on light backgrounds. */
-	--brand-dark: hsl(91 100% 21%);
-	/* Primary button gradient stops: linear-gradient(135deg, light -> primary). */
-	--brand-gradient-from: hsl(94 61% 56%);
-	--brand-gradient-to: hsl(94 65% 45%);
+	--brand-ink: oklch(0.47 0.16 250);
+	--success-ink: oklch(0.45 0.1 170);
+	--primary-ink: oklch(0.47 0.16 250);
+	--brand-dark: oklch(0.34 0.11 252);
+	/* Primary button gradient stops: linear-gradient(135deg, from -> to). */
+	--brand-gradient-from: oklch(0.54 0.18 258);
+	--brand-gradient-to: oklch(0.55 0.13 222);
 
-	--secondary-blue: hsl(228 30% 39%);
-	--tertiary: hsl(173 100% 21%);
+	--secondary-blue: oklch(0.45 0.1 255);
+	--tertiary: oklch(0.55 0.11 205);
 	--tertiary-foreground: hsl(0 0% 100%);
-	--placeholder: hsl(216 17% 65%);
+	--placeholder: oklch(0.68 0.025 240);
 
-	--chart-1: hsl(152 69% 41%);
-	--chart-2: hsl(217 91% 60%);
-	--chart-3: hsl(45 93% 47%);
-	--chart-4: hsl(262 83% 58%);
-	--chart-5: hsl(24 95% 53%);
-	--chart-6: hsl(187 92% 41%);
-	--chart-7: hsl(330 81% 60%);
-	--chart-8: hsl(84 81% 44%);
+	--chart-1: oklch(0.6 0.17 250);
+	--chart-2: oklch(0.68 0.12 215);
+	--chart-3: hsl(42 93% 50%);
+	--chart-4: oklch(0.58 0.2 285);
+	--chart-5: hsl(20 92% 56%);
+	--chart-6: oklch(0.7 0.12 190);
+	--chart-7: hsl(330 75% 60%);
+	--chart-8: oklch(0.72 0.1 160);
 
-	--radius: 0.5rem;
+	--radius: 0.75rem;
 
 	/* A permanently dark navy sidebar, independent of the light/dark toggle. */
-	--sidebar: hsl(226 74% 15%);
-	--sidebar-foreground: hsl(229 87% 85%);
-	--sidebar-primary: hsl(94 65% 45%);
-	--sidebar-primary-foreground: var(--on-brand);
-	--sidebar-accent: hsl(226 40% 22%);
+	--sidebar: oklch(0.17 0.04 252);
+	--sidebar-foreground: oklch(0.86 0.04 240);
+	--sidebar-primary: oklch(0.66 0.15 242);
+	--sidebar-primary-foreground: oklch(0.15 0.04 252);
+	--sidebar-accent: oklch(0.24 0.05 252);
 	--sidebar-accent-foreground: hsl(0 0% 100%);
-	--sidebar-border: hsl(226 40% 22%);
-	--sidebar-ring: hsl(94 65% 45%);
+	--sidebar-border: oklch(0.24 0.05 252);
+	--sidebar-ring: oklch(0.66 0.15 242);
 
-	--auth-gradient-from: hsl(261 60% 97%);
-	--auth-gradient-via: hsl(0 0% 100%);
-	--auth-gradient-to: hsl(217 70% 96%);
+	--auth-gradient-from: oklch(0.96 0.025 240);
+	--auth-gradient-via: oklch(0.99 0.004 230);
+	--auth-gradient-to: oklch(0.96 0.03 210);
 
 	/*
-	 * Theme-independent near-black surface for cinematic hero and dark-band marketing sections
-	 * (#120c08). Fixed in both themes, like the sidebar.
+	 * Theme-independent deep navy for the cinematic bands (the learning framework, the final call
+	 * to action). Fixed in both themes, like the sidebar.
 	 */
-	--surface-dark: hsl(24 38% 5%);
-	--surface-dark-foreground: hsl(0 0% 100%);
+	--surface-dark: oklch(0.13 0.03 252);
+	--surface-dark-foreground: oklch(0.98 0.01 230);
+
+	/* The site's glass, gradient text and glows (see "Glass and light" below). */
+	--site-deep: oklch(0.955 0.016 232);
+	--glass-bg: rgb(255 255 255 / 0.6);
+	--glass-card-bg: rgb(255 255 255 / 0.72);
+	--glass-border: rgb(12 40 80 / 0.09);
+	--glass-shadow: 0 8px 32px rgb(20 70 140 / 0.08);
+	--gradient-from: #1d6fe0;
+	--gradient-to: #0a9ec2;
 }
 
 .dark {
-	--background: hsl(24 38% 5%);
-	--foreground: hsl(220 20% 96%);
+	--background: oklch(0.12 0.025 252);
+	--foreground: oklch(0.97 0.01 230);
 
-	--card: hsl(24 30% 8%);
-	--card-foreground: hsl(220 20% 96%);
-	--popover: hsl(24 30% 8%);
-	--popover-foreground: hsl(220 20% 96%);
+	--card: oklch(0.17 0.03 252);
+	--card-foreground: oklch(0.97 0.01 230);
+	--popover: oklch(0.17 0.03 252);
+	--popover-foreground: oklch(0.97 0.01 230);
 
-	--primary: hsl(94 60% 52%);
-	--primary-foreground: hsl(230 25% 8%);
-	--secondary: hsl(230 15% 16%);
-	--secondary-foreground: hsl(220 20% 96%);
+	--primary: oklch(0.72 0.14 238);
+	--primary-foreground: oklch(0.14 0.03 252);
+	--secondary: oklch(0.22 0.035 252);
+	--secondary-foreground: oklch(0.97 0.01 230);
 
-	--muted: hsl(230 15% 16%);
-	--muted-foreground: hsl(220 10% 65%);
-	--accent: hsl(230 15% 18%);
-	--accent-foreground: hsl(220 20% 96%);
+	--muted: oklch(0.2 0.03 252);
+	--muted-foreground: oklch(0.74 0.035 238);
+	--accent: oklch(0.24 0.04 250);
+	--accent-foreground: oklch(0.97 0.01 230);
 
-	--destructive: hsl(4 70% 45%);
+	--destructive: hsl(4 70% 50%);
 	--destructive-foreground: hsl(0 0% 98%);
-	--success: hsl(94 55% 48%);
-	--success-foreground: hsl(230 25% 8%);
-	--warning: hsl(44 100% 48%);
+	--success: oklch(0.72 0.12 170);
+	--success-foreground: oklch(0.14 0.03 252);
+	--warning: hsl(42 96% 52%);
 	--warning-foreground: hsl(24 10% 10%);
-	--info: hsl(217 91% 65%);
-	--info-foreground: hsl(0 0% 98%);
+	--info: oklch(0.72 0.12 225);
+	--info-foreground: oklch(0.14 0.03 252);
 
-	--border: hsl(230 15% 18%);
-	--input: hsl(230 15% 18%);
-	--ring: hsl(94 60% 52%);
+	--border: oklch(1 0 0 / 0.1);
+	--input: oklch(1 0 0 / 0.14);
+	--ring: oklch(0.72 0.14 238);
 
-	--brand: hsl(94 60% 52%);
-	--brand-foreground: hsl(230 25% 8%);
-	--brand-dark: hsl(91 70% 60%);
-	/* On dark surfaces the bright green already reads well as text. */
+	--brand: oklch(0.72 0.14 238);
+	--brand-foreground: oklch(0.14 0.03 252);
+	--brand-dark: oklch(0.82 0.1 232);
+	/* On dark surfaces the light blue already reads well as text. */
 	--brand-ink: var(--brand);
 	--success-ink: var(--success);
 	--primary-ink: var(--primary);
-	--brand-gradient-from: hsl(94 55% 60%);
-	--brand-gradient-to: hsl(94 60% 52%);
+	--brand-gradient-from: oklch(0.74 0.14 245);
+	--brand-gradient-to: oklch(0.82 0.11 212);
 
-	--secondary-blue: hsl(228 40% 65%);
-	--tertiary: hsl(173 60% 45%);
-	--tertiary-foreground: hsl(173 100% 10%);
-	--placeholder: hsl(220 10% 45%);
+	--secondary-blue: oklch(0.75 0.09 245);
+	--tertiary: oklch(0.72 0.1 205);
+	--tertiary-foreground: oklch(0.14 0.03 252);
+	--placeholder: oklch(0.55 0.03 245);
 
-	--chart-1: hsl(152 69% 48%);
-	--chart-2: hsl(217 91% 65%);
-	--chart-3: hsl(45 93% 55%);
-	--chart-4: hsl(262 83% 68%);
-	--chart-5: hsl(24 95% 60%);
-	--chart-6: hsl(187 92% 50%);
-	--chart-7: hsl(330 81% 68%);
-	--chart-8: hsl(84 81% 52%);
+	--chart-1: oklch(0.7 0.15 245);
+	--chart-2: oklch(0.78 0.11 212);
+	--chart-3: hsl(42 93% 58%);
+	--chart-4: oklch(0.7 0.16 285);
+	--chart-5: hsl(20 92% 62%);
+	--chart-6: oklch(0.78 0.1 190);
+	--chart-7: hsl(330 75% 68%);
+	--chart-8: oklch(0.78 0.09 160);
 
-	--auth-gradient-from: hsl(261 30% 10%);
-	--auth-gradient-via: hsl(230 25% 7%);
-	--auth-gradient-to: hsl(217 35% 9%);
+	--auth-gradient-from: oklch(0.16 0.04 255);
+	--auth-gradient-via: oklch(0.12 0.025 252);
+	--auth-gradient-to: oklch(0.16 0.04 220);
+
+	--site-deep: oklch(0.1 0.025 252);
+	--glass-bg: rgb(255 255 255 / 0.035);
+	--glass-card-bg: rgb(255 255 255 / 0.05);
+	--glass-border: rgb(255 255 255 / 0.1);
+	--glass-shadow: 0 8px 32px rgb(0 0 0 / 0.37);
+	--gradient-from: #7cc4ff;
+	--gradient-to: #c4f1ff;
 }
 
 @theme inline {
@@ -248,6 +264,7 @@
 
 	--color-surface-dark: var(--surface-dark);
 	--color-surface-dark-foreground: var(--surface-dark-foreground);
+	--color-site-deep: var(--site-deep);
 
 	--radius-xs: 0.25rem;
 	--radius-sm: 0.375rem;
@@ -354,7 +371,7 @@
 		line-height: inherit;
 	}
 	::selection {
-		@apply bg-brand/20;
+		@apply bg-brand/25;
 	}
 }
 
@@ -428,5 +445,257 @@
 	}
 	.text-balance {
 		text-wrap: balance;
+	}
+}
+
+/*
+ * ─── Glass and light ──────────────────────────────────────────────────────────────────────────
+ * The frosted surfaces, gradient text and colour clouds of Joel's site. `glass`/`glass-card` sit
+ * in the components layer, so a `rounded-*` or `p-*` next to them still applies.
+ */
+@layer components {
+	.glass {
+		background: var(--glass-bg);
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		border: 1px solid var(--glass-border);
+	}
+	.glass-card {
+		background: var(--glass-card-bg);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid var(--glass-border);
+		box-shadow: var(--glass-shadow);
+	}
+	.text-gradient {
+		background: linear-gradient(100deg, var(--gradient-from), var(--gradient-to));
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+	/* Light-on-dark gradient text for the fixed navy bands, whatever the theme. */
+	.text-gradient-ice {
+		background: linear-gradient(100deg, #7cc4ff, #c4f1ff);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+	/*
+	 * A soft colour cloud: a radial gradient rather than a blurred circle, which would be repainted
+	 * whenever anything under it moves.
+	 */
+	.glow {
+		pointer-events: none;
+		border-radius: 9999px;
+		background: radial-gradient(
+			closest-side,
+			var(--glow-color, var(--primary)) 0%,
+			color-mix(in oklab, var(--glow-color, var(--primary)) 45%, transparent) 50%,
+			transparent 100%
+		);
+	}
+	/* A faint engineering grid that fades out toward the edges. */
+	.bg-grid {
+		background-image:
+			linear-gradient(color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px);
+		background-size: 56px 56px;
+		mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+	}
+	/* A hairline gradient border (blue to cyan) drawn with a mask, for highlighted cards. */
+	.gradient-border {
+		position: relative;
+	}
+	.gradient-border::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		padding: 1px;
+		border-radius: inherit;
+		background: linear-gradient(135deg, var(--gradient-from), transparent 40%, transparent 60%, var(--gradient-to));
+		-webkit-mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		-webkit-mask-composite: xor;
+		mask-composite: exclude;
+		pointer-events: none;
+		opacity: 0.7;
+	}
+	/* Cards that rise toward the pointer. */
+	.lift {
+		transition:
+			transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+			box-shadow 0.35s ease,
+			border-color 0.35s ease;
+	}
+	.lift:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 18px 40px -16px color-mix(in oklab, var(--primary) 40%, transparent);
+		border-color: color-mix(in oklab, var(--primary) 35%, var(--border));
+	}
+}
+
+@utility shadow-glow {
+	box-shadow: 0 0 24px color-mix(in oklab, var(--primary) 35%, transparent);
+}
+@utility shadow-glow-strong {
+	box-shadow: 0 0 34px color-mix(in oklab, var(--primary) 55%, transparent);
+}
+
+@theme {
+	--animate-float: float 6s ease-in-out infinite;
+	--animate-bob-up: bob-up 4s ease-in-out infinite;
+	--animate-bob-down: bob-down 5s ease-in-out 1s infinite;
+	--animate-spin-slow: spin 60s linear infinite;
+	--animate-spin-slow-reverse: spin-reverse 90s linear infinite;
+	--animate-marquee: marquee 40s linear infinite;
+	--animate-shimmer: shimmer 3s linear infinite;
+	--animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+
+	@keyframes float {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-16px);
+		}
+	}
+	@keyframes bob-up {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-10px);
+		}
+	}
+	@keyframes bob-down {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(10px);
+		}
+	}
+	@keyframes spin-reverse {
+		to {
+			transform: rotate(-360deg);
+		}
+	}
+	@keyframes marquee {
+		to {
+			transform: translateX(-50%);
+		}
+	}
+	@keyframes shimmer {
+		from {
+			background-position: 0% 50%;
+		}
+		to {
+			background-position: 200% 50%;
+		}
+	}
+	@keyframes pulse-ring {
+		from {
+			transform: scale(0.6);
+			opacity: 0.8;
+		}
+		to {
+			transform: scale(2.4);
+			opacity: 0;
+		}
+	}
+}
+
+/*
+ * ─── Entrances and reveals ────────────────────────────────────────────────────────────────────
+ * `enter-*` plays on load (the hero); `reveal` waits until the element scrolls into view, where
+ * the `inView` attachment ($lib/attachments) adds `is-visible`. Both are CSS, so the server-
+ * rendered page animates without waiting for hydration, and `reveal` hides content only once
+ * scripts run (`html.js`, set in app.html): without JavaScript everything is simply there.
+ * `--delay` staggers siblings.
+ */
+@keyframes enter-up {
+	from {
+		opacity: 0;
+		transform: translateY(28px);
+		filter: blur(6px);
+	}
+}
+@keyframes enter-left {
+	from {
+		opacity: 0;
+		transform: translateX(-40px);
+	}
+}
+@keyframes enter-zoom {
+	from {
+		opacity: 0;
+		transform: scale(0.82) rotate(-8deg);
+	}
+}
+@keyframes enter-fade {
+	from {
+		opacity: 0;
+	}
+}
+
+.enter-up {
+	animation: enter-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both;
+}
+.enter-left {
+	animation: enter-left 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both;
+}
+.enter-zoom {
+	animation: enter-zoom 1.4s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both;
+}
+.enter-fade {
+	animation: enter-fade 1.2s ease-out var(--delay, 0s) both;
+}
+
+.js .reveal {
+	opacity: 0;
+	transform: translateY(var(--reveal-y, 32px)) scale(var(--reveal-scale, 1));
+	filter: blur(var(--reveal-blur, 4px));
+	transition:
+		opacity 0.7s ease-out var(--delay, 0s),
+		transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
+		filter 0.7s ease-out var(--delay, 0s);
+}
+.js .reveal.is-visible {
+	opacity: 1;
+	transform: none;
+	filter: none;
+}
+/*
+ * Children of a `reveal-stagger` group rise one after another once the group is in view. An
+ * animation that fills only backwards, not a transition, so once it ends the children's own
+ * transforms (a card's hover lift) apply again.
+ */
+.js .reveal-stagger > * {
+	opacity: 0;
+}
+.js .reveal-stagger.is-visible > * {
+	opacity: 1;
+	animation: enter-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.reveal-stagger > :nth-child(2) { animation-delay: 0.08s; }
+.reveal-stagger > :nth-child(3) { animation-delay: 0.16s; }
+.reveal-stagger > :nth-child(4) { animation-delay: 0.24s; }
+.reveal-stagger > :nth-child(5) { animation-delay: 0.32s; }
+.reveal-stagger > :nth-child(6) { animation-delay: 0.4s; }
+.reveal-stagger > :nth-child(7) { animation-delay: 0.48s; }
+.reveal-stagger > :nth-child(n + 8) { animation-delay: 0.56s; }
+
+@media (prefers-reduced-motion: reduce) {
+	.public-site *,
+	.public-site *::before,
+	.public-site *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		transition-delay: 0s !important;
 	}
 }

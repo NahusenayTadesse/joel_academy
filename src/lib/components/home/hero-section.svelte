@@ -1,18 +1,30 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
+	import Award from '@lucide/svelte/icons/award';
+	import Globe from '@lucide/svelte/icons/globe';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import Search from '@lucide/svelte/icons/search';
 	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import Button from '$lib/components/ui/button.svelte';
-	import Input from '$lib/components/ui/input.svelte';
-	import { DEFAULT_HERO_IMAGE, DEFAULT_LANDING, type LandingHero } from '$lib/content/landing';
-	import { mediaUrl } from '$lib/media';
+	import { DEFAULT_LANDING, type LandingHero } from '$lib/content/landing';
 	import { ROUTES } from '$lib/site';
+	import BrandGlobe from './brand-globe.svelte';
 
 	let { hero = DEFAULT_LANDING.hero }: { hero?: LandingHero } = $props();
 
-	const heroImage = $derived(mediaUrl(hero.image) ?? DEFAULT_HERO_IMAGE);
+	/** The heading's last two words carry the gradient. */
+	const heading = $derived.by(() => {
+		const words = hero.heading.trim().split(/\s+/);
+		const split = Math.max(0, words.length - 2);
+		return { lead: words.slice(0, split).join(' '), accent: words.slice(split).join(' ') };
+	});
+
+	const HIGHLIGHTS = [
+		{ icon: Sparkles, label: 'AI-first curriculum' },
+		{ icon: Award, label: 'Verified certificates' },
+		{ icon: Globe, label: 'Learn from anywhere' }
+	];
 
 	let query = $state('');
 	let isPending = $state(false);
@@ -32,43 +44,70 @@
 	}
 </script>
 
-<section class="border-b border-border bg-background">
+<section class="relative isolate overflow-hidden">
+	<!-- Backdrop: a faint grid and two colour clouds. -->
+	<div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+		<div class="bg-grid absolute inset-0 opacity-70"></div>
+		<div
+			class="glow absolute -top-1/3 -left-1/4 size-[70rem] opacity-20"
+			style:--glow-color="var(--primary)"
+		></div>
+		<div
+			class="glow absolute -right-1/4 -bottom-1/2 size-[60rem] opacity-15"
+			style:--glow-color="var(--tertiary)"
+		></div>
+	</div>
+
 	<div
-		class="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-2 lg:gap-16"
+		class="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 px-4 pt-14 pb-20 sm:px-6 sm:pt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-8 lg:pt-24 lg:pb-28"
 	>
-		<div class="flex flex-col gap-6">
+		<div class="flex min-w-0 flex-col gap-7">
 			<span
-				class="inline-flex w-fit items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand-ink uppercase"
+				class="glass enter-up inline-flex w-fit items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-ink uppercase"
 			>
-				<Sparkles class="size-3.5" />
+				<span class="relative flex size-2">
+					<span class="absolute inset-0 animate-pulse-ring rounded-full bg-primary"></span>
+					<span class="relative size-2 rounded-full bg-primary"></span>
+				</span>
 				{hero.badge}
 			</span>
-			<h1 class="text-4xl leading-[1.05] font-bold tracking-tight text-foreground sm:text-5xl">
-				{hero.heading}
+
+			<h1
+				class="enter-up text-[2.75rem] leading-[1.02] font-bold tracking-tight text-balance text-foreground sm:text-6xl lg:text-7xl"
+				style:--delay="0.08s"
+			>
+				{#if heading.lead}{heading.lead}{' '}{/if}<span class="text-gradient">{heading.accent}</span>
 			</h1>
-			<p class="max-w-lg text-lg text-muted-foreground">{hero.description}</p>
+
+			<p
+				class="enter-up max-w-xl text-lg leading-relaxed text-muted-foreground"
+				style:--delay="0.16s"
+			>
+				{hero.description}
+			</p>
 
 			<form
 				method="GET"
 				action={ROUTES.courses.list}
 				onsubmit={handleSearch}
-				class="flex w-full max-w-md items-center gap-2"
+				class="glass-card enter-up flex w-full max-w-lg items-center gap-2 rounded-2xl p-1.5"
+				style:--delay="0.24s"
 			>
-				<div class="relative flex-1">
+				<div class="relative min-w-0 flex-1">
 					<Search
 						class="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
 						aria-hidden="true"
 					/>
-					<Input
+					<input
 						name="search"
 						bind:value={query}
 						placeholder="What do you want to learn?"
 						aria-label="Search courses"
 						disabled={isPending}
-						class="h-12 pl-10"
+						class="h-11 w-full min-w-0 rounded-xl bg-transparent pr-3 pl-10 text-base text-foreground placeholder:text-placeholder focus-visible:outline-none md:text-sm"
 					/>
 				</div>
-				<Button type="submit" size="lg" disabled={isPending} class="h-12 shrink-0">
+				<Button type="submit" disabled={isPending} class="h-11 shrink-0 rounded-xl">
 					{#if isPending}
 						<LoaderCircle class="size-4 animate-spin" />
 						Searching...
@@ -78,42 +117,31 @@
 				</Button>
 			</form>
 
-			<div class="flex flex-wrap items-center gap-3">
-				<Button href={hero.primaryCtaUrl} size="lg">
+			<div class="enter-up flex flex-wrap items-center gap-3" style:--delay="0.32s">
+				<Button href={hero.primaryCtaUrl} size="lg" class="group">
 					{hero.primaryCtaText}
-					<ArrowRight class="size-4" />
+					<ArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
 				</Button>
-				<Button href={hero.secondaryCtaUrl} variant="outline" size="lg">{hero.secondaryCtaText}</Button>
+				<Button href={hero.secondaryCtaUrl} variant="glass" size="lg">
+					{hero.secondaryCtaText}
+				</Button>
 			</div>
+
+			<ul class="flex flex-wrap gap-2.5">
+				{#each HIGHLIGHTS as item, index (item.label)}
+					<li
+						class="glass enter-up flex items-center gap-2 rounded-xl px-3 py-2"
+						style:--delay="{0.45 + index * 0.08}s"
+					>
+						<item.icon class="size-4 shrink-0 text-brand-ink" aria-hidden="true" />
+						<span class="text-xs font-semibold whitespace-nowrap text-foreground/85">{item.label}</span>
+					</li>
+				{/each}
+			</ul>
 		</div>
 
-		<div
-			class="relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-surface-dark lg:aspect-square"
-		>
-			<!-- The page's largest image: fetched first rather than discovered late. -->
-			<img
-				src={heroImage}
-				alt={hero.imageAlt}
-				class="size-full object-cover"
-				width="1200"
-				height="637"
-				fetchpriority="high"
-				decoding="async"
-			/>
-			<div
-				class="absolute inset-0 opacity-60 mix-blend-multiply"
-				style:background-image="radial-gradient(circle at 20% 20%, color-mix(in srgb, var(--chart-1) 50%, transparent), transparent 45%), radial-gradient(circle at 80% 30%, color-mix(in srgb, var(--surface-dark) 60%, transparent), transparent 50%)"
-				aria-hidden="true"
-			></div>
-			<div
-				class="absolute inset-0 bg-linear-to-t from-surface-dark via-surface-dark/10 to-transparent"
-				aria-hidden="true"
-			></div>
-			{#if hero.imageCaption}
-				<div class="absolute inset-x-0 bottom-0 p-8">
-					<p class="max-w-xs text-sm text-slate-300">{hero.imageCaption}</p>
-				</div>
-			{/if}
+		<div class="relative min-w-0">
+			<BrandGlobe caption={hero.imageCaption} />
 		</div>
 	</div>
 </section>

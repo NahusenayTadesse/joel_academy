@@ -99,7 +99,7 @@
 			loading={priority === 'lazy' ? 'lazy' : 'eager'}
 			fetchpriority={priority === 'high' ? 'high' : 'auto'}
 			decoding="async"
-			class="absolute inset-0 size-full object-cover"
+			class="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
 			onerror={() => (imageError = true)}
 		/>
 		{#if showBadge}

@@ -25,13 +25,13 @@
 		qr?: { size: number; path: string } | null;
 	} = $props();
 
-	const primary = '#336B00';
-	const accent = '#69BE28';
+	const primary = '#0B2A5C';
+	const accent = '#1D6FE0';
 	const gold = '#C5A059';
 	const borderGold = '#DFC68E';
 	const darkInk = '#0F172A';
 	const mutedInk = '#64748B';
-	const cardBg = '#F8FAF6';
+	const cardBg = '#F5F9FD';
 	const font = 'Helvetica, Arial, sans-serif';
 
 	function star(cx: number, cy: number, outer: number, inner: number) {
@@ -68,7 +68,7 @@
 	class="block h-auto w-full"
 	font-family={font}
 >
-	<rect x="0" y="0" width="842" height="595" fill="#FCFCF9" />
+	<rect x="0" y="0" width="842" height="595" fill="#FBFCFE" />
 	<rect x="14" y="14" width="814" height="567" fill="#FFFFFF" />
 	<rect x="18" y="18" width="806" height="559" fill="none" stroke={primary} stroke-width="3" />
 	<rect x="26" y="26" width="790" height="543" fill="none" stroke={gold} stroke-width="1" />

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import CircleHelp from '@lucide/svelte/icons/circle-help';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
-	import ImageUp from '@lucide/svelte/icons/image-up';
 	import Layers from '@lucide/svelte/icons/layers';
 	import LayoutDashboard from '@lucide/svelte/icons/layout-dashboard';
 	import ListOrdered from '@lucide/svelte/icons/list-ordered';
@@ -12,10 +11,8 @@
 	import ShieldCheck from '@lucide/svelte/icons/shield-check';
 	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import Users from '@lucide/svelte/icons/users';
-	import X from '@lucide/svelte/icons/x';
 	import Zap from '@lucide/svelte/icons/zap';
 	import { toast } from 'svelte-sonner';
-	import { deserialize } from '$app/forms';
 	import PageHeader from '@nahu/admin-kit/components/PageHeader.svelte';
 	import Notice from '@nahu/admin-kit/components/Notice.svelte';
 	import * as Card from '@nahu/admin-kit/components/ui/card/index.js';
@@ -25,9 +22,7 @@
 	import { Switch } from '@nahu/admin-kit/components/ui/switch/index.js';
 	import { Textarea } from '@nahu/admin-kit/components/ui/textarea/index.js';
 	import { confirmLeave, createForm } from '@nahu/admin-kit/forms/createForm';
-	import { fileUrl } from '@nahu/admin-kit/files';
 	import {
-		DEFAULT_HERO_IMAGE,
 		defaultSection,
 		landingSchema,
 		type LandingSettings,
@@ -116,42 +111,6 @@
 
 	function without<T>(list: T[], index: number): T[] {
 		return list.filter((_, i) => i !== index);
-	}
-
-	// --- Hero image ---
-	let uploading = $state(false);
-	const heroPreview = $derived(
-		$form.hero.image.startsWith('/') ? $form.hero.image : fileUrl($form.hero.image)
-	);
-
-	async function uploadHero(event: Event & { currentTarget: HTMLInputElement }) {
-		const input = event.currentTarget;
-		const file = input.files?.[0];
-		if (!file) return;
-		uploading = true;
-		try {
-			const body = new FormData();
-			body.append('image', file);
-			const response = await fetch('?/uploadHero', {
-				method: 'POST',
-				body,
-				headers: { 'x-sveltekit-action': 'true' }
-			});
-			const result = deserialize(await response.text());
-			if (result.type === 'success' && typeof result.data?.image === 'string') {
-				$form.hero.image = result.data.image;
-				toast.success('Image uploaded. Save the page to publish it.');
-			} else if (result.type === 'failure') {
-				toast.error(String(result.data?.message ?? 'The upload failed.'));
-			} else {
-				toast.error('The upload failed.');
-			}
-		} catch {
-			toast.error('The upload failed.');
-		} finally {
-			uploading = false;
-			input.value = '';
-		}
 	}
 
 	// --- Mentor ---
@@ -302,72 +261,14 @@
 						</Field>
 					</div>
 
-					<div class="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,18rem)_1fr]">
-						<div
-							class="relative aspect-4/3 w-full overflow-hidden rounded-xl border bg-muted"
-						>
-							{#if heroPreview}
-								<img src={heroPreview} alt={$form.hero.imageAlt} class="size-full object-cover" />
-							{/if}
-							{#if uploading}
-								<div class="absolute inset-0 flex items-center justify-center bg-background/60">
-									<LoaderCircle class="size-6 animate-spin" />
-								</div>
-							{/if}
-						</div>
-						<div class="flex flex-col gap-3">
-							<Field
-								id="hero-image"
-								label="Hero image"
-								hint="PNG, JPG or WebP up to 10 MB. Square or 4:3 crops best."
-								errors={$errors.hero?.image}
-							>
-								<div class="flex flex-wrap items-center gap-2">
-									<Button
-										type="button"
-										variant="outline"
-										size="sm"
-										disabled={uploading}
-										onclick={() => document.getElementById('hero-image')?.click()}
-									>
-										<ImageUp class="size-4" /> Upload new image
-									</Button>
-									{#if $form.hero.image !== DEFAULT_HERO_IMAGE}
-										<Button
-											type="button"
-											variant="ghost"
-											size="sm"
-											onclick={() => ($form.hero.image = DEFAULT_HERO_IMAGE)}
-										>
-											<X class="size-4" /> Use the original image
-										</Button>
-									{/if}
-									<input
-										id="hero-image"
-										type="file"
-										accept="image/png,image/jpeg,image/webp,image/gif"
-										class="sr-only"
-										onchange={uploadHero}
-									/>
-								</div>
-							</Field>
-							<Field
-								id="hero-alt"
-								label="Image description (for screen readers)"
-								errors={$errors.hero?.imageAlt}
-							>
-								<Input id="hero-alt" bind:value={$form.hero.imageAlt} />
-							</Field>
-							<Field
-								id="hero-caption"
-								label="Caption over the image"
-								hint="Leave empty for no caption."
-								errors={$errors.hero?.imageCaption}
-							>
-								<Textarea id="hero-caption" rows={2} bind:value={$form.hero.imageCaption} />
-							</Field>
-						</div>
-					</div>
+					<Field
+						id="hero-caption"
+						label="Caption under the globe"
+						hint="A short line beside the spinning globe. Leave empty for none."
+						errors={$errors.hero?.imageCaption}
+					>
+						<Textarea id="hero-caption" rows={2} bind:value={$form.hero.imageCaption} />
+					</Field>
 				</Card.Content>
 			</Card.Root>
 		{:else if activeTab === 'valuePills' || activeTab === 'whyChooseUs'}

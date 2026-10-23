@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import Button from '$lib/components/ui/button.svelte';
 
@@ -15,7 +16,7 @@
 <svelte:window onpageshow={(event) => event.persisted && (connecting = false)} />
 
 <form method="post" action="/login/google" onsubmit={() => (connecting = true)}>
-	{#if redirectTo}<input type="hidden" name="redirectTo" value={redirectTo} />{/if}
+	{#if redirectTo}<HiddenField name="redirectTo" value={redirectTo} />{/if}
 	<Button
 		type="submit"
 		variant="outline"

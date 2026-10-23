@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Quote from '@lucide/svelte/icons/quote';
 	import Star from '@lucide/svelte/icons/star';
-	import Card from '$lib/components/ui/card.svelte';
 	import type { Testimonial } from '$lib/content/testimonial.types';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
@@ -17,9 +16,9 @@
 	);
 </script>
 
-<Card class={cn('flex h-full flex-col gap-4 p-6', className)}>
-	<Quote class="size-6 text-brand/40" aria-hidden="true" />
-	<p class="flex-1 text-sm leading-relaxed text-foreground">&ldquo;{testimonial.quote}&rdquo;</p>
+<div class={cn('glass-card lift flex h-full flex-col gap-4 rounded-3xl p-7', className)}>
+	<Quote class="size-8 text-brand/50" aria-hidden="true" />
+	<p class="flex-1 text-base leading-relaxed text-foreground">&ldquo;{testimonial.quote}&rdquo;</p>
 	<div class="flex items-center gap-1" role="img" aria-label="{testimonial.rating} out of 5 stars">
 		{#each { length: 5 }, index (index)}
 			<Star
@@ -53,4 +52,4 @@
 			<p class="truncate text-xs text-muted-foreground">{testimonial.role}</p>
 		</div>
 	</div>
-</Card>
+</div>

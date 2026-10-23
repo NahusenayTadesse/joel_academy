@@ -3,7 +3,9 @@
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import Button from '$lib/components/ui/button.svelte';
+	import { inView } from '$lib/attachments';
 	import type { Testimonial } from '$lib/content/testimonial.types';
+	import SectionTitle from '$lib/components/home/section-title.svelte';
 	import TestimonialCard from './testimonial-card.svelte';
 
 	let { testimonials: items }: { testimonials: Testimonial[] } = $props();
@@ -61,16 +63,14 @@
 	};
 </script>
 
-<section class="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
-	<div class="mb-8 flex items-end justify-between gap-4">
-		<div>
-			<h2 class="text-2xl font-semibold tracking-tight text-foreground">Engineered Success</h2>
-			<p class="mt-1 text-sm text-muted-foreground">
-				Real feedback from learners who completed our courses.
-			</p>
-		</div>
-	</div>
-	<div class="relative" role="region" aria-roledescription="carousel">
+<section class="mx-auto w-full max-w-7xl px-4 py-24 sm:px-6">
+	<SectionTitle
+		eyebrow="Testimonials"
+		title="Engineered"
+		accent="success"
+		subtitle="Real feedback from learners who completed our courses."
+	/>
+	<div class="reveal relative" role="region" aria-roledescription="carousel" {@attach inView()}>
 		<div class="touch-pan-y overflow-hidden" {@attach swipe}>
 			<div
 				class="-ml-4 flex transition-transform duration-500 ease-out"
@@ -90,9 +90,9 @@
 		</div>
 		<div class="mt-6 flex items-center justify-center gap-2">
 			<Button
-				variant="outline"
+				variant="glass"
 				size="icon"
-				class="static size-9 translate-y-0 rounded-full"
+				class="static size-10 translate-y-0 rounded-full"
 				disabled={!canScroll}
 				onclick={scrollPrev}
 				aria-label="Previous slide"
@@ -100,9 +100,9 @@
 				<ArrowLeft class="size-4" />
 			</Button>
 			<Button
-				variant="outline"
+				variant="glass"
 				size="icon"
-				class="static size-9 translate-y-0 rounded-full"
+				class="static size-10 translate-y-0 rounded-full"
 				disabled={!canScroll}
 				onclick={scrollNext}
 				aria-label="Next slide"

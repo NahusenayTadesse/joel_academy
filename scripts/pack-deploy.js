@@ -16,7 +16,7 @@ import fs from 'node:fs';
 
 const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
-const local = Object.entries(pkg.dependencies).filter(([, spec]) => /^(file|link):/.test(spec));
+const local = Object.entries(pkg.dependencies ?? {}).filter(([, spec]) => /^(file|link):/.test(spec));
 if (local.length) {
 	console.error(
 		`These dependencies point at folders on this machine and would break npm on the server:\n` +

@@ -1,7 +1,8 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import Send from '@lucide/svelte/icons/send';
 	import type { ColumnDef } from '@tanstack/table-core';
-	import { enhance } from '$app/forms';
 	import PageHeader from '@nahu/admin-kit/components/PageHeader.svelte';
 	import PageSection from '@nahu/admin-kit/components/PageSection.svelte';
 	import Notice from '@nahu/admin-kit/components/Notice.svelte';
@@ -128,18 +129,13 @@
 	>
 		<Card.Root>
 			<Card.Content class="pt-6">
-				<form
-					method="post"
-					action="?/test"
-					class="grid gap-4 md:grid-cols-[minmax(0,16rem)_minmax(0,1fr)_auto] md:items-end"
-					use:enhance={() => {
+				<ActionForm action="?/test" class="grid gap-4 md:grid-cols-[minmax(0,16rem)_minmax(0,1fr)_auto] md:items-end" submit={() => {
 						sending = true;
 						return async ({ update }) => {
 							await update({ reset: false });
 							sending = false;
 						};
-					}}
-				>
+					}}>
 					<div class="flex flex-col gap-2">
 						<Label for="test-phone">Phone number</Label>
 						<Input
@@ -167,7 +163,7 @@
 						<Send class="size-4" />
 						{sending ? 'Sending…' : 'Send test'}
 					</Button>
-				</form>
+				</ActionForm>
 				<p class="mt-3 text-xs text-muted-foreground">
 					Texts start with “Joel Talargie Academy:”.
 					{data.senderId ? 'Sent from the sender id in SMS_SHORTCODE_ID.' : 'Sent from the GeezSMS account’s default sender (no SMS_SHORTCODE_ID).'}
@@ -226,8 +222,8 @@
 			</nav>
 		{/if}
 		<form method="get" class="flex flex-wrap items-center gap-2" aria-label="Filter by number">
-			{#if data.status}<input type="hidden" name="status" value={data.status} />{/if}
-			{#if data.kind}<input type="hidden" name="kind" value={data.kind} />{/if}
+			{#if data.status}<HiddenField name="status" value={data.status} />{/if}
+			{#if data.kind}<HiddenField name="kind" value={data.kind} />{/if}
 			<Input
 				name="number"
 				type="tel"

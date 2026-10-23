@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import CalendarRange from '@lucide/svelte/icons/calendar-range';
 	import type { ColumnDef } from '@tanstack/table-core';
 	import PageHeader from '@nahu/admin-kit/components/PageHeader.svelte';
@@ -304,7 +305,7 @@
 		</nav>
 		{#if showCustom}
 			<form method="GET" class="flex flex-wrap items-end gap-3">
-				<input type="hidden" name="range" value="custom" />
+				<HiddenField name="range" value="custom" />
 				<label class="flex flex-col gap-1 text-sm">
 					<span class="text-muted-foreground">From</span>
 					<Input type="date" name="from" value={data.range.fromDay} required class="w-44" />

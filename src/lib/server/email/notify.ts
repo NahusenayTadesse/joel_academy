@@ -33,7 +33,7 @@ import { sendEmail } from './send';
  * student-facing ones also leave an in-app notification (the header bell), which never rejects.
  */
 
-const BRAND = '#6abf2a';
+const BRAND = '#1d6fe0';
 
 const escape = (value: string | number | null | undefined) =>
 	String(value ?? '')

@@ -1,8 +1,8 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
 	import Bell from '@lucide/svelte/icons/bell';
 	import { DropdownMenu } from 'bits-ui';
 	import { toast } from 'svelte-sonner';
-	import { enhance } from '$app/forms';
 	import { invalidate } from '$app/navigation';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import EmptyState from '$lib/components/common/empty-state.svelte';
@@ -85,7 +85,7 @@
 			<div class="flex items-center justify-between gap-2 px-2 py-1.5">
 				<p class="text-sm font-semibold">Notifications</p>
 				{#if unreadCount > 0}
-					<form method="post" action="{ROUTES.student.notifications}?/readAll" use:enhance={markAllRead}>
+					<ActionForm action="{ROUTES.student.notifications}?/readAll" submit={markAllRead}>
 						<DropdownMenu.Item closeOnSelect={false}>
 							{#snippet child({ props })}
 								<button
@@ -98,7 +98,7 @@
 								</button>
 							{/snippet}
 						</DropdownMenu.Item>
-					</form>
+					</ActionForm>
 				{/if}
 			</div>
 			<DropdownMenu.Separator class="-mx-1 my-1 h-px bg-border" />

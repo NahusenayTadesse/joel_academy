@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import Save from '@lucide/svelte/icons/save';
 	import Trash from '@lucide/svelte/icons/trash';
@@ -56,7 +57,7 @@
 		<CardContent class="p-4">
 			<form method="post" action="?/save" use:enhance class="flex flex-col gap-4">
 				<Errors allErrors={$allErrors} />
-				<input type="hidden" name="id" value={$form.id} />
+				<HiddenField name="id" value={$form.id} />
 				<div class="grid gap-x-6 gap-y-2 lg:grid-cols-2">
 					<div class="flex flex-col gap-2">
 						<LessonFields {form} {errors} values={$form} sections={data.sections} />

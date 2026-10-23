@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import Download from '@lucide/svelte/icons/download';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import Link from '@lucide/svelte/icons/link';
@@ -136,7 +137,7 @@
 	hideTrigger
 >
 	{#snippet fields({ form, errors, values })}
-		<input type="hidden" name="id" value={values.id} />
+		<HiddenField name="id" value={values.id} />
 		<ResourceFields
 			{form}
 			{errors}

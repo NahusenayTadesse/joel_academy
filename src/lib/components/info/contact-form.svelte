@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
 	import type { ContactErrors, ContactInput } from './contact-schema';
 
 	/** What the contact page's form action hands back (only seen here after a non-JS post). */
@@ -11,7 +12,6 @@
 </script>
 
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import Send from '@lucide/svelte/icons/send';
 	import { toast } from 'svelte-sonner';
 	import Button from '$lib/components/ui/button.svelte';
@@ -41,11 +41,7 @@
 	});
 </script>
 
-<form
-	method="POST"
-	novalidate
-	class="flex flex-col gap-4"
-	use:enhance={({ cancel }) => {
+<ActionForm novalidate class="flex flex-col gap-4" submit={({ cancel }) => {
 		attempted = true;
 		if (!contactSchema.safeParse({ name, email, message }).success) return cancel();
 		submitting = true;
@@ -66,8 +62,7 @@
 				});
 			}
 		};
-	}}
->
+	}}>
 	<SpamGuard {token} />
 	<div class="flex flex-col gap-1.5">
 		<Label for="contact-name">Name</Label>
@@ -103,4 +98,4 @@
 		<Send class="size-4" />
 		Send message
 	</Button>
-</form>
+</ActionForm>

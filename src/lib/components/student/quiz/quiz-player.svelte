@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import Award from '@lucide/svelte/icons/award';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import History from '@lucide/svelte/icons/history';
@@ -8,7 +10,6 @@
 	import Send from '@lucide/svelte/icons/send';
 	import { tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { applyAction, enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import Button from '$lib/components/ui/button.svelte';
@@ -186,18 +187,13 @@
 			This quiz has no questions yet.
 		</p>
 	{:else}
-		<form
-			method="post"
-			action="?lesson={lessonId}&/quiz"
-			class="space-y-4"
-			onchange={(event) => countAnswered(event.currentTarget)}
-			use:enhance={({ cancel }) => {
+		<ActionForm action="?lesson={lessonId}&/quiz" class="space-y-4" onchange={(event) => countAnswered(event.currentTarget)} submit={({ cancel }) => {
 				if (!canSubmit) {
 					cancel();
 					return;
 				}
 				submitting = true;
-				return async ({ result }) => {
+				return async ({ result, update }) => {
 					submitting = false;
 					if (result.type === 'success' && result.data?.quiz) {
 						const graded = result.data.quiz as QuizResult;
@@ -219,11 +215,11 @@
 						toast.error('Quiz not submitted', { description: errorText });
 						return;
 					}
-					await applyAction(result);
+					// A redirect or an error: update() applies it, as applyAction(result) did.
+					await update();
 				};
-			}}
-		>
-			<input type="hidden" name="lessonId" value={lessonId} />
+			}}>
+			<HiddenField name="lessonId" value={lessonId} />
 			{#each quiz.questions as question, index (question.id)}
 				<QuizQuestion {question} number={index + 1} disabled={!canSubmit} />
 			{/each}
@@ -242,7 +238,7 @@
 					Submit answers
 				</Button>
 			</div>
-		</form>
+		</ActionForm>
 	{/if}
 
 	{#if quiz.attempts.length}

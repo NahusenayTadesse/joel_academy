@@ -7,24 +7,29 @@
 	import ShieldCheck from '@lucide/svelte/icons/shield-check';
 	import Button from '$lib/components/ui/button.svelte';
 	import { ROUTES } from '$lib/site';
+	import { inView } from '$lib/attachments';
 </script>
 
-<section class="relative overflow-hidden border-y border-border/60 bg-muted/30 py-16 sm:py-20">
+<section class="relative isolate overflow-hidden py-24">
+	<div
+		class="glow pointer-events-none absolute top-1/2 right-0 -z-10 size-[48rem] -translate-y-1/2 opacity-15"
+		aria-hidden="true"
+	></div>
 	<div class="mx-auto max-w-7xl px-4 sm:px-6">
 		<div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
 			<!-- Left column: information & actions -->
-			<div class="space-y-6 text-left lg:col-span-7">
+			<div class="reveal space-y-6 text-left lg:col-span-7" {@attach inView()}>
 				<div
-					class="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand/5 px-3.5 py-1 text-xs font-semibold text-brand-ink"
+					class="glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold text-brand-ink"
 				>
 					<ShieldCheck class="size-4" />
 					<span>Public Credential Verification</span>
 				</div>
 
 				<div class="space-y-3">
-					<h2 class="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+					<h2 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
 						Already have a certificate? <br class="hidden sm:inline" />
-						<span class="text-brand-ink">Verify its authenticity</span>
+						<span class="text-gradient">Verify its authenticity</span>
 					</h2>
 					<p class="max-w-2xl text-base text-muted-foreground">
 						Employers, recruiters, and academic partners can instantly authenticate any Joel Talargie
@@ -34,7 +39,7 @@
 				</div>
 
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-					<div class="flex items-start gap-3 rounded-xl border border-border/80 bg-card p-4 shadow-sm">
+					<div class="glass-card lift flex items-start gap-3 rounded-2xl p-4">
 						<div
 							class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand-ink"
 						>
@@ -48,7 +53,7 @@
 						</div>
 					</div>
 
-					<div class="flex items-start gap-3 rounded-xl border border-border/80 bg-card p-4 shadow-sm">
+					<div class="glass-card lift flex items-start gap-3 rounded-2xl p-4">
 						<div
 							class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand-ink"
 						>
@@ -81,14 +86,14 @@
 			</div>
 
 			<!-- Right column: credential preview graphic -->
-			<div class="lg:col-span-5">
+			<div class="reveal lg:col-span-5" style:--delay="0.15s" style:--reveal-scale="0.94" {@attach inView()}>
 				<div
-					class="relative mx-auto max-w-sm rounded-2xl border border-border/80 bg-gradient-to-b from-card to-card/60 p-6 shadow-xl backdrop-blur-sm"
+					class="glass-card gradient-border relative mx-auto max-w-sm animate-float rounded-3xl p-6 [animation-duration:8s]"
 				>
 					<div class="flex items-center justify-between border-b border-border/60 pb-4">
 						<div class="flex items-center gap-2.5">
 							<div
-								class="flex size-8 items-center justify-center rounded-lg bg-brand text-xs font-bold text-brand-foreground"
+								class="flex size-8 items-center justify-center rounded-lg bg-linear-to-br from-brand-gradient-from to-brand-gradient-to text-xs font-bold text-primary-foreground"
 							>
 								JTA
 							</div>

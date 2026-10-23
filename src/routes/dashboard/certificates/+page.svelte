@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import Ban from '@lucide/svelte/icons/ban';
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
@@ -184,7 +185,7 @@
 	resetOnSuccess
 >
 	{#snippet fields({ form, errors, values })}
-		<input type="hidden" name="id" value={values.id} />
+		<HiddenField name="id" value={values.id} />
 		<InputComp
 			{form}
 			{errors}

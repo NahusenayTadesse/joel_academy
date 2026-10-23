@@ -41,7 +41,7 @@
 
 {#if announcement.enabled && !dismissed}
 	<div
-		class="flex items-center justify-center gap-2 bg-brand px-4 py-2 text-center text-xs font-medium text-brand-foreground sm:text-sm"
+		class="flex items-center justify-center gap-2 bg-linear-to-r from-[#0b2a5c] via-[#1d6fe0] to-[#0a7fa8] bg-[length:200%_100%] px-4 py-2 text-center text-xs font-medium text-white animate-shimmer [animation-duration:12s] sm:text-sm"
 	>
 		<span>
 			{announcement.text}
@@ -55,7 +55,7 @@
 		<button
 			type="button"
 			aria-label="Dismiss announcement"
-			class="ml-2 shrink-0 rounded-full p-0.5 hover:bg-brand-foreground/10"
+			class="ml-2 shrink-0 rounded-full p-0.5 hover:bg-white/15"
 			onclick={dismiss}
 		>
 			<X class="size-3.5" />

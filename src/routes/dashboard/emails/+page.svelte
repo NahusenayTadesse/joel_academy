@@ -1,7 +1,7 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
 	import Eye from '@lucide/svelte/icons/eye';
 	import Send from '@lucide/svelte/icons/send';
-	import { enhance } from '$app/forms';
 	import PageSection from '@nahu/admin-kit/components/PageSection.svelte';
 	import * as Card from '@nahu/admin-kit/components/ui/card/index.js';
 	import { Input } from '@nahu/admin-kit/components/ui/input/index.js';
@@ -150,18 +150,13 @@
 	>
 		<Card.Root>
 			<Card.Content class="pt-6">
-				<form
-					method="post"
-					action="?/test"
-					class="grid gap-4 md:grid-cols-[minmax(0,24rem)_auto] md:items-end"
-					use:enhance={() => {
+				<ActionForm action="?/test" class="grid gap-4 md:grid-cols-[minmax(0,24rem)_auto] md:items-end" submit={() => {
 						sending = true;
 						return async ({ update }) => {
 							await update({ reset: false });
 							sending = false;
 						};
-					}}
-				>
+					}}>
 					<div class="flex flex-col gap-2">
 						<Label for="test-to">Send to</Label>
 						<Input id="test-to" name="to" type="email" placeholder="you@example.com" value={form?.to ?? ''} required />
@@ -170,7 +165,7 @@
 						<Send class="size-4" />
 						{sending ? 'Sending…' : 'Send test'}
 					</Button>
-				</form>
+				</ActionForm>
 				<p class="mt-3 text-xs text-muted-foreground">
 					{data.sender ? `Sent from ${data.sender}.` : 'No sender address is set (MAIL_FROM or SMTP_USER).'}
 				</p>

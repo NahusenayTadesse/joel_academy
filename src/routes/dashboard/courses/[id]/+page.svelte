@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import Plus from '@lucide/svelte/icons/plus';
@@ -264,7 +265,7 @@
 	hideTrigger
 >
 	{#snippet fields({ form, errors, values })}
-		<input type="hidden" name="id" value={values.id} />
+		<HiddenField name="id" value={values.id} />
 		<InputComp {form} {errors} name="title" label="Section title" required />
 		<InputComp
 			{form}

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import Award from '@lucide/svelte/icons/award';
 	import ChevronLeft from '@lucide/svelte/icons/chevron-left';
@@ -10,7 +12,6 @@
 	import PanelLeftOpen from '@lucide/svelte/icons/panel-left-open';
 	import { toast } from 'svelte-sonner';
 	import { MediaQuery } from 'svelte/reactivity';
-	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import ErrorState from '$lib/components/student/error-state.svelte';
 	import LessonPlayer from '$lib/components/student/lesson-player.svelte';
@@ -266,10 +267,7 @@
 					</Button>
 				</div>
 			{:else}
-				<form
-					method="post"
-					action="?/complete"
-					use:enhance={() => {
+				<ActionForm action="?/complete" submit={() => {
 						completing = true;
 						return async ({ result, update }) => {
 							completing = false;
@@ -300,10 +298,9 @@
 							if (nextLesson) await goto(lessonHref(nextLesson.id), { replaceState: true, noScroll: true, invalidateAll: true });
 							else await update();
 						};
-					}}
-				>
-					<input type="hidden" name="lessonId" value={data.activeLessonId ?? ''} />
-					<input type="hidden" name="next" value={nextLesson?.id ?? ''} />
+					}}>
+					<HiddenField name="lessonId" value={data.activeLessonId ?? ''} />
+					<HiddenField name="next" value={nextLesson?.id ?? ''} />
 					{#if mustWatch}
 						<span class="mr-3 hidden text-xs text-sidebar-foreground/60 sm:inline">Watch the video to continue</span>
 					{/if}
@@ -317,7 +314,7 @@
 						Complete & Next
 						<ArrowRight class="size-4" />
 					</Button>
-				</form>
+				</ActionForm>
 			{/if}
 		</div>
 	</div>

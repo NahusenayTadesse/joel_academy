@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import Award from '@lucide/svelte/icons/award';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import Clock from '@lucide/svelte/icons/clock';
@@ -12,7 +14,6 @@
 	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 	import Wallet from '@lucide/svelte/icons/wallet';
 	import { toast } from 'svelte-sonner';
-	import { enhance } from '$app/forms';
 	import EmptyState from '$lib/components/common/empty-state.svelte';
 	import PageBreadcrumb from '$lib/components/common/page-breadcrumb.svelte';
 	import PageHeader from '$lib/components/common/page-header.svelte';
@@ -184,16 +185,11 @@
 					onNext={() => (chosenStep = 3)}
 				/>
 			{:else if step === 3 && coveredByPromo}
-				<form
-					method="post"
-					action="?/redeem"
-					class="space-y-6"
-					use:enhance={() => {
+				<ActionForm action="?/redeem" class="space-y-6" submit={() => {
 						submitting = true;
 						return afterAction('Could not enroll');
-					}}
-				>
-					<input type="hidden" name="promoCode" value={promoCode} />
+					}}>
+					<HiddenField name="promoCode" value={promoCode} />
 					<Card class="border-success/40 bg-success/5">
 						<CardContent class="flex flex-col items-center gap-4 p-8 text-center">
 							<span class="flex size-16 items-center justify-center rounded-full bg-success/10 text-success-ink">
@@ -220,7 +216,7 @@
 							Enroll for free
 						</Button>
 					</div>
-				</form>
+				</ActionForm>
 			{:else if step === 3 && data.methods.length === 0 && !data.chapa}
 				<div class="space-y-6">
 					<EmptyState
@@ -293,16 +289,11 @@
 					{#if errors.paymentMethodId}<p class="text-sm text-destructive">{errors.paymentMethodId}</p>{/if}
 
 					{#if selected === 'chapa'}
-						<form
-							method="post"
-							action="?/chapa"
-							class="space-y-6"
-							use:enhance={() => {
+						<ActionForm action="?/chapa" class="space-y-6" submit={() => {
 								submitting = true;
 								return afterAction('Could not start the payment');
-							}}
-						>
-							<input type="hidden" name="promoCode" value={promoCode} />
+							}}>
+							<HiddenField name="promoCode" value={promoCode} />
 							<Card>
 								<CardContent class="space-y-4 p-5">
 									<div>
@@ -345,14 +336,9 @@
 									Pay {formatCurrency(amountDue, course.currency)} with Chapa
 								</Button>
 							</div>
-						</form>
+						</ActionForm>
 					{:else if selectedMethod}
-						<form
-							method="post"
-							action="?/submit"
-							enctype="multipart/form-data"
-							class="space-y-6"
-							use:enhance={({ cancel }) => {
+						<ActionForm action="?/submit" enctype="multipart/form-data" class="space-y-6" submit={({ cancel }) => {
 								receiptError = receiptProblem(receipt, data.maxReceiptBytes);
 								if (receiptError) {
 									cancel();
@@ -360,10 +346,9 @@
 								}
 								submitting = true;
 								return afterAction('Payment not submitted');
-							}}
-						>
-							<input type="hidden" name="paymentMethodId" value={selectedMethod.id} />
-							<input type="hidden" name="promoCode" value={promoCode} />
+							}}>
+							<HiddenField name="paymentMethodId" value={selectedMethod.id} />
+							<HiddenField name="promoCode" value={promoCode} />
 
 							<Card>
 								<CardContent class="space-y-4 p-5">
@@ -455,7 +440,7 @@
 									Submit payment
 								</Button>
 							</div>
-						</form>
+						</ActionForm>
 					{/if}
 				</div>
 			{:else if submission}

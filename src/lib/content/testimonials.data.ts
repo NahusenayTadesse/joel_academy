@@ -7,7 +7,7 @@ import type { Testimonial } from './testimonial.types';
 export const MOCK_TESTIMONIALS: Testimonial[] = [
 	{
 		id: 'test-01',
-		studentName: 'Marcus Webb',
+		studentName: 'Dawit Bekele',
 		role: 'Frontend Developer at a Series B startup',
 		avatarColor: 'from-blue-500 to-indigo-600',
 		courseTitle: 'Full Stack Web Development Bootcamp',
@@ -17,7 +17,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-02',
-		studentName: 'Priya Nair',
+		studentName: 'Hiwot Tadesse',
 		role: 'Backend Engineer',
 		avatarColor: 'from-emerald-500 to-teal-600',
 		courseTitle: 'NestJS Masterclass: Building Enterprise APIs',
@@ -27,7 +27,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-03',
-		studentName: 'Daniel Osei',
+		studentName: 'Yonas Girma',
 		role: 'Data Analyst',
 		avatarColor: 'from-amber-500 to-orange-600',
 		courseTitle: 'Python for Data Science and Analytics',
@@ -37,7 +37,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-04',
-		studentName: 'Laura Fischer',
+		studentName: 'Meron Alemu',
 		role: 'Product Designer',
 		avatarColor: 'from-pink-500 to-rose-500',
 		courseTitle: 'UI/UX Design Fundamentals',
@@ -47,7 +47,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-05',
-		studentName: 'James Okoro',
+		studentName: 'Natnael Haile',
 		role: 'Cloud Engineer',
 		avatarColor: 'from-sky-500 to-blue-600',
 		courseTitle: 'Cloud Computing with AWS: Solutions Architect Path',
@@ -57,7 +57,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-06',
-		studentName: 'Sofia Ramirez',
+		studentName: 'Selamawit Kebede',
 		role: 'Security Analyst',
 		avatarColor: 'from-red-500 to-rose-600',
 		courseTitle: 'Ethical Hacking and Penetration Testing',
@@ -67,7 +67,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-07',
-		studentName: 'Ben Carter',
+		studentName: 'Biniyam Assefa',
 		role: 'DevOps Engineer',
 		avatarColor: 'from-cyan-500 to-teal-600',
 		courseTitle: 'Docker and Kubernetes for Developers',
@@ -77,7 +77,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-08',
-		studentName: 'Aisha Rahman',
+		studentName: 'Hanan Mohammed',
 		role: 'Junior Software Engineer',
 		avatarColor: 'from-lime-500 to-green-600',
 		courseTitle: 'Python Programming for Beginners',
@@ -87,7 +87,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-09',
-		studentName: 'Tom Whitfield',
+		studentName: 'Henok Worku',
 		role: 'Project Manager',
 		avatarColor: 'from-blue-600 to-indigo-700',
 		courseTitle: 'Project Management Professional (PMP) Prep',
@@ -97,7 +97,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-10',
-		studentName: 'Ingrid Larsen',
+		studentName: 'Bethlehem Getachew',
 		role: 'Marketing Manager',
 		avatarColor: 'from-orange-500 to-red-500',
 		courseTitle: 'SEO Mastery: Rank Higher on Google',
@@ -107,7 +107,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-11',
-		studentName: 'Kwame Asante',
+		studentName: 'Eyob Mekonnen',
 		role: 'Mobile Developer',
 		avatarColor: 'from-rose-500 to-pink-600',
 		courseTitle: 'Flutter Development: Build iOS and Android Apps',
@@ -117,7 +117,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
 	},
 	{
 		id: 'test-12',
-		studentName: 'Chloe Dubois',
+		studentName: 'Tsion Desta',
 		role: 'Database Administrator',
 		avatarColor: 'from-yellow-500 to-amber-600',
 		courseTitle: 'Advanced PostgreSQL for Data Analysts',

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import type { Writable } from 'svelte/store';
 	import InputComp from '@nahu/admin-kit/formComponents/InputComp.svelte';
 	import YouTubeEmbed from '@nahu/admin-kit/components/YouTubeEmbed.svelte';
@@ -43,7 +44,7 @@
 		required
 	/>
 {:else}
-	<input type="hidden" name="sectionId" value={values.sectionId ?? ''} />
+	<HiddenField name="sectionId" value={values.sectionId ?? ''} />
 {/if}
 <InputComp
 	{form}

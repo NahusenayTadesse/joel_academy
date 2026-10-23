@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	/*
 	 * The bot traps for a form (see $lib/server/spam). The honeypot sits off screen, out of the tab
 	 * order and hidden from screen readers, so only something filling every input fills it.
@@ -12,4 +13,4 @@
 		<input type="text" name="website" tabindex="-1" autocomplete="off" value="" />
 	</label>
 </div>
-{#if token}<input type="hidden" name="formToken" value={token} />{/if}
+{#if token}<HiddenField name="formToken" value={token} />{/if}

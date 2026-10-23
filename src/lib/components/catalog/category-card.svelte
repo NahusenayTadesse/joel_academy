@@ -13,9 +13,11 @@
 	}: { category: Category; courseCount?: number; class?: string } = $props();
 </script>
 
-<Card class={cn('group overflow-hidden transition-shadow hover:shadow-md', className)}>
+<Card class={cn('lift group h-full overflow-hidden', className)}>
 	<a href={ROUTES.categories.detail(category.slug)} class="flex flex-col gap-3 p-5">
-		<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
+		<span
+			class="flex size-11 items-center justify-center rounded-xl bg-brand/10 text-brand-ink ring-1 ring-primary/15 transition-all duration-500 group-hover:-rotate-6 group-hover:bg-primary group-hover:text-primary-foreground"
+		>
 			<Layers class="size-5" aria-hidden="true" />
 		</span>
 		<div class="flex items-center justify-between gap-2">
