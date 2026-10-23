@@ -3,6 +3,7 @@ import sanitizeHtml from 'sanitize-html';
 import { db } from '$lib/server/db';
 import { course, courseReview, user } from '$lib/server/db/schema';
 import { invalidateCatalog } from '$lib/server/public-catalog';
+import { m } from '$lib/paraglide/messages';
 import {
 	REVIEW_COMMENT_MAX,
 	averageRating,
@@ -53,16 +54,16 @@ export type ParsedReview =
 /** The posted `rating` (a whole number 1–5) and optional `comment`, checked and cleaned. */
 export function parseReview(form: FormData): ParsedReview {
 	const ratingText = String(form.get('rating') ?? '').trim();
-	if (!/^[1-5]$/.test(ratingText)) return { ok: false, error: 'Choose a rating from 1 to 5 stars.' };
+	if (!/^[1-5]$/.test(ratingText)) return { ok: false, error: m.catalog_review_error_rating() };
 
 	const raw = form.get('comment');
-	if (raw !== null && typeof raw !== 'string') return { ok: false, error: 'The comment must be text.' };
+	if (raw !== null && typeof raw !== 'string') return { ok: false, error: m.catalog_review_error_comment_text() };
 	if ((raw ?? '').length > RAW_COMMENT_MAX) {
-		return { ok: false, error: `Keep your review under ${REVIEW_COMMENT_MAX} characters.` };
+		return { ok: false, error: m.catalog_review_error_too_long({ max: REVIEW_COMMENT_MAX }) };
 	}
 	const comment = plainTextComment(raw ?? '');
 	if (comment && Array.from(comment).length > REVIEW_COMMENT_MAX) {
-		return { ok: false, error: `Keep your review under ${REVIEW_COMMENT_MAX} characters.` };
+		return { ok: false, error: m.catalog_review_error_too_long({ max: REVIEW_COMMENT_MAX }) };
 	}
 	return { ok: true, rating: Number(ratingText), comment };
 }

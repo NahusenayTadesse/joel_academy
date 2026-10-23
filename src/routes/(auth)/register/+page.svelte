@@ -11,6 +11,7 @@
 	import GoogleLoginButton from '$lib/components/auth/google-login-button.svelte';
 	import LoadingButton from '$lib/components/ui/loading-button.svelte';
 	import { safeRedirectPath } from '$lib/safe-redirect';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 	import { registerSchema } from './schema';
 
@@ -26,20 +27,20 @@
 </script>
 
 <svelte:head>
-	<title>Create your account · {siteConfig.name}</title>
-	<meta name="robots" content="noindex" />
+	<title>{m.account_register_title()} · {siteConfig.name}</title>
+	<meta name="description" content={m.misc_register_meta()} />
 </svelte:head>
 
 <div>
-	<h2 class="text-center text-2xl font-bold text-foreground">Create your account</h2>
-	<p class="mt-1.5 text-center text-sm text-muted-foreground">Join {siteConfig.name}</p>
+	<h2 class="text-center text-2xl font-bold text-foreground">{m.account_register_title()}</h2>
+	<p class="mt-1.5 text-center text-sm text-muted-foreground">{m.account_register_subheading({ site: siteConfig.name })}</p>
 
 	{#if data.googleEnabled}
 		<div class="mt-8">
 			<GoogleLoginButton redirectTo={redirectTarget} disabled={$submitting} />
 			<div class="my-5 flex items-center gap-3 text-xs text-muted-foreground">
 				<span class="h-px flex-1 bg-border"></span>
-				Or continue with
+				{m.account_or_continue_with()}
 				<span class="h-px flex-1 bg-border"></span>
 			</div>
 		</div>
@@ -49,7 +50,7 @@
 		<div class="grid grid-cols-2 gap-3">
 			<AuthField
 				name="firstName"
-				label="First name"
+				label={m.account_first_name()}
 				autocomplete="given-name"
 				icon={User}
 				bind:value={$form.firstName}
@@ -58,7 +59,7 @@
 			/>
 			<AuthField
 				name="lastName"
-				label="Last name"
+				label={m.account_last_name()}
 				autocomplete="family-name"
 				icon={User}
 				bind:value={$form.lastName}
@@ -68,7 +69,7 @@
 		</div>
 		<AuthField
 			name="email"
-			label="Email Address"
+			label={m.account_email_label()}
 			type="email"
 			placeholder="student@example.com"
 			autocomplete="email"
@@ -79,7 +80,7 @@
 		/>
 		<AuthField
 			name="phone"
-			label="Phone number (for SMS updates)"
+			label={m.account_phone_label_sms()}
 			type="tel"
 			placeholder="0912 345 678"
 			autocomplete="tel"
@@ -88,11 +89,11 @@
 			bind:value={$form.phone}
 			errors={$errors.phone}
 			disabled={$submitting}
-			hint="Optional. We'll text you a code to confirm it."
+			hint={m.account_phone_hint_register()}
 		/>
 		<AuthField
 			name="password"
-			label="Password"
+			label={m.account_password_label()}
 			type="password"
 			autocomplete="new-password"
 			icon={Lock}
@@ -102,7 +103,7 @@
 		/>
 		<AuthField
 			name="confirmPassword"
-			label="Confirm password"
+			label={m.account_confirm_password()}
 			type="password"
 			autocomplete="new-password"
 			icon={Lock}
@@ -119,15 +120,15 @@
 			type="submit"
 			class="w-full"
 			loading={$submitting}
-			loadingText="Creating account..."
+			loadingText={m.account_creating_account()}
 		>
-			Create your account
+			{m.account_register_title()}
 		</LoadingButton>
 	</form>
 
 	<div class="mt-6 text-center text-sm">
 		<a href="{ROUTES.auth.login}{redirectQuery}" class="font-medium text-brand-ink hover:underline">
-			Back to sign in
+			{m.account_back_to_sign_in()}
 		</a>
 	</div>
 </div>

@@ -13,6 +13,7 @@
 	import VerifyCertificateSection from '$lib/components/home/verify-certificate-section.svelte';
 	import WhyChooseUsSection from '$lib/components/home/why-choose-us-section.svelte';
 	import TestimonialsSection from '$lib/components/testimonials/testimonials-section.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	let { data } = $props();
 
@@ -20,11 +21,8 @@
 </script>
 
 <svelte:head>
-	<title>Joel Talargie Academy - Learn with purpose. Build with confidence.</title>
-	<meta
-		name="description"
-		content="Explore a growing catalog of self-paced courses across a range of categories, taught by real instructors."
-	/>
+	<title>{m.home_meta_title()}</title>
+	<meta name="description" content={m.home_meta_description()} />
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- built on the server, `<` escaped -->
 	{@html jsonLdScript(data.jsonLd)}
 </svelte:head>
@@ -54,9 +52,9 @@
 	{#if show.stats}
 		<StatsBandSection
 			items={[
-				{ value: data.platformStats.totalCourses, label: 'Courses available', kind: 'number' },
-				{ value: data.platformStats.instructorCount, label: 'Expert instructors', kind: 'number' },
-				{ value: data.platformStats.studentsEnrolled, label: 'Students enrolled', kind: 'number' }
+				{ value: data.platformStats.totalCourses, label: m.home_stats_courses(), kind: 'number' },
+				{ value: data.platformStats.instructorCount, label: m.home_stats_instructors(), kind: 'number' },
+				{ value: data.platformStats.studentsEnrolled, label: m.home_stats_students(), kind: 'number' }
 			]}
 		/>
 	{/if}

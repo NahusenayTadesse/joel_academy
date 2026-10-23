@@ -1,3 +1,4 @@
+import { delocalizePath, getLocale, locales, localizePath, OG_LOCALES } from '$lib/i18n';
 import { siteConfig } from '$lib/site';
 
 /*
@@ -7,9 +8,12 @@ import { siteConfig } from '$lib/site';
  * into Telegram, Facebook or X shows a proper card. Anything a page sets itself is kept.
  */
 
-/** Never indexed: private, transactional or staff pages. */
-export const PRIVATE_PATHS =
-	/^\/(dashboard|api|account|my|my-courses|my-certificates|my-wishlist|my-payments|my-notifications|checkout|login|register|logout|forgot-password|reset-password|verify-email|offline|media|newsletter)(\/|$)/;
+/** Never indexed: private, transactional or staff pages, in either language. */
+const PRIVATE = /^\/(dashboard|api|account|my|my-courses|my-certificates|my-wishlist|my-payments|my-notifications|checkout|logout|forgot-password|reset-password|verify-email|offline|media|newsletter)(\/|$)/;
+
+export function isPrivatePath(pathname: string): boolean {
+	return PRIVATE.test(delocalizePath(pathname));
+}
 
 export const SHARE_IMAGE = { path: '/og-image.jpg', width: 1200, height: 630 };
 
@@ -40,9 +44,25 @@ export function withSeoTags(html: string, url: URL, origin: string): string {
 	const tags: string[] = [];
 
 	if (!has(head, /rel="canonical"/)) tags.push(`<link rel="canonical" href="${attr(canonical)}">`);
+	// Every page exists in each language at its own address; search engines show the reader's.
+	if (!has(head, /hreflang=/)) {
+		const base = new URL(canonical);
+		const variant = (locale: (typeof locales)[number]) =>
+			`${origin}${localizePath(base.pathname, locale)}${base.search}`;
+		for (const locale of locales) {
+			tags.push(`<link rel="alternate" hreflang="${locale}" href="${attr(variant(locale))}">`);
+		}
+		tags.push(`<link rel="alternate" hreflang="x-default" href="${attr(variant('en'))}">`);
+	}
 	if (!has(head, /property="og:site_name"/)) tags.push(`<meta property="og:site_name" content="${attr(siteConfig.name)}">`);
 	if (!has(head, /property="og:type"/)) tags.push('<meta property="og:type" content="website">');
-	if (!has(head, /property="og:locale"/)) tags.push('<meta property="og:locale" content="en_US">');
+	if (!has(head, /property="og:locale"/)) {
+		const current = getLocale();
+		tags.push(`<meta property="og:locale" content="${OG_LOCALES[current]}">`);
+		for (const other of locales) {
+			if (other !== current) tags.push(`<meta property="og:locale:alternate" content="${OG_LOCALES[other]}">`);
+		}
+	}
 	if (!has(head, /property="og:url"/)) tags.push(`<meta property="og:url" content="${attr(canonical)}">`);
 	if (title && !has(head, /property="og:title"/)) tags.push(`<meta property="og:title" content="${title}">`);
 	if (description && !has(head, /property="og:description"/)) {

@@ -2,6 +2,7 @@
 	import Award from '@lucide/svelte/icons/award';
 	import Badge from '$lib/components/ui/badge.svelte';
 	import Card from '$lib/components/ui/card.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import { formatCertificateDate } from './certificate-format';
 
@@ -29,9 +30,9 @@
 				<Award class="size-5" aria-hidden="true" />
 			</span>
 			{#if certificate.status === 'ISSUED'}
-				<Badge variant="success">Issued</Badge>
+				<Badge variant="success">{m.learn_issued()}</Badge>
 			{:else}
-				<Badge variant="outline">Revoked</Badge>
+				<Badge variant="outline">{m.learn_revoked()}</Badge>
 			{/if}
 		</div>
 		<div>
@@ -39,6 +40,6 @@
 			<p class="mt-0.5 text-xs text-muted-foreground">{certificate.recipientName}</p>
 			<p class="mt-1 truncate font-mono text-[11px] text-muted-foreground">{certificate.code}</p>
 		</div>
-		<p class="mt-auto text-xs text-muted-foreground">Issued {formatCertificateDate(certificate.issuedAt)}</p>
+		<p class="mt-auto text-xs text-muted-foreground">{m.learn_issued_on({ date: formatCertificateDate(certificate.issuedAt) })}</p>
 	</a>
 </Card>

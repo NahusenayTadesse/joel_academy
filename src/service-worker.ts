@@ -23,12 +23,20 @@ const APP_CACHE = `app-${version}`;
 const PAGES_CACHE = 'pages-v1';
 const ASSETS_CACHE = 'assets-v1';
 const OFFLINE_URL = '/offline';
+const OFFLINE_URL_AM = '/am/offline';
 
 const PRECACHE = [
 	...build,
 	...files.filter((file) => /^\/(icons\/|icon\.svg|favicon\.ico|manifest\.webmanifest)/.test(file)),
-	OFFLINE_URL
+	OFFLINE_URL,
+	OFFLINE_URL_AM
 ];
+
+/** Every page exists in English and under "/am"; the rules below are written for the English path. */
+const unlocalized = (pathname: string) => pathname.replace(/^\/am(?=\/|$)/, '') || '/';
+
+/** The offline page in the language of the page that could not load. */
+const offlineFor = (pathname: string) => (/^\/am(\/|$)/.test(pathname) ? OFFLINE_URL_AM : OFFLINE_URL);
 
 /** Paths whose responses may be personal, or that must always reach the server. */
 const PRIVATE = [
@@ -88,7 +96,7 @@ async function networkFirst(request: Request, pathname: string): Promise<Respons
 		const response = await fetch(request);
 		// A signed-in visitor's render carries their name; the server marks those `private`, and
 		// `cacheable` refuses them, so another person on this device never sees it offline.
-		if (cacheable(response) && PUBLIC_PAGE.test(pathname.replace(/\/__data\.json$/, ''))) {
+		if (cacheable(response) && PUBLIC_PAGE.test(unlocalized(pathname.replace(/\/__data\.json$/, '')))) {
 			await cache.put(request, response.clone());
 			void trim(PAGES_CACHE, MAX_PAGES);
 		}
@@ -97,7 +105,7 @@ async function networkFirst(request: Request, pathname: string): Promise<Respons
 		const cached = await cache.match(request, { ignoreSearch: false });
 		if (cached) return cached;
 		if (request.mode === 'navigate') {
-			const offline = await caches.match(OFFLINE_URL);
+			const offline = await caches.match(offlineFor(pathname));
 			if (offline) return offline;
 		}
 		return new Response('Offline', { status: 503, headers: { 'content-type': 'text/plain' } });
@@ -129,11 +137,11 @@ sw.addEventListener('fetch', (event) => {
 		return;
 	}
 
-	if (PRIVATE.some((pattern) => pattern.test(url.pathname))) {
+	if (PRIVATE.some((pattern) => pattern.test(unlocalized(url.pathname)))) {
 		// Private pages still get the offline page instead of the browser's error screen.
 		if (request.mode === 'navigate') {
 			event.respondWith(
-				fetch(request).catch(async () => (await caches.match(OFFLINE_URL)) ?? Response.error())
+				fetch(request).catch(async () => (await caches.match(offlineFor(url.pathname))) ?? Response.error())
 			);
 		}
 		return;

@@ -10,6 +10,8 @@ import { user } from '$lib/server/db/schema';
 import { passwordChangedEmail, passwordResetEmail, siteUrl, verifyEmailEmail, welcomeEmail } from '$lib/server/email';
 import { OTP_MINUTES, otpSms, sendSms } from '$lib/server/sms';
 import { isNormalizedEthPhone } from '$lib/phone';
+import { currentLocale, recipientLocale } from '$lib/server/locale';
+import { localizePath } from '$lib/i18n';
 import { ROUTES } from '$lib/site';
 
 /** The Google OAuth client, under either name the deployment uses (GOOGLE_CLIENT_ID or GOOGLE_ID). */
@@ -73,7 +75,11 @@ export const auth = betterAuth({
 		resetPasswordTokenExpiresIn: 60 * 60,
 		revokeSessionsOnPasswordReset: true,
 		sendResetPassword: async ({ user: to, token }) => {
-			void passwordResetEmail(to, siteUrl(`${ROUTES.auth.resetPassword}?token=${encodeURIComponent(token)}`));
+			// The link opens the page in the account's language, as the email is written in.
+			const path = `${ROUTES.auth.resetPassword}?token=${encodeURIComponent(token)}`;
+			void recipientLocale(to.email)
+				.catch(() => currentLocale())
+				.then((locale) => passwordResetEmail(to, siteUrl(localizePath(path, locale))));
 		},
 		// Following the emailed link proves the address is theirs, as a verification link would.
 		onPasswordReset: async ({ user: reset }) => {
@@ -89,7 +95,10 @@ export const auth = betterAuth({
 		autoSignInAfterVerification: true,
 		expiresIn: 60 * 60 * 24,
 		sendVerificationEmail: async ({ user: to, token }) => {
-			void verifyEmailEmail(to, siteUrl(`${ROUTES.auth.verifyEmail}?token=${encodeURIComponent(token)}`));
+			const path = `${ROUTES.auth.verifyEmail}?token=${encodeURIComponent(token)}`;
+			void recipientLocale(to.email)
+				.catch(() => currentLocale())
+				.then((locale) => verifyEmailEmail(to, siteUrl(localizePath(path, locale))));
 		}
 	},
 	socialProviders: googleEnabled
@@ -119,6 +128,8 @@ export const auth = betterAuth({
 				before: async (data) => ({ data: { ...data, phoneNumber: null, phoneNumberVerified: false } }),
 				// Runs after the sign-up commits, for password and Google accounts alike.
 				after: async (created) => {
+					// The language they signed up in (the cookie the site keeps), so emails start in it.
+					await db.update(user).set({ locale: currentLocale() }).where(eq(user.id, created.id));
 					void welcomeEmail(created);
 				}
 			}
@@ -132,7 +143,7 @@ export const auth = betterAuth({
 			// Callers normalise first; only the stored 2519…/2517… form gets a code.
 			phoneNumberValidator: (phone) => isNormalizedEthPhone(phone),
 			sendOTP: async ({ phoneNumber: to, code }) => {
-				const result = await sendSms({ to, kind: 'otp', message: otpSms(code) });
+				const result = await sendSms({ to, kind: 'otp', message: otpSms(code, currentLocale()) });
 				// SKIPPED without SMS_KEY still counts as sent (the code is in the SMS log); a refusal does not.
 				if (result.status === 'FAILED' || result.retryAfter) throw new SmsCodeNotSent(result.retryAfter);
 			}

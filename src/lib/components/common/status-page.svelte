@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Component, Snippet } from 'svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 
 	let {
@@ -26,6 +27,6 @@
 	<p class="text-sm text-muted-foreground">{description}</p>
 	<div class="mt-2 flex flex-wrap items-center justify-center gap-3">
 		{@render action?.()}
-		<Button variant="outline" href={ROUTES.home}>Back to home</Button>
+		<Button variant="outline" href={ROUTES.home}>{m.shell_back_home()}</Button>
 	</div>
 </div>

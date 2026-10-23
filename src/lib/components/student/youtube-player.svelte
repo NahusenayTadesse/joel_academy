@@ -80,6 +80,7 @@
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 	import { onMount } from 'svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { formatClock, PositionReporter, resumeStart, WatchProgress } from './watch-progress.svelte';
 
 	let {
@@ -339,7 +340,7 @@
 		bind:this={shell}
 		class="group relative aspect-video w-full overflow-hidden rounded-xl border border-sidebar-border bg-black shadow-2xl"
 		role="region"
-		aria-label="Video player: {title}"
+		aria-label={m.learn_yt_region({ title })}
 		tabindex="-1"
 		onpointermove={showControls}
 		onkeydown={onKeydown}
@@ -352,9 +353,9 @@
 					<TriangleAlert class="size-6" />
 				</span>
 				<div class="space-y-1">
-					<h3 class="text-base font-semibold tracking-tight text-white">The video could not load</h3>
+					<h3 class="text-base font-semibold tracking-tight text-white">{m.learn_yt_error_title()}</h3>
 					<p class="text-xs leading-relaxed text-slate-300">
-						Your network may be blocking YouTube. You can try again, or continue with the lesson.
+						{m.learn_yt_error_desc()}
 					</p>
 				</div>
 				<button
@@ -362,7 +363,7 @@
 					onclick={retry}
 					class="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-xs font-medium text-white hover:bg-white/20"
 				>
-					<RotateCcw class="size-3.5" /> Try again
+					<RotateCcw class="size-3.5" /> {m.learn_try_again_button()}
 				</button>
 			</div>
 		{:else if !started || ended}
@@ -371,7 +372,7 @@
 				type="button"
 				onclick={togglePlay}
 				disabled={status !== 'ready'}
-				aria-label={ended ? 'Replay video' : 'Play video'}
+				aria-label={ended ? m.learn_yt_replay() : m.learn_yt_play_video()}
 				class="absolute inset-0 flex items-center justify-center bg-black"
 			>
 				<img
@@ -392,14 +393,14 @@
 					{/if}
 				</span>
 				{#if ended}
-					<span class="absolute bottom-6 text-sm font-medium text-white/90">Watch again</span>
+					<span class="absolute bottom-6 text-sm font-medium text-white/90">{m.learn_yt_watch_again()}</span>
 				{/if}
 			</button>
 		{:else if paused}
 			<button
 				type="button"
 				onclick={togglePlay}
-				aria-label="Resume video"
+				aria-label={m.learn_yt_resume()}
 				class="absolute inset-0 flex items-center justify-center bg-black/95"
 			>
 				<span
@@ -428,20 +429,20 @@
 						step="0.1"
 						value={current}
 						oninput={(event) => seek(Number(event.currentTarget.value))}
-						aria-label="Seek"
+						aria-label={m.learn_yt_seek()}
 						class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
 					/>
 				</div>
 				<div class="flex items-center gap-3 text-white">
-					<button type="button" onclick={togglePlay} aria-label={playing ? 'Pause' : 'Play'} class="rounded p-1 hover:bg-white/10">
+					<button type="button" onclick={togglePlay} aria-label={playing ? m.learn_yt_pause() : m.learn_yt_play()} class="rounded p-1 hover:bg-white/10">
 						{#if playing}<Pause class="size-5 fill-current" />{:else}<Play class="size-5 fill-current" />{/if}
 					</button>
-					<button type="button" onclick={() => seek(current - 10)} aria-label="Back 10 seconds" class="rounded p-1 hover:bg-white/10">
+					<button type="button" onclick={() => seek(current - 10)} aria-label={m.learn_yt_back10()} class="rounded p-1 hover:bg-white/10">
 						<RotateCcw class="size-4" />
 					</button>
 					<span class="text-xs tabular-nums text-white/80">{formatClock(current)} / {formatClock(duration)}</span>
 					<div class="ml-auto flex items-center gap-2">
-						<button type="button" onclick={toggleMute} aria-label={muted ? 'Unmute' : 'Mute'} class="rounded p-1 hover:bg-white/10">
+						<button type="button" onclick={toggleMute} aria-label={muted ? m.learn_yt_unmute() : m.learn_yt_mute()} class="rounded p-1 hover:bg-white/10">
 							{#if muted || volume === 0}<VolumeX class="size-5" />{:else}<Volume2 class="size-5" />{/if}
 						</button>
 						<input
@@ -450,13 +451,13 @@
 							max="100"
 							value={muted ? 0 : volume}
 							oninput={(event) => setVolume(Number(event.currentTarget.value))}
-							aria-label="Volume"
+							aria-label={m.learn_yt_volume()}
 							class="hidden w-20 accent-sidebar-primary sm:block"
 						/>
 						<button
 							type="button"
 							onclick={cycleSpeed}
-							aria-label="Playback speed"
+							aria-label={m.learn_yt_speed()}
 							class="min-w-11 rounded px-1.5 py-1 text-xs font-semibold tabular-nums hover:bg-white/10"
 						>
 							{speed}×
@@ -464,7 +465,7 @@
 						<button
 							type="button"
 							onclick={toggleFullscreen}
-							aria-label={fullscreen ? 'Exit full screen' : 'Full screen'}
+							aria-label={fullscreen ? m.learn_yt_exit_fullscreen() : m.learn_yt_fullscreen()}
 							class="rounded p-1 hover:bg-white/10"
 						>
 							{#if fullscreen}<Minimize class="size-5" />{:else}<Maximize class="size-5" />{/if}

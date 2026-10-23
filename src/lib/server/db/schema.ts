@@ -533,3 +533,39 @@ export const courseReview = mysqlTable(
 		index('course_review_course_idx').on(table.courseId, table.status)
 	]
 );
+
+export const ANALYTICS_DEVICES = ['mobile', 'tablet', 'desktop'] as const;
+
+/**
+ * One page view on the public site or the student area, recorded by the site itself — no cookies,
+ * no third-party script. `visitor` is a hash of the address, browser and day with a secret, so a
+ * person counts once per day and cannot be recognised across days or traced back to an address.
+ */
+export const pageView = mysqlTable(
+	'page_view',
+	{
+		id: int('id').autoincrement().primaryKey(),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		visitor: varchar('visitor', { length: 16 }).notNull(),
+		/** The path without its language prefix or query: "/courses/intro-to-ai". */
+		path: varchar('path', { length: 255 }).notNull(),
+		/** The SvelteKit route: "/(public)/courses/[slug]", for grouping pages of one kind. */
+		route: varchar('route', { length: 120 }),
+		locale: varchar('locale', { length: 5 }).notNull(),
+		/** Another site that sent the visitor, by host name; null for direct or internal. */
+		referrer: varchar('referrer', { length: 255 }),
+		utmSource: varchar('utm_source', { length: 100 }),
+		utmMedium: varchar('utm_medium', { length: 100 }),
+		utmCampaign: varchar('utm_campaign', { length: 100 }),
+		device: mysqlEnum('device', ANALYTICS_DEVICES).notNull(),
+		browser: varchar('browser', { length: 30 }).notNull(),
+		os: varchar('os', { length: 30 }).notNull(),
+		/** ISO country code from Cloudflare's CF-IPCountry header, when present. */
+		country: varchar('country', { length: 2 }),
+		signedIn: boolean('signed_in').notNull().default(false)
+	},
+	(table) => [
+		index('page_view_created_idx').on(table.createdAt),
+		index('page_view_route_idx').on(table.route, table.createdAt)
+	]
+);

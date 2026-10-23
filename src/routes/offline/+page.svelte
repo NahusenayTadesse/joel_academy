@@ -3,6 +3,7 @@
 	import RotateCw from '@lucide/svelte/icons/rotate-cw';
 	import WifiOff from '@lucide/svelte/icons/wifi-off';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	/*
@@ -12,7 +13,7 @@
 </script>
 
 <svelte:head>
-	<title>You're offline · {siteConfig.name}</title>
+	<title>{m.shell_offline_title()} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -29,17 +30,16 @@
 		<WifiOff class="size-8 text-muted-foreground" aria-hidden="true" />
 	</span>
 	<div class="max-w-sm space-y-2">
-		<h1 class="text-2xl font-semibold tracking-tight text-foreground">You're offline</h1>
+		<h1 class="text-2xl font-semibold tracking-tight text-foreground">{m.shell_offline_title()}</h1>
 		<p class="text-sm text-muted-foreground">
-			This page needs a connection. Pages you have already opened, like the course catalog, are
-			still available.
+			{m.shell_offline_description()}
 		</p>
 	</div>
 	<div class="flex flex-wrap items-center justify-center gap-3">
 		<Button onclick={() => location.reload()}>
 			<RotateCw class="size-4" />
-			Try again
+			{m.shell_try_again()}
 		</Button>
-		<Button variant="outline" href={ROUTES.courses.list}>Browse saved courses</Button>
+		<Button variant="outline" href={ROUTES.courses.list}>{m.shell_offline_browse_saved()}</Button>
 	</div>
 </main>

@@ -1,3 +1,5 @@
+import { m } from '$lib/paraglide/messages';
+
 /**
  * Payment receipts: a photo or a PDF. The kit's store takes more (audio, video, text), so this is
  * the narrower gate a receipt passes first. The browser's declared type is what the store keys
@@ -17,10 +19,10 @@ export const RECEIPT_ACCEPT = RECEIPT_TYPES.join(',');
 
 /** Why this file cannot be a receipt, or `null` if it can. */
 export function receiptProblem(file: { size: number; type: string } | null | undefined, maxBytes: number): string | null {
-	if (!file || file.size === 0) return 'Upload your payment receipt to continue.';
+	if (!file || file.size === 0) return m.account_receipt_missing();
 	if (!(RECEIPT_TYPES as readonly string[]).includes(file.type.toLowerCase()))
-		return 'The receipt must be an image (PNG, JPG, WEBP, HEIC) or a PDF.';
-	if (file.size > maxBytes) return `The receipt is larger than ${formatFileSize(maxBytes)}. Please compress it and try again.`;
+		return m.account_receipt_type();
+	if (file.size > maxBytes) return m.account_receipt_too_large({ size: formatFileSize(maxBytes) });
 	return null;
 }
 

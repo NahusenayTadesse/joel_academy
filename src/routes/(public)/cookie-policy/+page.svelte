@@ -1,16 +1,23 @@
 <script lang="ts">
 	import LegalPage from '$lib/components/common/legal-page.svelte';
+	import { getLocale, INTL_LOCALES } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
+
+	// The policy body below stays in English on purpose (see LegalPage); only the page chrome is translated.
+	const updatedAt = new Intl.DateTimeFormat(INTL_LOCALES[getLocale()], { dateStyle: 'long' }).format(
+		new Date(2026, 7, 5)
+	);
 </script>
 
 <svelte:head>
-	<title>Cookie Policy · {siteConfig.name}</title>
-	<meta name="description" content="How {siteConfig.name} uses cookies and similar technologies." />
+	<title>{m.info_cookies_title()} · {siteConfig.name}</title>
+	<meta name="description" content={m.info_cookies_meta_description({ name: siteConfig.name })} />
 </svelte:head>
 
 <LegalPage
-	title="Cookie Policy"
-	updatedAt="August 5, 2026"
+	title={m.info_cookies_title()}
+	{updatedAt}
 	intro="This Cookie Policy explains how {siteConfig.name} uses cookies and similar technologies."
 	sections={[
 		{

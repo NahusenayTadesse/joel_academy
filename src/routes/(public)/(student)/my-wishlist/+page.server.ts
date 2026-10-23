@@ -5,6 +5,7 @@ import { enrollment } from '$lib/server/db/schema';
 import { listCourses } from '$lib/server/public-catalog';
 import { requireActionUser, requireUser } from '$lib/server/student';
 import { parseCourseIds, removeFromWishlist, wishlistCourseIds } from '$lib/server/wishlist';
+import { m } from '$lib/paraglide/messages';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
@@ -41,7 +42,7 @@ export const actions: Actions = {
 	remove: async (event) => {
 		const user = requireActionUser(event);
 		const [courseId] = parseCourseIds([(await event.request.formData()).get('courseId')]);
-		if (!courseId) return fail(400, { error: 'Unknown course.' });
+		if (!courseId) return fail(400, { error: m.learn_unknown_course() });
 		await removeFromWishlist(user.id, [courseId]);
 		return { removed: courseId };
 	}

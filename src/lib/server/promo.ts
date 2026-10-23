@@ -2,6 +2,7 @@ import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { course, enrollment, promoCode } from '$lib/server/db/schema';
 import { effectivePrice } from '$lib/progress';
+import { m } from '$lib/paraglide/messages';
 import { normalizePromoCode, PROMO_CODE_PATTERN, promoPricing, type PromoPricing } from '$lib/promo';
 
 /*
@@ -72,12 +73,12 @@ export async function quoteCourse(
 		.from(course)
 		.where(and(eq(course.id, input.courseId), eq(course.status, true)))
 		.limit(1);
-	if (!target || target.accessType !== 'PAID') throw new PromoError('NOT_PAID', 'Promo codes apply to paid courses only.');
+	if (!target || target.accessType !== 'PAID') throw new PromoError('NOT_PAID', m.account_promo_err_not_paid());
 
 	const base = effectivePrice(target.price, target.discountPrice);
 	const code = normalizePromoCode(input.code);
 	if (!code) return { ...promoPricing(base, 'FIXED', 0), currency: target.currency, promo: null };
-	if (!PROMO_CODE_PATTERN.test(code)) throw new PromoError('INVALID', 'That is not a valid promo code.');
+	if (!PROMO_CODE_PATTERN.test(code)) throw new PromoError('INVALID', m.account_promo_err_invalid());
 
 	const query = executor
 		.select()
@@ -85,20 +86,20 @@ export async function quoteCourse(
 		.where(and(eq(promoCode.code, code), isNull(promoCode.deletedAt), eq(promoCode.status, true)))
 		.limit(1);
 	const [found] = input.lock ? await query.for('update') : await query;
-	if (!found) throw new PromoError('NOT_FOUND', 'That promo code does not exist or is no longer active.');
+	if (!found) throw new PromoError('NOT_FOUND', m.account_promo_err_not_found());
 
 	const now = input.now ?? new Date();
-	if (found.startsAt && found.startsAt > now) throw new PromoError('NOT_STARTED', 'That promo code is not active yet.');
-	if (found.endsAt && found.endsAt < now) throw new PromoError('EXPIRED', 'That promo code has expired.');
+	if (found.startsAt && found.startsAt > now) throw new PromoError('NOT_STARTED', m.account_promo_err_not_started());
+	if (found.endsAt && found.endsAt < now) throw new PromoError('EXPIRED', m.account_promo_err_expired());
 	if (found.courseId !== null && found.courseId !== target.id)
-		throw new PromoError('WRONG_COURSE', 'That promo code is for a different course.');
+		throw new PromoError('WRONG_COURSE', m.account_promo_err_wrong_course());
 
 	if (found.maxRedemptions !== null) {
 		// The student's own earlier attempt on this course is the redemption they are making now.
 		const taken = (await holders(executor, [found.id])).get(found.id) ?? new Set<string>();
 		taken.delete(`${input.userId}:${target.id}`);
 		if (taken.size >= found.maxRedemptions)
-			throw new PromoError('USED_UP', 'That promo code has reached its redemption limit.');
+			throw new PromoError('USED_UP', m.account_promo_err_used_up());
 	}
 
 	return {

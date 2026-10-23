@@ -4,6 +4,7 @@
 	import EmptyState from '$lib/components/common/empty-state.svelte';
 	import { inView } from '$lib/attachments';
 	import type { CourseSummary } from '$lib/content/catalog.types';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import SectionTitle from './section-title.svelte';
 
@@ -17,14 +18,18 @@
 	></div>
 	<div class="mx-auto w-full max-w-7xl px-4 py-24 sm:px-6">
 		<SectionTitle
-			eyebrow="Featured"
-			title="Courses to"
-			accent="start with"
-			subtitle="Hand-picked courses to get you moving this week."
-			link={{ href: ROUTES.courses.list, label: 'Browse all courses' }}
+			eyebrow={m.home_featured_eyebrow()}
+			title={m.home_featured_title()}
+			accent={m.home_featured_accent()}
+			subtitle={m.home_featured_subtitle()}
+			link={{ href: ROUTES.courses.list, label: m.home_featured_link() }}
 		/>
 		{#if courses.length === 0}
-			<EmptyState icon={BookOpen} title="No featured courses yet" description="Check back soon." />
+			<EmptyState
+				icon={BookOpen}
+				title={m.home_featured_empty_title()}
+				description={m.home_featured_empty_description()}
+			/>
 		{:else}
 			<div
 				class="reveal-stagger grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"

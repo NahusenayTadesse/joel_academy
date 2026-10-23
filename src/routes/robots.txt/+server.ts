@@ -12,14 +12,14 @@ export const GET: RequestHandler = ({ url }) => {
 		'/my-courses',
 		'/my-certificates',
 		'/checkout',
-		'/login',
-		'/register',
 		'/forgot-password',
 		'/reset-password',
 		'/verify-email',
 		'/offline',
 		'/certificates/verify/'
 	];
-	const body = ['User-agent: *', 'Allow: /', ...disallowed.map((path) => `Disallow: ${path}`), '', `Sitemap: ${origin}/sitemap.xml`, ''].join('\n');
+	// The same pages under the Amharic prefix (the dashboard and API have no Amharic twin).
+	const localized = disallowed.filter((path) => !/^\/(dashboard|api)/.test(path)).map((path) => `/am${path}`);
+	const body = ['User-agent: *', 'Allow: /', ...[...disallowed, ...localized].map((path) => `Disallow: ${path}`), '', `Sitemap: ${origin}/sitemap.xml`, ''].join('\n');
 	return new Response(body, { headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'public, max-age=3600' } });
 };

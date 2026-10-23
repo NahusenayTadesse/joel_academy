@@ -2,6 +2,7 @@
 	import CameraOff from '@lucide/svelte/icons/camera-off';
 	import KeyRound from '@lucide/svelte/icons/key-round';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	/*
 	 * The original decoded camera frames with `jsqr`, which this app does not ship. Rather than open a
@@ -24,17 +25,16 @@
 				<CameraOff class="size-7" />
 			</div>
 			<div class="space-y-1.5">
-				<h3 class="text-base font-semibold">Camera Unavailable</h3>
+				<h3 class="text-base font-semibold">{m.info_verify_camera_unavailable()}</h3>
 				<p class="max-w-xs text-xs text-muted-foreground">
-					QR code scanning isn't available yet. Enter the certificate number or verification token
-					printed on the certificate instead.
+					{m.info_verify_camera_unavailable_body()}
 				</p>
 			</div>
 			{#if onSwitchToManual}
 				<div class="flex w-full max-w-xs flex-col gap-2">
 					<Button size="sm" onclick={onSwitchToManual} class="w-full gap-2">
 						<KeyRound class="size-3.5" />
-						Enter Code Manually
+						{m.info_verify_enter_manually()}
 					</Button>
 				</div>
 			{/if}

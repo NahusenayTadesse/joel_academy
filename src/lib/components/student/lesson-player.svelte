@@ -1,5 +1,6 @@
 <script lang="ts">
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
+	import { m } from '$lib/paraglide/messages';
 	import type { PlayableVideo } from '$lib/video';
 	import FilePlayer from './file-player.svelte';
 	import HostedPlayer from './hosted-player.svelte';
@@ -58,10 +59,10 @@
 <div class="space-y-2">
 	<div class="flex items-center gap-2 px-0.5 text-xs text-sidebar-foreground/70">
 		<span class="inline-block size-2 animate-pulse rounded-full bg-sidebar-primary"></span>
-		<span class="font-medium text-white/80">Video Lesson</span>
+		<span class="font-medium text-white/80">{m.learn_video_lesson()}</span>
 		{#if resumedAt > 0}
 			<span class="ml-auto flex items-center gap-1.5" role="status">
-				<span>Resumed at <span class="tabular-nums">{formatClock(resumedAt)}</span></span>
+				<span>{m.learn_resumed_at()} <span class="tabular-nums">{formatClock(resumedAt)}</span></span>
 				<span aria-hidden="true">·</span>
 				<button
 					type="button"
@@ -69,7 +70,7 @@
 					class="inline-flex items-center gap-1 font-medium text-sidebar-primary hover:underline"
 				>
 					<RotateCcw class="size-3" aria-hidden="true" />
-					Start over
+					{m.learn_start_over()}
 				</button>
 			</span>
 		{/if}

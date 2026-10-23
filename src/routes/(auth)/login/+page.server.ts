@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth, googleEnabled } from '$lib/server/auth';
+import { m } from '$lib/paraglide/messages';
 import { db } from '$lib/server/db';
 import { staffRole } from '$lib/server/db/schema';
 import { afterSignIn } from '$lib/safe-redirect';
@@ -37,7 +38,7 @@ export const actions: Actions = {
 		if (wait) {
 			return message(
 				form,
-				{ type: 'error', text: `Too many sign-in attempts. Try again in ${waitText(wait)}, or reset your password.` },
+				{ type: 'error', text: m.account_login_too_many({ wait: waitText(wait) }) },
 				{ status: 429 }
 			);
 		}
@@ -53,7 +54,7 @@ export const actions: Actions = {
 			forgive('signInEmail', email);
 		} catch (err) {
 			if (err instanceof APIError) {
-				return message(form, { type: 'error', text: 'Wrong email or password.' }, { status: 400 });
+				return message(form, { type: 'error', text: m.account_login_wrong() }, { status: 400 });
 			}
 			throw err;
 		}

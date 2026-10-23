@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { CourseAccessType } from '$lib/content/catalog.types';
 	import { formatCurrency } from '$lib/format';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	let {
@@ -21,7 +22,7 @@
 </script>
 
 {#if accessType === 'FREE'}
-	<span class={cn('text-sm font-semibold text-success-ink', className)}>Free</span>
+	<span class={cn('text-sm font-semibold text-success-ink', className)}>{m.catalog_price_free()}</span>
 {:else}
 	<span class={cn('flex items-baseline gap-2', className)}>
 		<span class="text-sm font-semibold text-foreground">

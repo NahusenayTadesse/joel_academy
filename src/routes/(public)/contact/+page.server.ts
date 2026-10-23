@@ -3,6 +3,7 @@ import { contactErrors, contactSchema } from '$lib/components/info/contact-schem
 import { db } from '$lib/server/db';
 import { contactMessage } from '$lib/server/db/schema';
 import { contactMessageAdminEmail } from '$lib/server/email';
+import { m } from '$lib/paraglide/messages';
 import { clientAddress, hit, issueFormToken, judgeSubmission, waitText } from '$lib/server/spam';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -21,7 +22,7 @@ export const actions: Actions = {
 		const verdict = judgeSubmission(formData);
 		if (verdict === 'honeypot' || verdict === 'too-fast') return { sent: true };
 		if (verdict === 'bad-token') {
-			return fail(400, { values, errors: {}, message: 'This form has expired. Reload the page and send it again.' });
+			return fail(400, { values, errors: {}, message: m.info_contact_form_expired() });
 		}
 
 		const parsed = contactSchema.safeParse(values);
@@ -29,7 +30,7 @@ export const actions: Actions = {
 
 		const wait = hit('contact', clientAddress(event));
 		if (wait) {
-			return fail(429, { values, errors: {}, message: `You've sent several messages already. Try again in ${waitText(wait)}.` });
+			return fail(429, { values, errors: {}, message: m.info_contact_rate_limited({ wait: waitText(wait) }) });
 		}
 
 		// Staff read these in the dashboard inbox.

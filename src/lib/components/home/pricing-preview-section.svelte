@@ -4,16 +4,17 @@
 	import Tag from '@lucide/svelte/icons/tag';
 	import Button from '$lib/components/ui/button.svelte';
 	import { inView } from '$lib/attachments';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import SectionTitle from './section-title.svelte';
 </script>
 
 <section class="mx-auto w-full max-w-7xl px-4 py-24 sm:px-6">
 	<SectionTitle
-		eyebrow="Pricing"
-		title="Simple,"
-		accent="per-course pricing"
-		subtitle="No subscriptions. Pay once for a course and keep lifetime access."
+		eyebrow={m.home_pricing_eyebrow()}
+		title={m.home_pricing_title()}
+		accent={m.home_pricing_accent()}
+		subtitle={m.home_pricing_subtitle()}
 		align="center"
 	/>
 	<div class="reveal-stagger mx-auto grid max-w-3xl grid-cols-1 gap-6 sm:grid-cols-2" {@attach inView()}>
@@ -21,9 +22,9 @@
 			<span class="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-ink">
 				<Gift class="size-5" />
 			</span>
-			<h3 class="text-lg font-semibold text-foreground">Free courses</h3>
+			<h3 class="text-lg font-semibold text-foreground">{m.home_pricing_free_title()}</h3>
 			<p class="text-sm leading-relaxed text-muted-foreground">
-				Many courses are completely free to enroll in and complete.
+				{m.home_pricing_free_description()}
 			</p>
 		</div>
 		<div class="glass-card lift gradient-border flex flex-col gap-3 rounded-3xl p-7">
@@ -32,15 +33,15 @@
 			>
 				<Tag class="size-5" />
 			</span>
-			<h3 class="text-lg font-semibold text-foreground">Paid courses</h3>
+			<h3 class="text-lg font-semibold text-foreground">{m.home_pricing_paid_title()}</h3>
 			<p class="text-sm leading-relaxed text-muted-foreground">
-				Pay a one-time price set by the instructor for lifetime access, no recurring fees.
+				{m.home_pricing_paid_description()}
 			</p>
 		</div>
 	</div>
 	<div class="mt-10 flex justify-center">
 		<Button href={ROUTES.pricing} variant="glass">
-			Learn more about pricing
+			{m.home_pricing_link()}
 			<ArrowRight class="size-4" />
 		</Button>
 	</div>

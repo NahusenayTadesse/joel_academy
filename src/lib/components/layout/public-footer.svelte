@@ -1,35 +1,37 @@
 <script lang="ts">
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 	import BrandMark from './brand-mark.svelte';
+	import LanguageSwitcher from './language-switcher.svelte';
 	import NewsletterForm from './newsletter-form.svelte';
 	import { inView } from '$lib/attachments';
 
 	const FOOTER_SECTIONS = [
 		{
-			title: 'Platform',
+			title: m.shell_footer_platform(),
 			links: [
-				{ label: 'Courses', href: ROUTES.courses.list },
-				{ label: 'Categories', href: ROUTES.categories.list },
-				{ label: 'Instructors', href: ROUTES.instructors.list },
-				{ label: 'Pricing', href: ROUTES.pricing },
-				{ label: 'Verify certificate', href: ROUTES.certificates.verifyLookup }
+				{ label: m.shell_nav_courses(), href: ROUTES.courses.list },
+				{ label: m.shell_nav_categories(), href: ROUTES.categories.list },
+				{ label: m.shell_nav_instructors(), href: ROUTES.instructors.list },
+				{ label: m.shell_nav_pricing(), href: ROUTES.pricing },
+				{ label: m.shell_footer_verify_certificate(), href: ROUTES.certificates.verifyLookup }
 			]
 		},
 		{
-			title: 'Company',
+			title: m.shell_footer_company(),
 			links: [
-				{ label: 'About', href: ROUTES.about },
-				{ label: 'Contact', href: ROUTES.contact },
-				{ label: 'FAQ', href: ROUTES.faq },
-				{ label: 'Help center', href: ROUTES.helpCenter }
+				{ label: m.shell_nav_about(), href: ROUTES.about },
+				{ label: m.shell_nav_contact(), href: ROUTES.contact },
+				{ label: m.shell_footer_faq(), href: ROUTES.faq },
+				{ label: m.shell_footer_help_center(), href: ROUTES.helpCenter }
 			]
 		},
 		{
-			title: 'Legal',
+			title: m.shell_footer_legal(),
 			links: [
-				{ label: 'Privacy policy', href: ROUTES.privacyPolicy },
-				{ label: 'Terms of service', href: ROUTES.terms },
-				{ label: 'Cookie policy', href: ROUTES.cookiePolicy }
+				{ label: m.shell_footer_privacy(), href: ROUTES.privacyPolicy },
+				{ label: m.shell_footer_terms(), href: ROUTES.terms },
+				{ label: m.shell_footer_cookies(), href: ROUTES.cookiePolicy }
 			]
 		}
 	];
@@ -46,9 +48,9 @@
 	>
 		<div class="flex flex-col gap-3">
 			<BrandMark />
-			<p class="max-w-xs text-sm text-muted-foreground">{siteConfig.description}</p>
+			<p class="max-w-xs text-sm text-muted-foreground">{m.shell_site_description()}</p>
 			<div class="mt-2">
-				<p class="mb-2 text-sm font-medium text-foreground">Get course updates</p>
+				<p class="mb-2 text-sm font-medium text-foreground">{m.shell_footer_newsletter_heading()}</p>
 				<NewsletterForm class="max-w-sm" />
 			</div>
 		</div>
@@ -76,8 +78,13 @@
 		<div
 			class="mx-auto flex w-full max-w-7xl flex-col gap-2 px-4 py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6"
 		>
-			<p>&copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
-			<p class="text-xs">Learn with purpose. Build with confidence.</p>
+			<p>{m.shell_footer_copyright({ year: new Date().getFullYear(), name: siteConfig.name })}</p>
+			<div class="flex items-center gap-3">
+				<p class="text-xs">{m.shell_site_description()}</p>
+				<LanguageSwitcher
+					class="h-8 rounded-md border border-border px-2.5 text-xs text-muted-foreground hover:text-brand-ink"
+				/>
+			</div>
 		</div>
 	</div>
 </footer>

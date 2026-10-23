@@ -28,6 +28,22 @@ Anyone can register at `/register` as a student. Staff grants live in `staff_rol
 - **Limits** protect the balance, counted from the SMS log: codes one a minute and five an hour per number (and six code requests an hour per account), other kinds ten an hour per number, twenty texts a day per number, three hundred a day in total. A refused text is logged as Skipped with "Rate limited".
 - **Checking the key:** Dashboard → SMS log → *Send a test SMS* sends one real text to the number you enter (limited to a few per number per hour). A failure shows GeezSMS's own message, e.g. "API Not found" for a wrong token.
 
+## Languages (English and Amharic)
+
+- **Addresses:** English is at `/`, Amharic under `/am` (`/am/courses`, `/am/my-courses`, …), via [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs). `ROUTES` in `src/lib/site.ts` returns paths in the current page's language, so links and redirects stay in it; `localizePath()` in `src/lib/i18n.ts` does the same for any other path. The dashboard, APIs and files have no `/am` twin (`src/hooks.ts` refuses `/am/dashboard`, so the dashboard's access rules cannot be bypassed).
+- **Text:** every visible string lives in `messages/en.json` and `messages/am.json` (the same keys in both), used as `m.key()` from `$lib/paraglide/messages`. `src/lib/paraglide/` is generated (vite compiles it on dev and build; `npm run check` compiles it too) and not committed. Never call `m.*()` at module level: the language is per request.
+- **Database content** (course titles, descriptions, instructors, testimonials) is shown as entered. The home page CMS has a document per language: **Dashboard → Landing page** has an English / አማርኛ switch at the top; the Amharic copy starts from a translation of the defaults.
+- **Emails, texts and notifications** go out in the language the recipient last used the site in (`user.locale`, kept up to date as they browse); staff emails stay English. Legal pages keep their English text, with a note on the Amharic site that the English version governs.
+- **Search engines:** each page lists its other-language twin (`hreflang`), and the sitemap lists both.
+
+## Analytics
+
+**Dashboard → Analytics** (administrators): visitors, page views, the funnel from course page to approved payment, course interest, referring sites, `utm_source` campaigns, countries (from Cloudflare), devices, browsers and the Amharic/English split. The site counts this itself (`src/lib/components/analytics-beacon.svelte` → `src/routes/api/v` → table `page_view`): no cookies and no third-party script. A visitor is a salted hash of address, browser and day, so people count once a day and are not followed across days; staff, the dashboard, bots and audit tools are left out, and rows older than 400 days are dropped. Tag links you share, e.g. `https://ethioaischool.com/am?utm_source=telegram`, to see campaigns.
+
+## Images and performance
+
+Shipped pictures under `static/images` have WebP copies at 480/640/800 px (`bash scripts/optimize-images.sh` after adding one), offered through `srcset` by `responsiveSrcset()` in `src/lib/media.ts`. Public pages load only their own stylesheet; the dashboard adds `src/routes/dashboard/dashboard.css`.
+
 ## Commands
 
 `npm run check`, `npm test`, `npm run build`, `npm start`.

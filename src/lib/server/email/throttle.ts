@@ -1,3 +1,5 @@
+import { m } from '$lib/paraglide/messages';
+
 /**
  * How often one address may be sent the same kind of email on request (a resent confirmation, a
  * reset link): at most `max` within `windowMs`, and never twice within `gapMs`.
@@ -38,7 +40,6 @@ export function throttle(
 
 /** "45 seconds", "3 minutes": a wait for people. */
 export function describeWait(seconds: number): string {
-	if (seconds < 60) return `${seconds} second${seconds === 1 ? '' : 's'}`;
-	const minutes = Math.ceil(seconds / 60);
-	return `${minutes} minute${minutes === 1 ? '' : 's'}`;
+	if (seconds < 60) return m.misc_wait_seconds({ count: seconds });
+	return m.info_wait_minutes({ count: Math.ceil(seconds / 60) });
 }

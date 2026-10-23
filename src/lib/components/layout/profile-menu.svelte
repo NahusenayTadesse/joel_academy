@@ -11,6 +11,8 @@
 	import * as DropdownMenu from '@nahu/admin-kit/components/ui/dropdown-menu/index.js';
 	import { buttonVariants } from '$lib/components/ui/variants';
 	import { initials } from '$lib/format';
+	import { localizePath } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
@@ -19,19 +21,19 @@
 	let signOutForm = $state<HTMLFormElement>();
 
 	const STUDENT_LINKS = [
-		{ label: 'My learning home', href: ROUTES.student.home, icon: GraduationCap },
-		{ label: 'My courses', href: ROUTES.student.courses, icon: BookOpen },
-		{ label: 'My certificates', href: ROUTES.student.certificates, icon: Award },
-		{ label: 'Wishlist', href: ROUTES.student.wishlist, icon: Heart },
-		{ label: 'Payments', href: ROUTES.student.payments, icon: CreditCard },
-		{ label: 'Notifications', href: ROUTES.student.notifications, icon: Bell }
+		{ label: m.shell_profile_learning_home(), href: ROUTES.student.home, icon: GraduationCap },
+		{ label: m.shell_student_my_courses(), href: ROUTES.student.courses, icon: BookOpen },
+		{ label: m.shell_profile_my_certificates(), href: ROUTES.student.certificates, icon: Award },
+		{ label: m.shell_student_wishlist(), href: ROUTES.student.wishlist, icon: Heart },
+		{ label: m.shell_student_payments(), href: ROUTES.student.payments, icon: CreditCard },
+		{ label: m.shell_student_notifications(), href: ROUTES.student.notifications, icon: Bell }
 	];
 </script>
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
 		class={cn(buttonVariants({ variant: 'ghost' }), 'h-9 gap-2 px-2')}
-		aria-label="Account menu for {user.name}"
+		aria-label={m.shell_profile_account_menu({ name: user.name })}
 	>
 		<span
 			class="relative flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-xs"
@@ -52,7 +54,7 @@
 				{#snippet child({ props })}
 					<a href={ROUTES.dashboard} {...props}>
 						<LayoutDashboard class="size-4" />
-						Dashboard
+						{m.shell_header_dashboard()}
 					</a>
 				{/snippet}
 			</DropdownMenu.Item>
@@ -72,7 +74,7 @@
 			{#snippet child({ props })}
 				<a href={ROUTES.student.account} {...props}>
 					<UserCog class="size-4" />
-					Account
+					{m.shell_header_account()}
 				</a>
 			{/snippet}
 		</DropdownMenu.Item>
@@ -82,9 +84,9 @@
 			class="cursor-pointer gap-2 text-destructive focus:bg-destructive/10 focus:text-destructive"
 		>
 			<LogOut class="size-4" />
-			<span>Sign out</span>
+			<span>{m.shell_profile_sign_out()}</span>
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
-<form bind:this={signOutForm} method="post" action="/logout" hidden></form>
+<form bind:this={signOutForm} method="post" action={localizePath('/logout')} hidden></form>

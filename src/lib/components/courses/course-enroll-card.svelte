@@ -25,6 +25,7 @@
 	import { DIFFICULTY_LABELS } from '$lib/content/catalog.constants';
 	import type { CourseDetail } from '$lib/content/catalog.types';
 	import { formatDurationMinutes } from '$lib/format';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 
 	let {
@@ -73,15 +74,15 @@
 	const ctaLabel = $derived(
 		active
 			? active.completed
-				? 'Review Course'
+				? m.catalog_enroll_review_course()
 				: active.progressPercent > 0
-					? 'Continue Learning'
-					: 'Start Learning'
+					? m.catalog_enroll_continue()
+					: m.catalog_enroll_start()
 			: authenticated
 				? isFree
-					? 'Enroll Free'
-					: 'Enroll Now'
-				: 'Sign Up to Enroll'
+					? m.catalog_enroll_free()
+					: m.catalog_enroll_now()
+				: m.catalog_enroll_sign_up()
 	);
 </script>
 
@@ -108,18 +109,18 @@
 
 		{#if enrollment?.status === 'PENDING' && !isFree}
 			<p class="rounded-lg border border-warning/40 bg-warning/5 px-3 py-2 text-sm text-warning">
-				Your payment is under review. You'll get access as soon as it's approved.
+				{m.catalog_enroll_pending()}
 			</p>
 			<Button href={ROUTES.student.checkout(course.slug)} size="lg" variant="outline" class="w-full">
-				View Payment Status
+				{m.catalog_enroll_view_payment()}
 			</Button>
 		{:else if enrollment?.status === 'REJECTED' && !isFree}
 			<div class="rounded-lg border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-destructive">
-				<p class="font-medium">Your payment was not approved.</p>
+				<p class="font-medium">{m.catalog_enroll_rejected()}</p>
 				{#if enrollment.rejectionReason}<p class="mt-1">{enrollment.rejectionReason}</p>{/if}
 			</div>
 			<Button href={ROUTES.student.checkout(course.slug)} size="lg" class="w-full">
-				Resubmit Payment
+				{m.catalog_enroll_resubmit()}
 			</Button>
 		{:else if ctaHref}
 			<Button href={ctaHref} size="lg" class="w-full">{ctaLabel}</Button>
@@ -128,9 +129,9 @@
 					enrolling = true;
 					return async ({ result, update }) => {
 						if (result.type === 'success' && typeof result.data?.enrollError === 'string') {
-							toast.error('Could not start this course.', { description: result.data.enrollError });
+							toast.error(m.catalog_enroll_could_not_start(), { description: result.data.enrollError });
 						} else if (result.type === 'error') {
-							toast.error('Could not start this course.', { description: 'Please try again.' });
+							toast.error(m.catalog_enroll_could_not_start(), { description: m.catalog_try_again() });
 						}
 						await update();
 						enrolling = false;
@@ -138,7 +139,7 @@
 				}}>
 				<Button type="submit" size="lg" class="w-full" disabled={enrolling}>
 					{#if enrolling}<LoaderCircle class="mr-2 size-4 animate-spin" />{/if}
-					{enrolling ? 'Enrolling…' : ctaLabel}
+					{enrolling ? m.catalog_enroll_enrolling() : ctaLabel}
 				</Button>
 			</ActionForm>
 		{/if}
@@ -146,23 +147,23 @@
 		<ul class="flex flex-col gap-2.5 text-sm text-muted-foreground">
 			<li class="flex items-center gap-2">
 				<Signal class="size-4 shrink-0" />
-				{DIFFICULTY_LABELS[course.difficulty]} level
+				{m.catalog_enroll_level({ level: DIFFICULTY_LABELS[course.difficulty] })}
 			</li>
 			{#if course.estimatedDurationMinutes}
 				<li class="flex items-center gap-2">
 					<Clock class="size-4 shrink-0" />
-					{formatDurationMinutes(course.estimatedDurationMinutes)} total
+					{m.catalog_enroll_duration_total({ duration: formatDurationMinutes(course.estimatedDurationMinutes) })}
 				</li>
 			{/if}
 			{#if course.certificateEnabled}
 				<li class="flex items-center gap-2">
 					<Award class="size-4 shrink-0" />
-					Certificate of completion
+					{m.catalog_enroll_certificate()}
 				</li>
 			{/if}
 			<li class="flex items-center gap-2">
 				<CircleCheck class="size-4 shrink-0" />
-				Full lifetime access
+				{m.catalog_enroll_lifetime()}
 			</li>
 		</ul>
 	</CardContent>

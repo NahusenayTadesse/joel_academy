@@ -3,17 +3,15 @@
 	import CertificateLookupForm from '$lib/components/info/certificate-lookup-form.svelte';
 	import Card from '$lib/components/ui/card.svelte';
 	import CardContent from '$lib/components/ui/card-content.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
 
 	let { data } = $props();
 </script>
 
 <svelte:head>
-	<title>Verify Certificate · {siteConfig.name}</title>
-	<meta
-		name="description"
-		content="Verify the authenticity of Joel Talargie Academy certificates. Scan the QR code or enter the unique certificate ID to validate credentials instantly."
-	/>
+	<title>{m.info_verify_meta_title()} · {siteConfig.name}</title>
+	<meta name="description" content={m.info_verify_meta_description()} />
 </svelte:head>
 
 <div class="relative min-h-[calc(100vh-4rem)] overflow-hidden py-12 sm:py-16">
@@ -29,14 +27,13 @@
 				class="inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand/5 px-3 py-1 text-xs font-semibold text-brand-ink"
 			>
 				<ShieldCheck class="size-3.5" />
-				Official Credential Verification
+				{m.info_verify_badge()}
 			</div>
 			<h1 class="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-				Verify a Certificate
+				{m.info_verify_heading()}
 			</h1>
 			<p class="mx-auto max-w-md text-sm text-muted-foreground">
-				Confirm that a Joel Talargie Academy certificate of completion is genuine, verified, and
-				active.
+				{m.info_verify_intro()}
 			</p>
 		</div>
 
@@ -48,8 +45,7 @@
 
 		<!-- Security assurance notice -->
 		<div class="max-w-sm text-center text-xs text-muted-foreground">
-			All certificates issued by Joel Talargie Academy are protected by tamper-evident verification
-			tokens and cryptographically validated against our central registry.
+			{m.info_verify_security_notice()}
 		</div>
 	</div>
 </div>

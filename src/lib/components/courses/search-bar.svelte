@@ -4,15 +4,16 @@
 	import X from '@lucide/svelte/icons/x';
 	import Button from '$lib/components/ui/button.svelte';
 	import Input from '$lib/components/ui/input.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	let {
-		placeholder = 'Search…',
+		placeholder = m.catalog_search_placeholder(),
 		value = '',
 		onSearch,
 		debounceMs = 300,
 		class: className = '',
-		'aria-label': ariaLabel = 'Search'
+		'aria-label': ariaLabel = m.catalog_search_label()
 	}: {
 		placeholder?: string;
 		/** The committed query (from the URL); the input follows it when it changes elsewhere. */
@@ -89,7 +90,7 @@
 			size="icon"
 			class="absolute top-1/2 right-1 size-7 -translate-y-1/2"
 			onclick={handleClear}
-			aria-label="Clear search"
+			aria-label={m.catalog_search_clear()}
 		>
 			<X class="size-3.5" />
 		</Button>

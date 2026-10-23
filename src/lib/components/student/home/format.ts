@@ -1,15 +1,34 @@
+import { m } from '$lib/paraglide/messages';
+import { getLocale, INTL_LOCALES, type Locale } from '$lib/i18n';
+
 /*
  * Dates in the student area, in Addis Ababa time (as the dashboard shows them), so the server's
  * render and the browser's agree whatever either one's own time zone is.
  */
 const TIME_ZONE = 'Africa/Addis_Ababa';
 
-const DATE = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: TIME_ZONE });
-const DATE_TIME = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short', timeZone: TIME_ZONE });
-const RELATIVE = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+/* One set of formatters per language, made on first use (the language is per request). */
+const formatters = new Map<
+	Locale,
+	{ date: Intl.DateTimeFormat; dateTime: Intl.DateTimeFormat; relative: Intl.RelativeTimeFormat }
+>();
 
-export const formatDate = (iso: string) => DATE.format(new Date(iso));
-export const formatDateTime = (iso: string) => DATE_TIME.format(new Date(iso));
+function formattersFor(locale: Locale = getLocale()) {
+	let found = formatters.get(locale);
+	if (!found) {
+		const tag = INTL_LOCALES[locale];
+		found = {
+			date: new Intl.DateTimeFormat(tag, { dateStyle: 'medium', timeZone: TIME_ZONE }),
+			dateTime: new Intl.DateTimeFormat(tag, { dateStyle: 'medium', timeStyle: 'short', timeZone: TIME_ZONE }),
+			relative: new Intl.RelativeTimeFormat(tag, { numeric: 'auto' })
+		};
+		formatters.set(locale, found);
+	}
+	return found;
+}
+
+export const formatDate = (iso: string) => formattersFor().date.format(new Date(iso));
+export const formatDateTime = (iso: string) => formattersFor().dateTime.format(new Date(iso));
 
 /** Each unit, and how many of it make the next. */
 const STEPS: [Intl.RelativeTimeFormatUnit, number][] = [
@@ -22,10 +41,10 @@ const STEPS: [Intl.RelativeTimeFormatUnit, number][] = [
 /** "just now", "5 minutes ago", "yesterday"; past a month, the date itself. */
 export function formatRelativeTime(iso: string, now = Date.now()): string {
 	let value = Math.round((now - Date.parse(iso)) / 1000);
-	if (value < 45) return 'just now';
+	if (value < 45) return m.learn_time_just_now();
 	value = value / 60;
 	for (const [unit, size] of STEPS) {
-		if (value < size) return RELATIVE.format(-Math.max(1, Math.round(value)), unit);
+		if (value < size) return formattersFor().relative.format(-Math.max(1, Math.round(value)), unit);
 		value = value / size;
 	}
 	return formatDate(iso);
@@ -36,6 +55,6 @@ export function formatLearningTime(seconds: number): string {
 	const minutes = Math.round(seconds / 60);
 	const hours = Math.floor(minutes / 60);
 	const rest = minutes % 60;
-	if (hours === 0) return `${rest}m`;
-	return rest === 0 ? `${hours}h` : `${hours}h ${rest}m`;
+	if (hours === 0) return m.learn_time_m({ minutes: rest });
+	return rest === 0 ? m.learn_time_h({ hours }) : m.learn_time_hm({ hours, minutes: rest });
 }

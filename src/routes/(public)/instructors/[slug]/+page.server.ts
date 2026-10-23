@@ -1,9 +1,10 @@
 import { error } from '@sveltejs/kit';
+import { m } from '$lib/paraglide/messages';
 import { getInstructor } from '$lib/server/public-catalog';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const instructor = await getInstructor(params.slug);
-	if (!instructor) error(404, 'Instructor not found');
+	if (!instructor) error(404, m.catalog_instructor_not_found());
 	return { instructor };
 };

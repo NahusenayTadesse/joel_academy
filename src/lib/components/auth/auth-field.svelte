@@ -5,6 +5,7 @@
 	import EyeOff from '@lucide/svelte/icons/eye-off';
 	import Input from '$lib/components/ui/input.svelte';
 	import Label from '$lib/components/ui/label.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	/* One labelled input of the original `AuthForm`: leading icon, show-password toggle, error. */
 	let {
@@ -75,7 +76,7 @@
 				{disabled}
 				onclick={() => (visible = !visible)}
 				class="absolute top-1/2 right-1 flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground disabled:opacity-50"
-				aria-label={visible ? 'Hide password' : 'Show password'}
+				aria-label={visible ? m.account_hide_password() : m.account_show_password()}
 			>
 				{#if visible}<EyeOff class="size-4" />{:else}<Eye class="size-4" />{/if}
 			</button>

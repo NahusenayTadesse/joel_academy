@@ -12,6 +12,7 @@
 	import NotificationCard from '$lib/components/student/home/notification-card.svelte';
 	import LinkTabs from '$lib/components/student/link-tabs.svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
 
 	let { data } = $props();
@@ -30,9 +31,9 @@
 
 	const tabs = $derived(
 		[
-			{ value: 'ALL', label: 'All' },
-			{ value: 'UNREAD', label: 'Unread' },
-			{ value: 'READ', label: 'Read' }
+			{ value: 'ALL', label: m.learn_tab_all() },
+			{ value: 'UNREAD', label: m.learn_tab_unread() },
+			{ value: 'READ', label: m.learn_tab_read() }
 		].map((tab) => ({ ...tab, href: withParams({ read: tab.value === 'ALL' ? undefined : tab.value, shown: undefined }) }))
 	);
 	const hasActiveFilters = $derived(data.filters.read !== 'ALL' || Boolean(data.filters.search));
@@ -40,26 +41,26 @@
 </script>
 
 <svelte:head>
-	<title>Notifications · {siteConfig.name}</title>
+	<title>{m.learn_notifications()} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="mx-auto w-full max-w-4xl space-y-6 p-4 sm:p-6">
-	<PageHeader title="Notifications" description="Updates about your courses and account.">
+	<PageHeader title={m.learn_notifications()} description={m.learn_notifications_desc()}>
 		{#snippet actions()}
 			{#if hasUnread}
 				<ActionForm action="?/readAll" submit={() => {
 						marking = true;
 						return async ({ result, update }) => {
 							marking = false;
-							if (result.type === 'success') toast.success('All notifications marked as read');
-							else toast.error('Could not mark notifications as read', { description: 'Please try again.' });
+							if (result.type === 'success') toast.success(m.learn_notifications_all_read());
+							else toast.error(m.learn_notifications_mark_failed(), { description: m.learn_try_again() });
 							await update();
 						};
 					}}>
 					<Button type="submit" variant="outline" size="sm" class="gap-2" disabled={marking}>
 						<CheckCheck class="size-4" />
-						Mark all as read
+						{m.learn_mark_all_as_read()}
 					</Button>
 				</ActionForm>
 			{/if}
@@ -67,9 +68,9 @@
 	</PageHeader>
 
 	<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-		<LinkTabs label="Filter by read state" {tabs} current={data.filters.read} />
+		<LinkTabs label={m.learn_filter_read()} {tabs} current={data.filters.read} />
 		<SearchBar
-			placeholder="Search notifications..."
+			placeholder={m.learn_search_notifications()}
 			value={data.filters.search}
 			onSearch={(value) => goto(withParams({ search: value || undefined, shown: undefined }), { keepFocus: true, noScroll: true })}
 			class="w-full sm:w-64"
@@ -78,13 +79,13 @@
 
 	{#if data.items.length === 0}
 		{#if hasActiveFilters}
-			<EmptyState icon={SearchX} title="No results found" description="Try adjusting your search or filters.">
+			<EmptyState icon={SearchX} title={m.learn_no_results()} description={m.learn_no_results_desc()}>
 				{#snippet action()}
-					<Button variant="outline" href={page.url.pathname}>Reset filters</Button>
+					<Button variant="outline" href={page.url.pathname}>{m.learn_reset_filters()}</Button>
 				{/snippet}
 			</EmptyState>
 		{:else}
-			<EmptyState icon={Bell} title="You're all caught up" description="New notifications will appear here." />
+			<EmptyState icon={Bell} title={m.learn_caught_up_title()} description={m.learn_caught_up_desc()} />
 		{/if}
 	{:else}
 		<ul class="flex flex-col gap-1 rounded-xl border border-border bg-card p-2">
@@ -95,7 +96,7 @@
 		{#if data.hasMore}
 			<div class="flex justify-center">
 				<Button variant="outline" href={withParams({ shown: String(data.shown + data.pageSize) })} data-sveltekit-noscroll>
-					Load more
+					{m.learn_load_more()}
 				</Button>
 			</div>
 		{/if}

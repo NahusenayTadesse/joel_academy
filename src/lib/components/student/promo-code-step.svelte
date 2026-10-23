@@ -11,6 +11,7 @@
 	import Input from '$lib/components/ui/input.svelte';
 	import Label from '$lib/components/ui/label.svelte';
 	import { formatCurrency } from '$lib/format';
+	import { m } from '$lib/paraglide/messages';
 
 	/*
 	 * The original promo-code step. Applying a code is a GET to this page with `?promo=`, so the
@@ -38,9 +39,9 @@
 
 <div class="space-y-6">
 	<div>
-		<h2 class="text-lg font-bold text-foreground">Have a promo code?</h2>
+		<h2 class="text-lg font-bold text-foreground">{m.account_have_promo()}</h2>
 		<p class="mt-1 text-sm text-muted-foreground">
-			Apply a coupon for a discount, or skip this step to continue at full price.
+			{m.account_promo_intro()}
 		</p>
 	</div>
 
@@ -50,16 +51,16 @@
 				<div class="flex items-center gap-3">
 					<CircleCheck class="size-5 shrink-0 text-success-ink" />
 					<div>
-						<p class="text-sm font-semibold text-foreground">{promo.code} applied</p>
+						<p class="text-sm font-semibold text-foreground">{m.account_promo_applied({ code: promo.code })}</p>
 						<p class="text-xs text-muted-foreground">
-							You save {formatCurrency(promo.discountAmount, currency)}{Number(promo.amountDue) <= 0
-								? ' - this course is free with your code'
-								: ''}
+							{Number(promo.amountDue) <= 0
+								? m.account_you_save_free({ amount: formatCurrency(promo.discountAmount, currency) })
+								: m.account_you_save({ amount: formatCurrency(promo.discountAmount, currency) })}
 						</p>
 						{#if promo.description}<p class="mt-0.5 text-xs text-muted-foreground">{promo.description}</p>{/if}
 					</div>
 				</div>
-				<Button variant="ghost" size="sm" href="?step=2" data-sveltekit-noscroll>Remove</Button>
+				<Button variant="ghost" size="sm" href="?step=2" data-sveltekit-noscroll>{m.account_remove()}</Button>
 			</CardContent>
 		</Card>
 	{:else}
@@ -68,7 +69,7 @@
 				<form method="GET" class="space-y-4" data-sveltekit-keepfocus data-sveltekit-noscroll>
 					<HiddenField name="step" value="2" />
 					<div class="space-y-2">
-						<Label for="promo-code">Promo code</Label>
+						<Label for="promo-code">{m.account_promo_code()}</Label>
 						<div class="flex gap-2">
 							<div class="relative flex-1">
 								<Tag
@@ -79,7 +80,7 @@
 									id="promo-code"
 									name="promo"
 									value={promoInput}
-									placeholder="e.g. WELCOME15"
+									placeholder={m.account_promo_placeholder()}
 									autocomplete="off"
 									maxlength={40}
 									class="pl-9 uppercase placeholder:normal-case"
@@ -88,7 +89,7 @@
 								/>
 							</div>
 							<Button type="submit" variant="outline" disabled={checking}>
-								{#if checking}<LoaderCircle class="size-4 animate-spin" />{:else}Apply{/if}
+								{#if checking}<LoaderCircle class="size-4 animate-spin" />{:else}{m.account_apply()}{/if}
 							</Button>
 						</div>
 					</div>
@@ -109,7 +110,7 @@
 	{/if}
 
 	<div class="flex items-center justify-between gap-3">
-		<Button variant="outline" onclick={onBack}>Back</Button>
-		<Button onclick={onNext}>{promo ? 'Continue' : 'Skip & continue'}</Button>
+		<Button variant="outline" onclick={onBack}>{m.account_back()}</Button>
+		<Button onclick={onNext}>{promo ? m.account_continue() : m.account_skip_continue()}</Button>
 	</div>
 </div>

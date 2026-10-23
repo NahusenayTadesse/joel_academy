@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { initials } from '$lib/format';
+	import { getLocale, INTL_LOCALES } from '$lib/i18n';
 	import StarRating from './star-rating.svelte';
 
 	let {
@@ -11,7 +12,7 @@
 
 	// A fixed zone, so the server render and the browser agree on the day.
 	const date = $derived(
-		new Date(createdAt).toLocaleDateString('en-US', {
+		new Date(createdAt).toLocaleDateString(INTL_LOCALES[getLocale()], {
 			month: 'short',
 			day: 'numeric',
 			year: 'numeric',

@@ -2,6 +2,8 @@
 	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import Button from '$lib/components/ui/button.svelte';
+	import { localizePath } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
 
 	/*
 	 * The original's Google button. A plain form post: the server starts the OAuth flow and sends
@@ -15,7 +17,7 @@
 <!-- Back from Google's page, the browser may restore this page as it was left: still "connecting". -->
 <svelte:window onpageshow={(event) => event.persisted && (connecting = false)} />
 
-<form method="post" action="/login/google" onsubmit={() => (connecting = true)}>
+<form method="post" action={localizePath('/login/google')} onsubmit={() => (connecting = true)}>
 	{#if redirectTo}<HiddenField name="redirectTo" value={redirectTo} />{/if}
 	<Button
 		type="submit"
@@ -26,7 +28,7 @@
 	>
 		{#if connecting}
 			<LoaderCircle class="size-4 animate-spin text-brand-ink" aria-hidden="true" />
-			<span>Connecting to Google...</span>
+			<span>{m.account_google_connecting()}</span>
 		{:else}
 			<svg aria-hidden="true" viewBox="0 0 24 24" class="size-4">
 				<path

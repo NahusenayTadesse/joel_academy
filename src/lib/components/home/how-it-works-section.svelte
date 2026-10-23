@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { inView } from '$lib/attachments';
 	import { DEFAULT_LANDING, type LandingStep } from '$lib/content/landing';
+	import { m } from '$lib/paraglide/messages';
 	import SectionTitle from './section-title.svelte';
 
 	let { items = DEFAULT_LANDING.howItWorks }: { items?: LandingStep[] } = $props();
@@ -21,10 +22,10 @@
 	</div>
 	<div class="mx-auto w-full max-w-7xl px-4 py-24 sm:px-6">
 		<SectionTitle
-			eyebrow="How it works"
-			title="The learning"
-			accent="framework"
-			subtitle="Four simple steps from sign-up to certificate."
+			eyebrow={m.home_how_eyebrow()}
+			title={m.home_how_title()}
+			accent={m.home_how_accent()}
+			subtitle={m.home_how_subtitle()}
 			align="center"
 			tone="dark"
 		/>

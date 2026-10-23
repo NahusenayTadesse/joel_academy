@@ -5,6 +5,7 @@
 	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 	import CourseThumbnail from '$lib/components/catalog/course-thumbnail.svelte';
 	import Badge from '$lib/components/ui/badge.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import ProgressBar from './progress-bar.svelte';
 
@@ -64,7 +65,7 @@
 			<Badge variant="secondary" class="tracking-wide uppercase">{category}</Badge>
 			{#if status === 'ACTIVE' && totalLessons}
 				<span class="shrink-0 text-xs text-muted-foreground">
-					{completedLessons}/{totalLessons} Lessons
+					{m.learn_card_lessons({ done: completedLessons ?? 0, total: totalLessons })}
 				</span>
 			{/if}
 		</div>
@@ -72,25 +73,25 @@
 		{#if status === 'PENDING'}
 			<p class="flex items-center gap-1.5 text-xs text-muted-foreground">
 				<Clock class="size-3.5 shrink-0 text-warning" />
-				Payment under review - you'll get access as soon as it's approved.
+				{m.learn_card_pending()}
 			</p>
 		{:else if status === 'REJECTED'}
 			<p class="flex items-center gap-1.5 truncate text-xs text-destructive">
 				<TriangleAlert class="size-3.5 shrink-0" />
-				{rejectionReason ? `Payment not approved: ${rejectionReason}` : 'Payment not approved - resubmit to continue.'}
+				{rejectionReason ? m.learn_card_rejected_reason({ reason: rejectionReason }) : m.learn_card_rejected()}
 			</p>
 		{:else}
 			<ProgressBar value={percent} />
 		{/if}
 	</div>
 	{#if status === 'PENDING'}
-		<Badge variant="warning" class="shrink-0">Pending</Badge>
+		<Badge variant="warning" class="shrink-0">{m.learn_badge_pending()}</Badge>
 	{:else if status === 'REJECTED'}
-		<Badge variant="destructive" class="shrink-0">Resubmit</Badge>
+		<Badge variant="destructive" class="shrink-0">{m.learn_badge_resubmit()}</Badge>
 	{:else if isComplete}
 		<Badge class="shrink-0 gap-1 border border-primary/20 bg-primary/10 text-primary-ink hover:bg-primary/10">
 			<CircleCheck class="size-3.5" />
-			Completed
+			{m.learn_completed_badge()}
 		</Badge>
 	{:else}
 		<span

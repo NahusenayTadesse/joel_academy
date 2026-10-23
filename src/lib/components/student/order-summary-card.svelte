@@ -3,6 +3,7 @@
 	import CardContent from '$lib/components/ui/card-content.svelte';
 	import Card from '$lib/components/ui/card.svelte';
 	import { formatCurrency } from '$lib/format';
+	import { m } from '$lib/paraglide/messages';
 
 	/*
 	 * The original order summary. With a promo code applied, every figure on it is the server's
@@ -30,7 +31,7 @@
 
 <Card class="sticky top-24">
 	<div class="flex flex-col space-y-1.5 p-6">
-		<h3 class="text-base leading-none font-semibold tracking-tight">Order Summary</h3>
+		<h3 class="text-base leading-none font-semibold tracking-tight">{m.account_order_summary()}</h3>
 	</div>
 	<CardContent class="space-y-4">
 		<div class="flex gap-3">
@@ -52,18 +53,18 @@
 
 		<dl class="space-y-2 text-sm">
 			<div class="flex items-center justify-between">
-				<dt class="text-muted-foreground">Course price</dt>
+				<dt class="text-muted-foreground">{m.account_course_price()}</dt>
 				<dd class="font-medium text-foreground">{formatCurrency(course.price, course.currency)}</dd>
 			</div>
 			{#if Number(course.total) < Number(course.price)}
 				<div class="flex items-center justify-between text-success-ink">
-					<dt>Discount</dt>
+					<dt>{m.account_discount()}</dt>
 					<dd>-{formatCurrency(Number(course.price) - Number(course.total), course.currency)}</dd>
 				</div>
 			{/if}
 			{#if promo}
 				<div class="flex items-center justify-between text-success-ink">
-					<dt>Promo ({promo.code})</dt>
+					<dt>{m.account_promo_with_code({ code: promo.code })}</dt>
 					<dd>-{formatCurrency(promo.discountAmount, course.currency)}</dd>
 				</div>
 			{/if}
@@ -72,9 +73,9 @@
 		<div class="h-px w-full shrink-0 bg-border"></div>
 
 		<div class="flex items-center justify-between">
-			<span class="text-sm font-semibold text-foreground">Total</span>
+			<span class="text-sm font-semibold text-foreground">{m.account_total()}</span>
 			<span class="text-lg font-bold text-brand-ink">
-				{Number(total) <= 0 ? 'Free' : formatCurrency(total, course.currency)}
+				{Number(total) <= 0 ? m.account_free() : formatCurrency(total, course.currency)}
 			</span>
 		</div>
 	</CardContent>

@@ -15,6 +15,7 @@
 	import Button from '$lib/components/ui/button.svelte';
 	import CardContent from '$lib/components/ui/card-content.svelte';
 	import Card from '$lib/components/ui/card.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
 
 	let { data } = $props();
@@ -29,14 +30,14 @@
 			copied = which;
 			setTimeout(() => (copied = null), 2000);
 		} catch {
-			toast.error('Could not copy to the clipboard');
+			toast.error(m.learn_cert_copy_failed());
 		}
 	}
 
 	async function share() {
 		const shareData = {
-			title: `Certificate - ${certificate.courseTitle}`,
-			text: `View my certificate for ${certificate.courseTitle}`,
+			title: m.learn_cert_share_title({ title: certificate.courseTitle }),
+			text: m.learn_cert_share_text({ title: certificate.courseTitle }),
 			url: data.verificationUrl
 		};
 		if (typeof navigator.share === 'function') {
@@ -49,22 +50,22 @@
 		}
 		try {
 			await navigator.clipboard.writeText(data.verificationUrl);
-			toast.success('Verification link copied');
+			toast.success(m.learn_cert_link_copied());
 		} catch {
-			toast.error('Could not copy the link');
+			toast.error(m.learn_cert_link_copy_failed());
 		}
 	}
 </script>
 
 <svelte:head>
-	<title>{certificate.courseTitle} · Certificate · {siteConfig.name}</title>
+	<title>{certificate.courseTitle} · {m.learn_certificate()} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
-	<PageHeader title={certificate.courseTitle} description="Official Credential • {certificate.code}">
+	<PageHeader title={certificate.courseTitle} description={m.learn_cert_official({ code: certificate.code })}>
 		{#snippet actions()}
-			{#if revoked}<Badge variant="outline">Revoked</Badge>{:else}<Badge variant="success">Issued</Badge>{/if}
+			{#if revoked}<Badge variant="outline">{m.learn_revoked()}</Badge>{:else}<Badge variant="success">{m.learn_issued()}</Badge>{/if}
 		{/snippet}
 	</PageHeader>
 
@@ -74,7 +75,7 @@
 				class="flex aspect-[297/210] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-muted/30 p-8 text-center"
 			>
 				<Ban class="size-8 text-muted-foreground" />
-				<p class="text-sm text-muted-foreground">This certificate has been revoked.</p>
+				<p class="text-sm text-muted-foreground">{m.learn_cert_revoked_notice()}</p>
 				{#if certificate.revokedReason}<p class="text-xs text-muted-foreground">{certificate.revokedReason}</p>{/if}
 			</div>
 		{:else}
@@ -107,7 +108,7 @@
 
 					<dl class="space-y-3.5 text-xs sm:text-sm">
 						<div class="space-y-1">
-							<dt class="text-xs font-medium text-muted-foreground">Certificate ID</dt>
+							<dt class="text-xs font-medium text-muted-foreground">{m.learn_cert_id()}</dt>
 							<dd
 								class="rounded-lg border border-border bg-muted/40 p-2 font-mono text-xs leading-relaxed font-semibold break-all text-foreground"
 							>
@@ -115,15 +116,15 @@
 							</dd>
 						</div>
 						<div class="flex items-center justify-between">
-							<dt class="text-muted-foreground">Completion Date</dt>
+							<dt class="text-muted-foreground">{m.learn_cert_completion_date()}</dt>
 							<dd class="font-medium text-foreground">{formatCertificateDate(certificate.issuedAt)}</dd>
 						</div>
 						<div class="flex items-center justify-between">
-							<dt class="text-muted-foreground">Issue Date</dt>
+							<dt class="text-muted-foreground">{m.learn_cert_issue_date()}</dt>
 							<dd class="font-medium text-foreground">{formatCertificateDate(certificate.issuedAt)}</dd>
 						</div>
 						<div class="space-y-1.5 pt-1">
-							<dt class="text-xs font-medium text-muted-foreground">Verification Link</dt>
+							<dt class="text-xs font-medium text-muted-foreground">{m.learn_cert_verification_link()}</dt>
 							<dd
 								class="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5 font-mono text-xs text-foreground"
 							>
@@ -134,15 +135,15 @@
 									type="button"
 									onclick={() => copy(data.verificationUrl, 'link')}
 									class="inline-flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
-									title="Copy verification link"
-									aria-label="Copy verification link"
+									title={m.learn_cert_copy_link()}
+									aria-label={m.learn_cert_copy_link()}
 								>
 									{#if copied === 'link'}<Check class="size-3.5 text-emerald-700" />{:else}<Copy class="size-3.5" />{/if}
 								</button>
 							</dd>
 						</div>
 						<div class="space-y-1.5">
-							<dt class="text-xs font-medium text-muted-foreground">Verification Code</dt>
+							<dt class="text-xs font-medium text-muted-foreground">{m.learn_cert_verification_code()}</dt>
 							<dd
 								class="flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/40 px-2.5 py-1.5 font-mono text-xs text-foreground"
 							>
@@ -151,8 +152,8 @@
 									type="button"
 									onclick={() => copy(certificate.token, 'code')}
 									class="inline-flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
-									title="Copy verification code"
-									aria-label="Copy verification code"
+									title={m.learn_cert_copy_code()}
+									aria-label={m.learn_cert_copy_code()}
 								>
 									{#if copied === 'code'}<Check class="size-3.5 text-emerald-700" />{:else}<Copy class="size-3.5" />{/if}
 								</button>
@@ -168,25 +169,25 @@
 						<!-- A file, not a page: `download` keeps SvelteKit's router out of it. -->
 						<Button class="w-full gap-2 font-medium" href={data.pdfHref} download data-sveltekit-reload>
 							<Download class="size-4" />
-							Download PDF
+							{m.learn_cert_download_pdf()}
 						</Button>
 					{:else}
 						<Button class="w-full gap-2 font-medium" disabled>
 							<Download class="size-4" />
-							Download PDF
+							{m.learn_cert_download_pdf()}
 						</Button>
 					{/if}
 					<Button variant="outline" class="w-full gap-2" onclick={() => window.print()} disabled={revoked}>
 						<Printer class="size-4" />
-						Print Certificate
+						{m.learn_cert_print()}
 					</Button>
 					<Button variant="outline" class="w-full gap-2" href={data.verificationUrl} target="_blank" rel="noopener">
 						<ExternalLink class="size-4" />
-						Open Verification Page
+						{m.learn_cert_open_verification()}
 					</Button>
 					<Button variant="outline" class="w-full gap-2" onclick={share} disabled={revoked}>
 						<Share2 class="size-4" />
-						Share Credential
+						{m.learn_cert_share()}
 					</Button>
 				</CardContent>
 			</Card>

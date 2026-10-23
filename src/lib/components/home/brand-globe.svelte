@@ -17,9 +17,6 @@
 		{ id: 'singapore', location: [1.35, 103.82] }
 	];
 
-	const RING_TEXT =
-		'JOEL TALARGIE ACADEMY ✦ LEARN WITH PURPOSE ✦ BUILD WITH CONFIDENCE ✦ FROM ADDIS ABABA TO THE WORLD ✦ ';
-
 	/** The globe's rotation that puts a longitude in front of the viewer. */
 	const facing = (longitude: number) => Math.PI - ((longitude * Math.PI) / 180 - Math.PI / 2);
 
@@ -46,6 +43,7 @@
 
 <script lang="ts">
 	import { mode } from 'mode-watcher';
+	import { m } from '$lib/paraglide/messages';
 	import type { Attachment } from 'svelte/attachments';
 
 	let { caption = '' }: { caption?: string } = $props();
@@ -129,7 +127,20 @@
 		canvas.addEventListener('pointerup', up);
 		canvas.addEventListener('pointercancel', up);
 
-		import('cobe').then(({ default: createGlobe }) => {
+		// Building the globe (shaders, an 18,000-point map) is one long task. It is decoration, so it
+		// waits until the page has loaded and the browser is idle, instead of competing with hydration
+		// and the visitor's first taps.
+		const whenIdle = () =>
+			new Promise<void>((resolve) => {
+				const idle = () =>
+					'requestIdleCallback' in window
+						? requestIdleCallback(() => resolve(), { timeout: 3000 })
+						: setTimeout(resolve, 1200);
+				if (document.readyState === 'complete') idle();
+				else addEventListener('load', idle, { once: true });
+			});
+
+		whenIdle().then(() => import('cobe')).then(({ default: createGlobe }) => {
 			if (disposed) return;
 			const colors = theme;
 			globe = createGlobe(canvas, {
@@ -211,7 +222,7 @@
 			style="font-family: var(--font-heading)"
 		>
 			<!-- Stretched to the circle's length (2π × 188) so the words meet without overlapping. -->
-			<textPath href="#globe-ring" textLength="1178" lengthAdjust="spacing">{RING_TEXT}</textPath>
+			<textPath href="#globe-ring" textLength="1178" lengthAdjust="spacing">{m.home_globe_ring()}</textPath>
 		</text>
 	</svg>
 	<!-- A dashed orbit turning the other way. -->
@@ -238,7 +249,7 @@
 		class="enter-zoom absolute inset-[11%]"
 		style:--delay="0.2s"
 		role="img"
-		aria-label="A spinning globe with arcs from Addis Ababa to cities around the world"
+		aria-label={m.home_globe_label()}
 	>
 		<div class="globe-stage relative size-full">
 			<canvas
@@ -257,7 +268,7 @@
 					<span class="absolute inset-0 animate-pulse-ring rounded-full bg-primary"></span>
 					<span class="relative size-2 rounded-full bg-primary"></span>
 				</span>
-				Addis Ababa
+				{m.home_globe_addis()}
 			</span>
 		</div>
 	</div>

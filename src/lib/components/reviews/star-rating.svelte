@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Star from '@lucide/svelte/icons/star';
 	import { cn } from '@nahu/admin-kit/utils.js';
+	import { m } from '$lib/paraglide/messages';
 
 	/** Five stars for a rating, read out as "4.5 out of 5 stars". Whole stars, rounded. */
 	let {
@@ -10,7 +11,7 @@
 	}: { value: number; class?: string; starClass?: string } = $props();
 
 	const filled = $derived(Math.round(value));
-	const label = $derived(`${Number.isInteger(value) ? value : value.toFixed(1)} out of 5 stars`);
+	const label = $derived(m.catalog_stars_out_of_five({ value: Number.isInteger(value) ? value : value.toFixed(1) }));
 </script>
 
 <span class={cn('inline-flex items-center gap-0.5', className)} role="img" aria-label={label}>

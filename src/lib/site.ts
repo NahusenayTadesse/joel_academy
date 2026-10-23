@@ -1,3 +1,5 @@
+import { localizePath } from '$lib/i18n';
+
 export const siteConfig = {
 	name: 'Joel Talargie Academy',
 	shortName: 'JTA',
@@ -5,45 +7,61 @@ export const siteConfig = {
 	description: 'Learn with purpose. Build with confidence.'
 } as const;
 
-/** Route paths for the public site and the student area. */
+/*
+ * Route paths for the public site and the student area. Every path comes back in the locale of
+ * the page being rendered ("/courses" in English, "/am/courses" in Amharic), so links, redirects
+ * and `goto` stay in the visitor's language without each caller localizing. The dashboard is
+ * English-only and never localized.
+ */
+const l = (path: string) => localizePath(path);
+
 export const ROUTES = {
-	home: '/',
-	forbidden: '/403',
-	about: '/about',
-	pricing: '/pricing',
-	contact: '/contact',
-	faq: '/faq',
-	helpCenter: '/help-center',
-	privacyPolicy: '/privacy-policy',
-	terms: '/terms',
-	cookiePolicy: '/cookie-policy',
-	instructors: { list: '/instructors', detail: (slug: string) => `/instructors/${slug}` },
-	courses: { list: '/courses', detail: (slug: string) => `/courses/${slug}` },
-	categories: { list: '/categories', detail: (slug: string) => `/categories/${slug}` },
+	get home() { return l('/'); },
+	get forbidden() { return l('/403'); },
+	get about() { return l('/about'); },
+	get pricing() { return l('/pricing'); },
+	get contact() { return l('/contact'); },
+	get faq() { return l('/faq'); },
+	get helpCenter() { return l('/help-center'); },
+	get privacyPolicy() { return l('/privacy-policy'); },
+	get terms() { return l('/terms'); },
+	get cookiePolicy() { return l('/cookie-policy'); },
+	instructors: {
+		get list() { return l('/instructors'); },
+		detail: (slug: string) => l(`/instructors/${slug}`)
+	},
+	courses: {
+		get list() { return l('/courses'); },
+		detail: (slug: string) => l(`/courses/${slug}`)
+	},
+	categories: {
+		get list() { return l('/categories'); },
+		detail: (slug: string) => l(`/categories/${slug}`)
+	},
 	certificates: {
-		verify: (token: string) => `/certificates/verify/${token}`,
-		verifyLookup: '/certificates/verify'
+		verify: (token: string) => l(`/certificates/verify/${token}`),
+		get verifyLookup() { return l('/certificates/verify'); }
 	},
 	auth: {
-		login: '/login',
-		register: '/register',
-		forgotPassword: '/forgot-password',
-		resetPassword: '/reset-password',
-		verifyEmail: '/verify-email'
+		get login() { return l('/login'); },
+		get register() { return l('/register'); },
+		get forgotPassword() { return l('/forgot-password'); },
+		get resetPassword() { return l('/reset-password'); },
+		get verifyEmail() { return l('/verify-email'); }
 	},
 	student: {
 		/** The student's home: progress, payments, certificates and notifications at a glance. */
-		home: '/my',
-		courses: '/my-courses',
+		get home() { return l('/my'); },
+		get courses() { return l('/my-courses'); },
 		learn: (slug: string, lessonId?: number | string) =>
-			lessonId === undefined ? `/my-courses/${slug}` : `/my-courses/${slug}?lesson=${lessonId}`,
-		certificates: '/my-certificates',
-		certificate: (code: string) => `/my-certificates/${code}`,
-		checkout: (slug: string) => `/checkout/${slug}`,
-		account: '/account',
-		wishlist: '/my-wishlist',
-		payments: '/my-payments',
-		notifications: '/my-notifications'
+			l(lessonId === undefined ? `/my-courses/${slug}` : `/my-courses/${slug}?lesson=${lessonId}`),
+		get certificates() { return l('/my-certificates'); },
+		certificate: (code: string) => l(`/my-certificates/${code}`),
+		checkout: (slug: string) => l(`/checkout/${slug}`),
+		get account() { return l('/account'); },
+		get wishlist() { return l('/my-wishlist'); },
+		get payments() { return l('/my-payments'); },
+		get notifications() { return l('/my-notifications'); }
 	},
 	dashboard: '/dashboard'
-} as const;
+};

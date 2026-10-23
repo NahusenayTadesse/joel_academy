@@ -1,19 +1,23 @@
 <script lang="ts">
 	import LegalPage from '$lib/components/common/legal-page.svelte';
+	import { getLocale, INTL_LOCALES } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
+
+	// The policy body below stays in English on purpose (see LegalPage); only the page chrome is translated.
+	const updatedAt = new Intl.DateTimeFormat(INTL_LOCALES[getLocale()], { dateStyle: 'long' }).format(
+		new Date(2026, 7, 5)
+	);
 </script>
 
 <svelte:head>
-	<title>Privacy Policy · {siteConfig.name}</title>
-	<meta
-		name="description"
-		content="How {siteConfig.name} collects, uses, and protects your personal data."
-	/>
+	<title>{m.info_privacy_title()} · {siteConfig.name}</title>
+	<meta name="description" content={m.info_privacy_meta_description({ name: siteConfig.name })} />
 </svelte:head>
 
 <LegalPage
-	title="Privacy Policy"
-	updatedAt="August 5, 2026"
+	title={m.info_privacy_title()}
+	{updatedAt}
 	intro="This Privacy Policy explains how {siteConfig.name} collects, uses, and protects your information when you use our platform."
 	sections={[
 		{

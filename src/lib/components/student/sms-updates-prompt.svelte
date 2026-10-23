@@ -1,5 +1,6 @@
 <script lang="ts">
 	import MessageSquareText from '@lucide/svelte/icons/message-square-text';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 
 	/* An optional nudge for students without a verified phone: never in the way of paying. */
@@ -15,10 +16,10 @@
 		<MessageSquareText class="size-4" aria-hidden="true" />
 	</span>
 	<div class="text-sm">
-		<p class="font-medium text-foreground">Get updates by SMS</p>
+		<p class="font-medium text-foreground">{m.account_sms_title()}</p>
 		<p class="text-muted-foreground">
-			Add your phone number and we'll text you when your payment is approved.
-			<a {href} class="font-medium text-brand-ink hover:underline">Add phone number</a>
+			{m.account_sms_body()}
+			<a {href} class="font-medium text-brand-ink hover:underline">{m.account_add_phone()}</a>
 		</p>
 	</div>
 </div>

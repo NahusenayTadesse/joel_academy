@@ -5,14 +5,15 @@
 	import EmptyState from '$lib/components/common/empty-state.svelte';
 	import PublicPagination from '$lib/components/common/public-pagination.svelte';
 	import { buildBreadcrumbJsonLd, jsonLdScript } from '$lib/json-ld';
+	import { m } from '$lib/paraglide/messages';
 	import PageBreadcrumb from '$lib/components/common/page-breadcrumb.svelte';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	let { data } = $props();
 
 	const breadcrumbItems = $derived([
-		{ label: 'Home', href: ROUTES.home },
-		{ label: 'Categories', href: ROUTES.categories.list },
+		{ label: m.catalog_breadcrumb_home(), href: ROUTES.home },
+		{ label: m.catalog_breadcrumb_categories(), href: ROUTES.categories.list },
 		{ label: data.category.name }
 	]);
 </script>
@@ -21,7 +22,7 @@
 	<title>{data.category.name} · {siteConfig.name}</title>
 	<meta
 		name="description"
-		content={data.category.description ?? `Courses in ${data.category.name}`}
+		content={data.category.description ?? m.catalog_category_meta_fallback({ name: data.category.name })}
 	/>
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- serialized JSON with `<` escaped -->
 	{@html jsonLdScript(buildBreadcrumbJsonLd(page.url.origin, breadcrumbItems))}
@@ -38,7 +39,7 @@
 	</div>
 
 	{#if data.courses.items.length === 0}
-		<EmptyState icon={SearchX} title="No courses in this category yet" />
+		<EmptyState icon={SearchX} title={m.catalog_category_empty()} />
 	{:else}
 		<div class="flex flex-col gap-6">
 			<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

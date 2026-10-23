@@ -29,6 +29,8 @@
 	import { DIFFICULTY_LABELS } from '$lib/content/catalog.constants';
 	import { formatCurrency, formatDurationMinutes } from '$lib/format';
 	import { RECEIPT_ACCEPT, receiptProblem } from '$lib/receipt';
+	import { getLocale, INTL_LOCALES } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
@@ -72,13 +74,13 @@
 	const shownReceiptError = $derived(receiptError ?? errors.receipt);
 
 	const breadcrumbs = $derived([
-		{ label: 'Home', href: ROUTES.home },
-		{ label: 'Courses', href: ROUTES.courses.list },
+		{ label: m.account_breadcrumb_home(), href: ROUTES.home },
+		{ label: m.account_breadcrumb_courses(), href: ROUTES.courses.list },
 		{ label: course.title, href: ROUTES.courses.detail(course.slug) },
-		{ label: 'Checkout' }
+		{ label: m.account_checkout() }
 	]);
 
-	const dateFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' });
+	const dateFormat = new Intl.DateTimeFormat(INTL_LOCALES[getLocale()], { dateStyle: 'medium' });
 
 	/** A failed action shows a toast and keeps what was typed. */
 	function afterAction(title: string) {
@@ -91,7 +93,7 @@
 		}) => {
 			submitting = false;
 			if (result.type === 'failure') {
-				toast.error(title, { description: 'Please check the details and try again.' });
+				toast.error(title, { description: m.account_check_details() });
 			}
 			// Keep the chosen file and typed values after a refusal.
 			await update({ reset: false });
@@ -100,7 +102,7 @@
 </script>
 
 <svelte:head>
-	<title>Checkout · {course.title} · {siteConfig.name}</title>
+	<title>{m.account_checkout()} · {course.title} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -109,7 +111,7 @@
 		<PageBreadcrumb items={breadcrumbs} />
 	</div>
 
-	<PageHeader title="Checkout" description="Enrolling in {course.title}" />
+	<PageHeader title={m.account_checkout()} description={m.account_checkout_description({ title: course.title })} />
 
 	<div class="mb-2">
 		<CheckoutStepper currentStep={step} />
@@ -120,7 +122,7 @@
 			{#if step === 1}
 				<div class="space-y-6">
 					<div>
-						<h2 class="text-lg font-bold text-foreground">You're enrolling in</h2>
+						<h2 class="text-lg font-bold text-foreground">{m.account_enrolling_in()}</h2>
 						<p class="mt-1 text-2xl font-bold text-foreground">{course.title}</p>
 						{#if course.subtitle}<p class="mt-1 text-sm text-muted-foreground">{course.subtitle}</p>{/if}
 					</div>
@@ -128,17 +130,17 @@
 					<div class="flex flex-wrap gap-4 text-sm text-muted-foreground">
 						<span class="flex items-center gap-2">
 							<Signal class="size-4" />
-							{DIFFICULTY_LABELS[course.difficulty]} level
+							{m.account_difficulty_level({ level: DIFFICULTY_LABELS[course.difficulty] })}
 						</span>
 						{#if course.estimatedDurationMinutes}
 							<span class="flex items-center gap-2">
 								<Clock class="size-4" />
-								{formatDurationMinutes(course.estimatedDurationMinutes)} total
+								{m.account_duration_total({ duration: formatDurationMinutes(course.estimatedDurationMinutes) })}
 							</span>
 						{/if}
 						{#if course.certificateEnabled}
 							<span class="flex items-center gap-2">
-								<Award class="size-4" /> Certificate of completion
+								<Award class="size-4" /> {m.account_certificate_of_completion()}
 							</span>
 						{/if}
 					</div>
@@ -146,7 +148,7 @@
 					{#if course.outcomes.length > 0}
 						<Card>
 							<CardContent class="p-5">
-								<h3 class="mb-3 text-sm font-bold text-foreground">What you'll get</h3>
+								<h3 class="mb-3 text-sm font-bold text-foreground">{m.account_what_youll_get()}</h3>
 								<ul class="grid gap-2.5 sm:grid-cols-2">
 									{#each course.outcomes.slice(0, 8) as outcome (outcome)}
 										<li class="flex items-start gap-2 text-sm text-muted-foreground">
@@ -159,7 +161,7 @@
 						</Card>
 					{/if}
 
-					<Button size="lg" class="w-full sm:w-auto" onclick={() => (chosenStep = 2)}>Continue</Button>
+					<Button size="lg" class="w-full sm:w-auto" onclick={() => (chosenStep = 2)}>{m.account_continue()}</Button>
 				</div>
 			{:else if step === 2}
 				<PromoCodeStep
@@ -173,7 +175,7 @@
 			{:else if step === 3 && coveredByPromo}
 				<ActionForm action="?/redeem" class="space-y-6" submit={() => {
 						submitting = true;
-						return afterAction('Could not enroll');
+						return afterAction(m.account_could_not_enroll());
 					}}>
 					<HiddenField name="promoCode" value={promoCode} />
 					<Card class="border-success/40 bg-success/5">
@@ -182,10 +184,9 @@
 								<Gift class="size-9" />
 							</span>
 							<div>
-								<h2 class="text-xl font-bold text-foreground">Nothing to pay</h2>
+								<h2 class="text-xl font-bold text-foreground">{m.account_nothing_to_pay()}</h2>
 								<p class="mt-2 max-w-md text-sm text-muted-foreground">
-									Your code {promoCode} covers the full price of "{course.title}". Enroll now and start learning straight
-									away.
+									{m.account_nothing_to_pay_body({ code: promoCode, title: course.title })}
 								</p>
 							</div>
 							{#if errors.redeem}
@@ -195,11 +196,11 @@
 					</Card>
 					<div class="flex items-center justify-between gap-3">
 						<Button type="button" variant="outline" onclick={() => (chosenStep = 2)} disabled={submitting}>
-							Back
+							{m.account_back()}
 						</Button>
 						<Button type="submit" disabled={submitting}>
 							{#if submitting}<LoaderCircle class="mr-2 size-4 animate-spin" />{/if}
-							Enroll for free
+							{m.account_enroll_for_free()}
 						</Button>
 					</div>
 				</ActionForm>
@@ -207,21 +208,21 @@
 				<div class="space-y-6">
 					<EmptyState
 						icon={Wallet}
-						title="No payment methods yet"
-						description="Payment options for courses haven't been set up yet. Please check back soon or contact us to enroll."
+						title={m.account_no_methods_title()}
+						description={m.account_no_methods_description()}
 					>
 						{#snippet action()}
-							<Button variant="outline" href={ROUTES.contact}>Contact us</Button>
+							<Button variant="outline" href={ROUTES.contact}>{m.account_contact_us()}</Button>
 						{/snippet}
 					</EmptyState>
-					<Button type="button" variant="outline" onclick={() => (chosenStep = 2)}>Back</Button>
+					<Button type="button" variant="outline" onclick={() => (chosenStep = 2)}>{m.account_back()}</Button>
 				</div>
 			{:else if step === 3}
 				<div class="space-y-6">
 					<div>
-						<h2 class="text-lg font-bold text-foreground">Choose a payment method</h2>
+						<h2 class="text-lg font-bold text-foreground">{m.account_choose_payment_method_heading()}</h2>
 						<p class="mt-1 text-sm text-muted-foreground">
-							Pay {formatCurrency(amountDue, course.currency)} by bank transfer and upload your receipt.
+							{m.account_pay_by_transfer({ amount: formatCurrency(amountDue, course.currency) })}
 						</p>
 					</div>
 
@@ -232,14 +233,14 @@
 						>
 							<TriangleAlert class="mt-0.5 size-4 shrink-0" />
 							<div>
-								<p class="font-medium">Your previous payment was not approved.</p>
+								<p class="font-medium">{m.account_previous_rejected()}</p>
 								{#if submission?.rejectionReason}<p class="mt-0.5">{submission.rejectionReason}</p>{/if}
-								<p class="mt-0.5">Submit a new receipt below to try again.</p>
+								<p class="mt-0.5">{m.account_submit_new_receipt()}</p>
 							</div>
 						</div>
 					{/if}
 
-					<div class="grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Payment method">
+					<div class="grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label={m.account_payment_method()}>
 						{#each data.methods as method (method.id)}
 							{@render methodCard(method.id, method.name, method.accountName, Landmark)}
 						{/each}
@@ -254,7 +255,7 @@
 									return;
 								}
 								submitting = true;
-								return afterAction('Payment not submitted');
+								return afterAction(m.account_payment_not_submitted());
 							}}>
 							<HiddenField name="paymentMethodId" value={selectedMethod.id} />
 							<HiddenField name="promoCode" value={promoCode} />
@@ -262,23 +263,23 @@
 							<Card>
 								<CardContent class="space-y-4 p-5">
 									<div>
-										<h3 class="text-sm font-bold text-foreground">{selectedMethod.name} instructions</h3>
+										<h3 class="text-sm font-bold text-foreground">{m.account_method_instructions({ method: selectedMethod.name })}</h3>
 										<p class="mt-1 text-sm text-muted-foreground">
-											Send exactly {formatCurrency(amountDue, course.currency)} to the account below.
+											{m.account_send_exactly({ amount: formatCurrency(amountDue, course.currency) })}
 										</p>
 									</div>
 
 									<dl class="grid gap-2 text-sm sm:grid-cols-2">
 										<div>
-											<dt class="text-muted-foreground">Account name</dt>
+											<dt class="text-muted-foreground">{m.account_account_name()}</dt>
 											<dd class="font-medium text-foreground">{selectedMethod.accountName}</dd>
 										</div>
 										<div>
-											<dt class="text-muted-foreground">Account number</dt>
+											<dt class="text-muted-foreground">{m.account_account_number()}</dt>
 											<dd class="font-medium break-all text-foreground">{selectedMethod.accountNumber}</dd>
 										</div>
 										<div>
-											<dt class="text-muted-foreground">Amount to pay</dt>
+											<dt class="text-muted-foreground">{m.account_amount_to_pay()}</dt>
 											<dd class="font-medium text-foreground">{formatCurrency(amountDue, course.currency)}</dd>
 										</div>
 									</dl>
@@ -291,14 +292,14 @@
 										class="flex items-start gap-2 rounded-lg border border-info/30 bg-info/5 px-3 py-2 text-sm text-info"
 									>
 										<TriangleAlert class="mt-0.5 size-4 shrink-0" />
-										Only pay into the account shown here. Academy staff will never ask you to pay anywhere else.
+										{m.account_only_pay_here()}
 									</p>
 								</CardContent>
 							</Card>
 
 							<Card>
 								<CardContent class="space-y-4 p-5">
-									<h3 class="text-sm font-bold text-foreground">Confirm your payment</h3>
+									<h3 class="text-sm font-bold text-foreground">{m.account_confirm_your_payment()}</h3>
 
 									{#if errors.form}
 										<p class="rounded-lg bg-destructive/10 p-3 text-sm text-destructive" role="alert">{errors.form}</p>
@@ -306,11 +307,11 @@
 
 									<div class="grid gap-4 sm:grid-cols-2">
 										<div class="space-y-2">
-											<Label for="transactionReference">Transaction ID</Label>
+											<Label for="transactionReference">{m.account_transaction_id()}</Label>
 											<Input
 												id="transactionReference"
 												name="transactionReference"
-												placeholder="Enter your transaction ID"
+												placeholder={m.account_transaction_id_placeholder()}
 												maxlength={120}
 												value={form?.values?.transactionReference ?? ''}
 												aria-invalid={errors.transactionReference ? 'true' : undefined}
@@ -320,13 +321,13 @@
 											{/if}
 										</div>
 										<div class="space-y-2">
-											<Label for="amount">Amount to pay ({course.currency})</Label>
+											<Label for="amount">{m.account_amount_to_pay_currency({ currency: course.currency })}</Label>
 											<Input id="amount" value={amountDue} readonly disabled />
 										</div>
 									</div>
 
 									<div class="space-y-2">
-										<Label>Payment receipt</Label>
+										<Label>{m.account_payment_receipt()}</Label>
 										<FileDrop
 											name="receipt"
 											accept={RECEIPT_ACCEPT}
@@ -342,11 +343,11 @@
 
 							<div class="flex items-center justify-between gap-3">
 								<Button type="button" variant="outline" onclick={() => (chosenStep = 2)} disabled={submitting}>
-									Back
+									{m.account_back()}
 								</Button>
 								<Button type="submit" disabled={submitting}>
 									{#if submitting}<LoaderCircle class="mr-2 size-4 animate-spin" />{/if}
-									Submit payment
+									{m.account_submit_payment()}
 								</Button>
 							</div>
 						</ActionForm>
@@ -360,15 +361,16 @@
 								<Clock class="size-9" />
 							</span>
 							<div>
-								<h2 class="text-xl font-bold text-foreground">Payment submitted for review</h2>
+								<h2 class="text-xl font-bold text-foreground">{m.account_submitted_for_review()}</h2>
 								<p class="mt-2 max-w-md text-sm text-muted-foreground">
-									We've received your {submission.methodName ? `${submission.methodName} ` : ''}payment for "{course.title}".
-									An admin will verify it shortly - you'll get access as soon as it's approved.
+									{submission.methodName
+										? m.account_received_with_method({ method: submission.methodName, title: course.title })
+										: m.account_received_payment({ title: course.title })}
 								</p>
 							</div>
 							<div class="mt-2 flex flex-wrap items-center justify-center gap-3">
-								<Button size="lg" href={ROUTES.student.courses}>Go to My Courses</Button>
-								<Button size="lg" variant="outline" href={ROUTES.courses.detail(course.slug)}>Back to Course</Button>
+								<Button size="lg" href={ROUTES.student.courses}>{m.account_go_to_my_courses()}</Button>
+								<Button size="lg" variant="outline" href={ROUTES.courses.detail(course.slug)}>{m.account_back_to_course()}</Button>
 							</div>
 						</CardContent>
 					</Card>
@@ -377,9 +379,9 @@
 						<CardContent class="space-y-4 p-5">
 							<div class="flex items-center justify-between">
 								<span class="flex items-center gap-2 text-sm font-semibold text-foreground">
-									<Clock class="size-4 text-warning" /> Awaiting review
+									<Clock class="size-4 text-warning" /> {m.account_awaiting_review()}
 								</span>
-								<Badge variant="warning">Pending</Badge>
+								<Badge variant="warning">{m.account_pending()}</Badge>
 							</div>
 
 							<div class="h-px w-full shrink-0 bg-border"></div>
@@ -387,28 +389,28 @@
 							<dl class="grid gap-3 text-sm sm:grid-cols-2">
 								{#if submission.methodName}
 									<div>
-										<dt class="text-muted-foreground">Payment method</dt>
+										<dt class="text-muted-foreground">{m.account_payment_method()}</dt>
 										<dd class="font-medium text-foreground">{submission.methodName}</dd>
 									</div>
 								{/if}
 								<div>
-									<dt class="text-muted-foreground">Transaction ID</dt>
+									<dt class="text-muted-foreground">{m.account_transaction_id()}</dt>
 									<dd class="font-medium break-all text-foreground">{submission.transactionReference ?? '—'}</dd>
 								</div>
 								<div>
-									<dt class="text-muted-foreground">Amount</dt>
+									<dt class="text-muted-foreground">{m.account_amount()}</dt>
 									<dd class="font-medium text-foreground">{formatCurrency(submission.amount, submission.currency)}</dd>
 								</div>
 								{#if submission.promoCode}
 									<div>
-										<dt class="text-muted-foreground">Promo code</dt>
+										<dt class="text-muted-foreground">{m.account_promo_code()}</dt>
 										<dd class="font-medium text-foreground">
 											{submission.promoCode} (-{formatCurrency(submission.discountAmount, submission.currency)})
 										</dd>
 									</div>
 								{/if}
 								<div>
-									<dt class="text-muted-foreground">Submitted</dt>
+									<dt class="text-muted-foreground">{m.account_submitted()}</dt>
 									<dd class="font-medium text-foreground">{dateFormat.format(new Date(submission.submittedAt))}</dd>
 								</div>
 							</dl>
@@ -417,7 +419,7 @@
 
 							<div class="flex items-center gap-2 text-sm text-muted-foreground">
 								<FileText class="size-4 shrink-0" />
-								<span class="truncate">Receipt uploaded - visible only to academy staff</span>
+								<span class="truncate">{m.account_receipt_uploaded()}</span>
 							</div>
 						</CardContent>
 					</Card>

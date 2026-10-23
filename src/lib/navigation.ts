@@ -11,6 +11,7 @@ import Inbox from '@lucide/svelte/icons/inbox';
 import Mail from '@lucide/svelte/icons/mail';
 import TicketPercent from '@lucide/svelte/icons/ticket-percent';
 import ChartColumn from '@lucide/svelte/icons/chart-column';
+import ChartLine from '@lucide/svelte/icons/chart-line';
 import PanelsTopLeft from '@lucide/svelte/icons/panels-top-left';
 import MailCheck from '@lucide/svelte/icons/mail-check';
 import MessageSquareText from '@lucide/svelte/icons/message-square-text';
@@ -18,6 +19,7 @@ import type { NavItem } from '@nahu/admin-kit/navigation';
 export const NAVIGATION: NavItem[] = [
  { title: 'Overview', url: '/dashboard', icon: LayoutDashboard },
  { title: 'Reports', url: '/dashboard/reports', icon: ChartColumn },
+ { title: 'Analytics', url: '/dashboard/analytics', icon: ChartLine },
  { title: 'Courses', url: '/dashboard/courses', icon: BookOpen, section: 'Catalog' },
  { title: 'Categories', url: '/dashboard/categories', icon: Layers, section: 'Catalog' },
  { title: 'Instructors', url: '/dashboard/instructors', icon: UserRound, section: 'Catalog' },

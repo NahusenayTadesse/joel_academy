@@ -1,13 +1,14 @@
 <script lang="ts">
 	import type { Component, Snippet } from 'svelte';
 	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	/* The original `ErrorState`, with an action slot in place of its retry callback. */
 	let {
 		icon: Icon = TriangleAlert,
-		title = 'Something went wrong',
-		description = 'An unexpected error occurred. Please try again.',
+		title = m.learn_error_title(),
+		description = m.learn_error_desc(),
 		action,
 		class: className = ''
 	}: { icon?: Component; title?: string; description?: string; action?: Snippet; class?: string } =

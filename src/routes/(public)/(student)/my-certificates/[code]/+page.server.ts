@@ -5,6 +5,8 @@ import { certificate, course } from '$lib/server/db/schema';
 import { requireUser } from '$lib/server/student';
 import { verificationQrPath } from '$lib/server/certificate-pdf';
 import { siteUrl } from '$lib/server/email/notify';
+import { delocalizePath } from '$lib/i18n';
+import { m } from '$lib/paraglide/messages';
 import { ROUTES } from '$lib/site';
 import type { PageServerLoad } from './$types';
 
@@ -17,10 +19,11 @@ export const load: PageServerLoad = async (event) => {
 		.leftJoin(course, eq(course.id, certificate.courseId))
 		.where(and(eq(certificate.code, event.params.code.toUpperCase()), eq(certificate.userId, user.id)))
 		.limit(1);
-	if (!row) error(404, 'Certificate not found');
+	if (!row) error(404, m.learn_certificate_not_found());
 	const { certificate: found } = row;
-	// The configured site address, as in the emails and the PDF, so all three show the same link.
-	const verificationUrl = siteUrl(ROUTES.certificates.verify(found.token));
+	// The configured site address, as in the emails and the PDF, so all three show the same link
+	// (without a language prefix: the PDF's QR code is the same in every language).
+	const verificationUrl = siteUrl(delocalizePath(ROUTES.certificates.verify(found.token)));
 
 	return {
 		certificate: {

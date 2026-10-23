@@ -3,6 +3,7 @@
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { inView } from '$lib/attachments';
 	import type { Testimonial } from '$lib/content/testimonial.types';
 	import SectionTitle from '$lib/components/home/section-title.svelte';
@@ -65,12 +66,12 @@
 
 <section class="mx-auto w-full max-w-7xl px-4 py-24 sm:px-6">
 	<SectionTitle
-		eyebrow="Testimonials"
-		title="Engineered"
-		accent="success"
-		subtitle="Real feedback from learners who completed our courses."
+		eyebrow={m.catalog_testimonials_eyebrow()}
+		title={m.catalog_testimonials_title()}
+		accent={m.catalog_testimonials_accent()}
+		subtitle={m.catalog_testimonials_subtitle()}
 	/>
-	<div class="reveal relative" role="region" aria-roledescription="carousel" {@attach inView()}>
+	<div class="reveal relative" role="region" aria-roledescription={m.catalog_testimonials_carousel()} {@attach inView()}>
 		<div class="touch-pan-y overflow-hidden" {@attach swipe}>
 			<div
 				class="-ml-4 flex transition-transform duration-500 ease-out"
@@ -80,7 +81,7 @@
 				{#each items as testimonial (testimonial.id)}
 					<div
 						role="group"
-						aria-roledescription="slide"
+						aria-roledescription={m.catalog_testimonials_slide()}
 						class="min-w-0 shrink-0 grow-0 basis-full pl-4 sm:basis-1/2 lg:basis-1/3"
 					>
 						<TestimonialCard {testimonial} />
@@ -95,7 +96,7 @@
 				class="static size-10 translate-y-0 rounded-full"
 				disabled={!canScroll}
 				onclick={scrollPrev}
-				aria-label="Previous slide"
+				aria-label={m.catalog_testimonials_previous()}
 			>
 				<ArrowLeft class="size-4" />
 			</Button>
@@ -105,7 +106,7 @@
 				class="static size-10 translate-y-0 rounded-full"
 				disabled={!canScroll}
 				onclick={scrollNext}
-				aria-label="Next slide"
+				aria-label={m.catalog_testimonials_next()}
 			>
 				<ArrowRight class="size-4" />
 			</Button>

@@ -1,4 +1,5 @@
 import type { BadgeVariant } from '$lib/components/ui/variants';
+import { m } from '$lib/paraglide/messages';
 
 export type PaymentStatus = 'PENDING' | 'APPROVED' | 'DECLINED';
 
@@ -16,8 +17,24 @@ export interface PaymentRecord {
 	reason: string | null;
 }
 
+/* Labels are getters: the language is the page's, known only when they are read. */
 export const PAYMENT_STATUS: Record<PaymentStatus, { label: string; variant: BadgeVariant }> = {
-	PENDING: { label: 'Pending', variant: 'warning' },
-	APPROVED: { label: 'Approved', variant: 'success' },
-	DECLINED: { label: 'Declined', variant: 'destructive' }
+	PENDING: {
+		get label() {
+			return m.account_pending();
+		},
+		variant: 'warning'
+	},
+	APPROVED: {
+		get label() {
+			return m.account_status_approved();
+		},
+		variant: 'success'
+	},
+	DECLINED: {
+		get label() {
+			return m.account_status_declined();
+		},
+		variant: 'destructive'
+	}
 };

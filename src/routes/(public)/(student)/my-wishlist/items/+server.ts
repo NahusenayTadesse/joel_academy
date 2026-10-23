@@ -1,5 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 import { addToWishlist, parseCourseIds, removeFromWishlist, wishlistCourseIds } from '$lib/server/wishlist';
+import { m } from '$lib/paraglide/messages';
 import type { RequestHandler } from './$types';
 
 /*
@@ -9,7 +10,7 @@ import type { RequestHandler } from './$types';
  * checked here as well so nothing rests on that alone.
  */
 export const POST: RequestHandler = async ({ request, locals, url }) => {
-	if (!locals.user) error(401, 'Sign in to save courses to your account.');
+	if (!locals.user) error(401, m.learn_wishlist_sign_in());
 	if (request.headers.get('origin') !== url.origin) error(403, 'Cross-site request refused.');
 	if (!request.headers.get('content-type')?.startsWith('application/json')) error(415, 'Send JSON.');
 

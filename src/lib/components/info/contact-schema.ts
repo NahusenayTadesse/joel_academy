@@ -1,14 +1,19 @@
 import { z } from 'zod';
+import { m } from '$lib/paraglide/messages';
 
 /** Shared by the contact form (instant feedback) and its form action (the check that counts). */
 export const contactSchema = z.object({
-	name: z.string().trim().min(2, 'Enter your name').max(120, 'Keep your name under 120 characters'),
-	email: z.email('Enter a valid email address').max(255),
+	name: z
+		.string()
+		.trim()
+		.min(2, { error: () => m.info_contact_name_required() })
+		.max(120, { error: () => m.info_contact_name_too_long() }),
+	email: z.email({ error: () => m.info_contact_email_invalid() }).max(255),
 	message: z
 		.string()
 		.trim()
-		.min(10, 'Message must be at least 10 characters')
-		.max(5000, 'Keep your message under 5,000 characters')
+		.min(10, { error: () => m.info_contact_message_too_short() })
+		.max(5000, { error: () => m.info_contact_message_too_long() })
 });
 
 export type ContactInput = z.infer<typeof contactSchema>;

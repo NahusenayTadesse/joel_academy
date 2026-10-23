@@ -13,6 +13,7 @@ import {
 import { issueCertificate } from '$lib/server/certificates';
 import { certificateIssuedEmail, enrollmentConfirmedEmail } from '$lib/server/email';
 import { quoteCourse } from '$lib/server/promo';
+import { m } from '$lib/paraglide/messages';
 import { courseProgress, type CourseProgress } from '$lib/progress';
 
 /*
@@ -64,7 +65,7 @@ async function publishedCourse(courseId: number) {
 		.from(course)
 		.where(and(eq(course.id, courseId), eq(course.status, true)))
 		.limit(1);
-	if (!row) throw new EnrollmentError('COURSE_NOT_FOUND', 'This course is not available.');
+	if (!row) throw new EnrollmentError('COURSE_NOT_FOUND', m.account_err_course_unavailable());
 	return row;
 }
 
@@ -99,7 +100,7 @@ export async function notifyEnrolled(
 /** Enrolls in a free course. Enrolling twice is harmless: the existing place is returned. */
 export async function enrollFree(userId: string, courseId: number): Promise<Enrollment> {
 	const row = await publishedCourse(courseId);
-	if (row.accessType !== 'FREE') throw new EnrollmentError('NOT_FREE', 'This course requires payment.');
+	if (row.accessType !== 'FREE') throw new EnrollmentError('NOT_FREE', m.account_err_course_requires_payment());
 
 	const free = { status: 'ACTIVE' as const, amount: '0.00', paymentProvider: 'FREE' as const, rejectionReason: null };
 	const existing = await getEnrollment(userId, courseId);
@@ -127,12 +128,12 @@ export async function enrollFree(userId: string, courseId: number): Promise<Enro
  */
 export async function enrollWithFullDiscount(userId: string, courseId: number, code: string): Promise<Enrollment> {
 	const row = await publishedCourse(courseId);
-	if (row.accessType !== 'PAID') throw new EnrollmentError('NOT_PAID', 'This course is free; no promo code is needed.');
+	if (row.accessType !== 'PAID') throw new EnrollmentError('NOT_PAID', m.account_err_free_no_promo());
 
 	await db.transaction(async (tx) => {
 		const quote = await quoteCourse({ userId, courseId, code, lock: true }, tx);
 		if (!quote.promo || Number(quote.amountDue) > 0)
-			throw new EnrollmentError('PAYMENT_DUE', 'This code does not cover the whole price. Choose a way to pay.');
+			throw new EnrollmentError('PAYMENT_DUE', m.account_err_code_partial());
 
 		const values = {
 			status: 'ACTIVE' as const,
@@ -149,9 +150,9 @@ export async function enrollWithFullDiscount(userId: string, courseId: number, c
 			.from(enrollment)
 			.where(and(eq(enrollment.userId, userId), eq(enrollment.courseId, courseId)))
 			.for('update');
-		if (existing?.status === 'ACTIVE') throw new EnrollmentError('ALREADY_ENROLLED', 'You are already enrolled in this course.');
+		if (existing?.status === 'ACTIVE') throw new EnrollmentError('ALREADY_ENROLLED', m.account_err_already_enrolled());
 		if (existing?.status === 'PENDING')
-			throw new EnrollmentError('PAYMENT_PENDING', 'A payment for this course is already under review.');
+			throw new EnrollmentError('PAYMENT_PENDING', m.account_payment_under_review());
 		if (existing) await tx.update(enrollment).set(values).where(eq(enrollment.id, existing.id));
 		else await tx.insert(enrollment).values({ userId, courseId, ...values });
 	});
@@ -189,14 +190,14 @@ export async function startPaidEnrollment(input: {
 	promoCode?: string | null;
 }): Promise<Enrollment> {
 	const row = await publishedCourse(input.courseId);
-	if (row.accessType !== 'PAID') throw new EnrollmentError('NOT_PAID', 'This course is free; no payment is needed.');
+	if (row.accessType !== 'PAID') throw new EnrollmentError('NOT_PAID', m.account_err_free_no_payment());
 
 	const [method] = await db
 		.select({ id: paymentMethod.id })
 		.from(paymentMethod)
 		.where(and(eq(paymentMethod.id, input.paymentMethodId), eq(paymentMethod.status, true), isNull(paymentMethod.deletedAt)))
 		.limit(1);
-	if (!method) throw new EnrollmentError('PAYMENT_METHOD_INVALID', 'Choose one of the payment methods listed.');
+	if (!method) throw new EnrollmentError('PAYMENT_METHOD_INVALID', m.account_err_method_invalid());
 
 	await db.transaction(async (tx) => {
 		const quote = await quoteCourse(
@@ -204,7 +205,7 @@ export async function startPaidEnrollment(input: {
 			tx
 		);
 		if (Number(quote.amountDue) <= 0)
-			throw new EnrollmentError('NO_PAYMENT_DUE', 'Your promo code covers the whole price; there is nothing to pay.');
+			throw new EnrollmentError('NO_PAYMENT_DUE', m.account_err_nothing_to_pay());
 
 		const payment = {
 			status: 'PENDING' as const,
@@ -227,9 +228,9 @@ export async function startPaidEnrollment(input: {
 			.from(enrollment)
 			.where(and(eq(enrollment.userId, input.userId), eq(enrollment.courseId, input.courseId)))
 			.for('update');
-		if (existing?.status === 'ACTIVE') throw new EnrollmentError('ALREADY_ENROLLED', 'You are already enrolled in this course.');
+		if (existing?.status === 'ACTIVE') throw new EnrollmentError('ALREADY_ENROLLED', m.account_err_already_enrolled());
 		if (existing?.status === 'PENDING')
-			throw new EnrollmentError('PAYMENT_PENDING', 'A payment for this course is already under review.');
+			throw new EnrollmentError('PAYMENT_PENDING', m.account_payment_under_review());
 
 		if (existing) {
 			await tx.update(enrollment).set(payment).where(eq(enrollment.id, existing.id));
@@ -238,7 +239,7 @@ export async function startPaidEnrollment(input: {
 				await tx.insert(enrollment).values({ userId: input.userId, courseId: input.courseId, ...payment });
 			} catch (error) {
 				if (!isDuplicate(error)) throw error;
-				throw new EnrollmentError('PAYMENT_PENDING', 'A payment for this course is already under review.');
+				throw new EnrollmentError('PAYMENT_PENDING', m.account_payment_under_review());
 			}
 		}
 	});
@@ -305,7 +306,7 @@ export async function markLessonComplete(userId: string, lessonId: number): Prom
 			.from(lesson)
 			.where(eq(lesson.id, lessonId))
 			.limit(1);
-		if (!target) throw new EnrollmentError('LESSON_NOT_FOUND', 'That lesson does not exist.');
+		if (!target) throw new EnrollmentError('LESSON_NOT_FOUND', m.account_err_lesson_missing());
 
 		const [current] = await tx
 			.select()
@@ -314,7 +315,7 @@ export async function markLessonComplete(userId: string, lessonId: number): Prom
 			.limit(1)
 			.for('update');
 		if (current?.status !== 'ACTIVE')
-			throw new EnrollmentError('NOT_ENROLLED', 'Enroll in this course to track your progress.');
+			throw new EnrollmentError('NOT_ENROLLED', m.account_err_not_enrolled());
 
 		if (target.lessonType === 'QUIZ') {
 			const [pass] = await tx
@@ -322,7 +323,7 @@ export async function markLessonComplete(userId: string, lessonId: number): Prom
 				.from(quizAttempt)
 				.where(and(eq(quizAttempt.userId, userId), eq(quizAttempt.lessonId, lessonId), eq(quizAttempt.passed, true)))
 				.limit(1);
-			if (!pass) throw new EnrollmentError('QUIZ_NOT_PASSED', 'Pass the quiz to complete this lesson.');
+			if (!pass) throw new EnrollmentError('QUIZ_NOT_PASSED', m.account_err_quiz_not_passed());
 		}
 
 		await tx.insert(lessonProgress).ignore().values({ userId, lessonId });

@@ -1,8 +1,8 @@
 import { invalidate } from '$app/navigation';
-import { ROUTES } from '$lib/site';
 
 const STORAGE_KEY = 'joel-academy-wishlist';
-const ENDPOINT = `${ROUTES.student.wishlist}/items`;
+// An API address, the same in every language.
+const ENDPOINT = '/my-wishlist/items';
 
 function readLocal(): string[] {
 	try {

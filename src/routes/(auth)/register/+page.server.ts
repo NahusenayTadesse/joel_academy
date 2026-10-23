@@ -3,6 +3,8 @@ import { APIError } from 'better-auth/api';
 import { fail, message, setError, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth, googleEnabled } from '$lib/server/auth';
+import { getLocale } from '$lib/i18n';
+import { m } from '$lib/paraglide/messages';
 import { phoneUnavailable, requestPhoneCode } from '$lib/server/phone-verification';
 import { normalizeEthPhone } from '$lib/phone';
 import { afterSignIn, safeRedirectPath } from '$lib/safe-redirect';
@@ -28,10 +30,10 @@ export const actions: Actions = {
 		// Bots fill the honeypot or post at once; they get a vague refusal and no account.
 		const verdict = judgeSubmission(posted);
 		if (verdict === 'bad-token') {
-			return message(form, { type: 'error', text: 'This form has expired. Reload the page and try again.' }, { status: 400 });
+			return message(form, { type: 'error', text: m.account_form_expired() }, { status: 400 });
 		}
 		if (verdict !== 'ok') {
-			return message(form, { type: 'error', text: 'Could not create your account. Please try again.' }, { status: 400 });
+			return message(form, { type: 'error', text: m.account_register_failed_retry() }, { status: 400 });
 		}
 		if (!form.valid) return fail(400, { form });
 
@@ -39,7 +41,7 @@ export const actions: Actions = {
 		if (wait) {
 			return message(
 				form,
-				{ type: 'error', text: `Too many new accounts from your connection. Try again in ${waitText(wait)}.` },
+				{ type: 'error', text: m.account_register_too_many({ wait: waitText(wait) }) },
 				{ status: 429 }
 			);
 		}
@@ -62,9 +64,9 @@ export const actions: Actions = {
 		} catch (err) {
 			if (err instanceof APIError) {
 				if (String(err.body?.code ?? '').startsWith('USER_ALREADY_EXISTS')) {
-					return setError(form, 'email', 'An account with this email already exists. Sign in instead.');
+					return setError(form, 'email', m.account_email_taken());
 				}
-				return message(form, { type: 'error', text: err.body?.message ?? 'Could not create your account.' }, { status: 400 });
+				return message(form, { type: 'error', text: (getLocale() === 'en' && err.body?.message) || m.account_register_failed() }, { status: 400 });
 			}
 			throw err;
 		}

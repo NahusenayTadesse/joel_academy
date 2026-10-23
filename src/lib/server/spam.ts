@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { RequestEvent } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { m } from '$lib/paraglide/messages';
 
 /*
  * Keeping bots and brute force off the public forms, in three cheap layers:
@@ -127,10 +128,10 @@ export function clientAddress(event: Pick<RequestEvent, 'getClientAddress'>): st
 	}
 }
 
-/** "2 minutes", "1 hour" — for "try again in …". */
+/** "2 minutes", "1 hour" (in the request's language) — for "try again in …". */
 export function waitText(ms: number): string {
 	const minutes = Math.max(1, Math.ceil(ms / 60_000));
-	if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'}`;
+	if (minutes < 60) return m.info_wait_minutes({ count: minutes });
 	const hours = Math.ceil(minutes / 60);
-	return `${hours} hour${hours === 1 ? '' : 's'}`;
+	return m.info_wait_hours({ count: hours });
 }

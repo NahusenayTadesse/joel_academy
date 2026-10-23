@@ -3,6 +3,7 @@
 	import List from '@lucide/svelte/icons/list';
 	import RotateCcw from '@lucide/svelte/icons/rotate-ccw';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import {
 		DEFAULT_CATALOG_FILTERS,
 		DEFAULT_PAGE_SIZE,
@@ -41,19 +42,19 @@
 	);
 
 	const categoryOptions = $derived([
-		{ value: ALL_VALUE, label: 'All categories' },
+		{ value: ALL_VALUE, label: m.catalog_filter_all_categories() },
 		...categories.map((category) => ({ value: category.id, label: category.name }))
 	]);
-	const accessOptions = [
-		{ value: ALL_VALUE, label: 'Free & Paid' },
-		{ value: 'FREE', label: 'Free' },
-		{ value: 'PAID', label: 'Paid' }
-	];
-	const difficultyOptions = [
-		{ value: ALL_VALUE, label: 'All levels' },
+	const accessOptions = $derived([
+		{ value: ALL_VALUE, label: m.catalog_filter_free_and_paid() },
+		{ value: 'FREE', label: m.catalog_price_free() },
+		{ value: 'PAID', label: m.catalog_filter_paid() }
+	]);
+	const difficultyOptions = $derived([
+		{ value: ALL_VALUE, label: m.catalog_filter_all_levels() },
 		...Object.entries(DIFFICULTY_LABELS).map(([value, label]) => ({ value, label }))
-	];
-	const sortOptions = Object.entries(SORT_LABELS).map(([value, label]) => ({ value, label }));
+	]);
+	const sortOptions = $derived(Object.entries(SORT_LABELS).map(([value, label]) => ({ value, label })));
 
 	/** Any filter change returns to the first page. */
 	function setFilter(key: keyof CatalogFilters, value: string | undefined) {
@@ -69,17 +70,17 @@
 
 <div class="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
 	<SearchBar
-		placeholder="Search courses…"
+		placeholder={m.catalog_filter_search_placeholder()}
 		value={filters.search ?? ''}
 		onSearch={(value) => setFilter('search', value || undefined)}
-		aria-label="Search courses"
+		aria-label={m.catalog_filter_search_label()}
 	/>
 
 	<div class="flex flex-wrap items-center gap-3">
 		<Select
 			value={filters.categoryId ?? ALL_VALUE}
 			items={categoryOptions}
-			placeholder="Category"
+			placeholder={m.catalog_filter_category()}
 			onValueChange={(value) => setFilter('categoryId', fromSelect(value))}
 			class="w-[180px]"
 		/>
@@ -87,7 +88,7 @@
 		<Select
 			value={filters.accessType ?? ALL_VALUE}
 			items={accessOptions}
-			placeholder="Access"
+			placeholder={m.catalog_filter_access()}
 			onValueChange={(value) => setFilter('accessType', fromSelect(value))}
 			class="w-[140px]"
 		/>
@@ -95,7 +96,7 @@
 		<Select
 			value={filters.difficulty ?? ALL_VALUE}
 			items={difficultyOptions}
-			placeholder="Level"
+			placeholder={m.catalog_filter_level()}
 			onValueChange={(value) => setFilter('difficulty', fromSelect(value))}
 			class="w-[160px]"
 		/>
@@ -103,7 +104,7 @@
 		<Select
 			value={filters.sort ?? 'newest'}
 			items={sortOptions}
-			placeholder="Sort by"
+			placeholder={m.catalog_filter_sort_by()}
 			onValueChange={(value) => setFilter('sort', value)}
 			class="w-[180px]"
 		/>
@@ -111,7 +112,7 @@
 		{#if hasActiveFilters}
 			<Button variant="ghost" size="sm" onclick={resetFilters}>
 				<RotateCcw class="size-3.5" />
-				Reset
+				{m.catalog_filter_reset()}
 			</Button>
 		{/if}
 
@@ -121,7 +122,7 @@
 				variant={view === 'grid' ? 'secondary' : 'ghost'}
 				size="icon"
 				class="size-8"
-				aria-label="Grid view"
+				aria-label={m.catalog_filter_grid_view()}
 				aria-pressed={view === 'grid'}
 				onclick={() => (view = 'grid')}
 			>
@@ -132,7 +133,7 @@
 				variant={view === 'list' ? 'secondary' : 'ghost'}
 				size="icon"
 				class="size-8"
-				aria-label="List view"
+				aria-label={m.catalog_filter_list_view()}
 				aria-pressed={view === 'list'}
 				onclick={() => (view = 'list')}
 			>

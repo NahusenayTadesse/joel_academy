@@ -1,0 +1,9 @@
+/*
+ * The dashboard's own utilities: everything the admin kit and the dashboard pages use, generated
+ * against the site theme (layout.css, referenced, not repeated). Loaded by the dashboard layout
+ * only, so public pages never download or parse it.
+ */
+@reference '../layout.css';
+@import 'tailwindcss/utilities' source(none);
+@source '../../../node_modules/@nahu/admin-kit/dist';
+@source '.';

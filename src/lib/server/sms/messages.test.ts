@@ -88,3 +88,48 @@ describe('security and status texts', () => {
 		expect(text).not.toContain('251911223344');
 	});
 });
+
+describe('Amharic texts', () => {
+	const am = 'am' as const;
+	const longAm = 'በጣም ረጅም የኮርስ ርዕስ '.repeat(30);
+	const withLink = () => [
+		otpSms('123456', am),
+		enrollmentConfirmedSms({ courseTitle: longAm, amount: 99999, currency: 'ETB', provider: 'MANUAL', url, locale: am }),
+		enrollmentConfirmedSms({ courseTitle: longAm, amount: 0, currency: 'ETB', provider: 'FREE', url, locale: am }),
+		paymentRejectedSms({ courseTitle: longAm, reason: longAm, url, locale: am }),
+		certificateIssuedSms({ courseTitle: longAm, code: 'JTA-2026-000123', url, locale: am }),
+		passwordResetSms(`${url}?token=${'x'.repeat(32)}`, am),
+		receiptReceivedSms({ courseTitle: longAm, amount: '1500', currency: 'ETB', url, locale: am }),
+		passwordChangedSms(url, am),
+		phoneChangedSms({ newPhone: '251911223344', url, locale: am }),
+		phoneChangedSms({ newPhone: null, url, locale: am })
+	];
+
+	it('start with the academy name, keep their link and fit one text', () => {
+		for (const [index, text] of withLink().entries()) {
+			expect(text.length).toBeLessThanOrEqual(SMS_LIMIT);
+			expect(text.startsWith('Joel Talargie Academy')).toBe(true);
+			// Written in Amharic, not the English copy.
+			expect(text).toMatch(/[ሀ-፿]/);
+			if (index > 0) expect(text).toContain(url);
+		}
+		expect(otpSms('123456', am)).toContain('123456');
+	});
+
+	it('fits a revoked certificate with a long reason', () => {
+		const text = certificateRevokedSms({ courseTitle: longAm, code: 'JTA-2026-000123', reason: longAm, locale: am });
+		expect(text.length).toBeLessThanOrEqual(SMS_LIMIT);
+		expect(text.startsWith('Joel Talargie Academy')).toBe(true);
+		expect(text).toContain('JTA-2026-000123');
+	});
+
+	it('mentions a payment only for paid enrollments, and only the last digits of a new number', () => {
+		const paid = enrollmentConfirmedSms({ courseTitle: 'Intro', amount: '1500', currency: 'ETB', provider: 'MANUAL', url, locale: am });
+		const free = enrollmentConfirmedSms({ courseTitle: 'Intro', amount: 0, currency: 'ETB', provider: 'FREE', url, locale: am });
+		expect(paid).toContain('1,500');
+		expect(free).not.toContain('ክፍያ');
+		const phone = phoneChangedSms({ newPhone: '251911223344', url, locale: am });
+		expect(phone).toContain('344');
+		expect(phone).not.toContain('251911223344');
+	});
+});

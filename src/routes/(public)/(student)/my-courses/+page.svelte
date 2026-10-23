@@ -12,6 +12,7 @@
 	import CourseProgressCard from '$lib/components/student/course-progress-card.svelte';
 	import LinkTabs from '$lib/components/student/link-tabs.svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	let { data, form } = $props();
@@ -28,9 +29,9 @@
 
 	const tabs = $derived(
 		[
-			{ value: 'ALL', label: 'All' },
-			{ value: 'IN_PROGRESS', label: 'In Progress' },
-			{ value: 'COMPLETED', label: 'Completed' }
+			{ value: 'ALL', label: m.learn_tab_all() },
+			{ value: 'IN_PROGRESS', label: m.learn_in_progress() },
+			{ value: 'COMPLETED', label: m.learn_completed_plural() }
 		].map((tab) => ({ ...tab, href: withParams({ status: tab.value === 'ALL' ? undefined : tab.value }) }))
 	);
 	const hasActiveFilters = $derived(Boolean(data.search) || data.status !== 'ALL');
@@ -42,16 +43,16 @@
 </script>
 
 <svelte:head>
-	<title>My Courses · {siteConfig.name}</title>
+	<title>{m.learn_my_courses()} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
-	<PageHeader title="My Courses" description="Courses you're enrolled in - active, in progress, and completed." />
+	<PageHeader title={m.learn_my_courses()} description={m.learn_my_courses_desc()} />
 
 	{#if data.emailVerification === 'confirmed'}
 		<p class="flex items-center gap-2 rounded-lg bg-success/10 p-3 text-sm text-success-ink" role="status">
-			<CircleCheck class="size-4" aria-hidden="true" /> Email verified successfully.
+			<CircleCheck class="size-4" aria-hidden="true" /> {m.learn_email_verified()}
 		</p>
 	{:else if data.emailVerification}
 		<VerifyEmailNotice
@@ -61,12 +62,12 @@
 		/>
 	{/if}
 
-	<LinkTabs label="Filter by progress" {tabs} current={data.status} />
+	<LinkTabs label={m.learn_filter_progress()} {tabs} current={data.status} />
 
 	<div class="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
 		<div class="flex flex-wrap items-center gap-2">
 			<SearchBar
-				placeholder="Search your courses..."
+				placeholder={m.learn_search_courses()}
 				value={data.search}
 				onSearch={(value) => goto(withParams({ search: value || undefined }), { keepFocus: true, noScroll: true })}
 				class="w-full sm:w-64"
@@ -76,15 +77,15 @@
 
 	{#if data.items.length === 0}
 		{#if hasActiveFilters && data.total > 0}
-			<EmptyState icon={SearchX} title="No results found" description="Try adjusting your search or filters.">
+			<EmptyState icon={SearchX} title={m.learn_no_results()} description={m.learn_no_results_desc()}>
 				{#snippet action()}
-					<Button variant="outline" href={page.url.pathname}>Reset filters</Button>
+					<Button variant="outline" href={page.url.pathname}>{m.learn_reset_filters()}</Button>
 				{/snippet}
 			</EmptyState>
 		{:else}
-			<EmptyState icon={BookOpen} title="No courses yet" description="You haven't enrolled in any courses yet.">
+			<EmptyState icon={BookOpen} title={m.learn_no_courses_title()} description={m.learn_no_courses_desc()}>
 				{#snippet action()}
-					<Button href={ROUTES.courses.list}>Browse courses</Button>
+					<Button href={ROUTES.courses.list}>{m.learn_browse_courses()}</Button>
 				{/snippet}
 			</EmptyState>
 		{/if}
@@ -111,7 +112,7 @@
 							class="flex items-center gap-1.5 self-end px-1 py-1 text-sm font-medium text-brand-ink hover:underline"
 						>
 							<Star class="size-4 fill-warning text-warning" aria-hidden="true" />
-							Rate this course<span class="sr-only">: {item.title}</span>
+							{m.learn_rate_course()}<span class="sr-only">: {item.title}</span>
 						</a>
 					{/if}
 				</div>

@@ -3,6 +3,7 @@ import { EnrollmentError, markLessonComplete } from '$lib/server/enrollment';
 import { loadLearning } from '$lib/server/learning';
 import { QuizError, submitQuizAttempt } from '$lib/server/quiz';
 import { requireActionUser, requireUser } from '$lib/server/student';
+import { m } from '$lib/paraglide/messages';
 import { ROUTES } from '$lib/site';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -14,7 +15,7 @@ const lessonParam = (value: string | null) => {
 export const load: PageServerLoad = async (event) => {
 	const user = requireUser(event);
 	const learning = await loadLearning(event.params.slug, user.id, lessonParam(event.url.searchParams.get('lesson')));
-	if (!learning) error(404, 'Course not found');
+	if (!learning) error(404, m.learn_course_not_found());
 	return learning;
 };
 
@@ -23,7 +24,7 @@ export const actions: Actions = {
 		const user = requireActionUser(event);
 		const posted = await event.request.formData();
 		const lessonId = lessonParam(String(posted.get('lessonId') ?? ''));
-		if (!lessonId) return fail(400, { error: 'Choose a lesson to complete.' });
+		if (!lessonId) return fail(400, { error: m.learn_choose_lesson() });
 		try {
 			// Ownership and enrollment are checked inside, against the session's user.
 			const result = await markLessonComplete(user.id, lessonId);
@@ -56,7 +57,7 @@ export const actions: Actions = {
 		const user = requireActionUser(event);
 		const posted = await event.request.formData();
 		const lessonId = lessonParam(String(posted.get('lessonId') ?? ''));
-		if (!lessonId) return fail(400, { quizError: 'Choose a quiz to submit.', retryAfter: 0 });
+		if (!lessonId) return fail(400, { quizError: m.learn_choose_quiz(), retryAfter: 0 });
 		try {
 			return { quiz: await submitQuizAttempt(user.id, lessonId, posted) };
 		} catch (err) {

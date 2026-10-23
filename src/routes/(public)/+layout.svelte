@@ -4,6 +4,7 @@
 	import PublicFooter from '$lib/components/layout/public-footer.svelte';
 	import PublicHeader from '$lib/components/layout/public-header.svelte';
 	import AppTabBar from '$lib/components/pwa/app-tab-bar.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { wishlist } from '$lib/wishlist.svelte';
 
 	let { data, children } = $props();
@@ -14,7 +15,14 @@
 	});
 </script>
 
-<Toaster position="top-right" richColors closeButton expand />
+<Toaster
+	position="top-right"
+	richColors
+	closeButton
+	expand
+	containerAriaLabel={m.shell_toast_region()}
+	closeButtonAriaLabel={m.shell_toast_close()}
+/>
 
 <!-- Installed on a phone, the tab bar sits over the bottom: leave room for it. -->
 <div

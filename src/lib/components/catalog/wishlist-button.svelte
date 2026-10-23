@@ -3,6 +3,7 @@
 	import { toast } from 'svelte-sonner';
 	import Button from '$lib/components/ui/button.svelte';
 	import { wishlist } from '$lib/wishlist.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	let {
@@ -22,9 +23,9 @@
 		busy = true;
 		const saved = await wishlist.toggle(courseId);
 		busy = false;
-		if (!saved) toast.error('Could not update your wishlist', { description: 'Please try again.' });
-		else if (removing) toast.info('Removed from wishlist', { description: courseTitle });
-		else toast.success('Added to wishlist', { description: courseTitle });
+		if (!saved) toast.error(m.catalog_wishlist_error(), { description: m.catalog_try_again() });
+		else if (removing) toast.info(m.catalog_wishlist_removed(), { description: courseTitle });
+		else toast.success(m.catalog_wishlist_added(), { description: courseTitle });
 	}
 </script>
 
@@ -32,7 +33,9 @@
 	variant="secondary"
 	size="icon"
 	class={cn('size-8 shrink-0 rounded-full', className)}
-	aria-label={isWishlisted ? `Remove ${courseTitle} from wishlist` : `Add ${courseTitle} to wishlist`}
+	aria-label={isWishlisted
+		? m.catalog_wishlist_remove_label({ title: courseTitle })
+		: m.catalog_wishlist_add_label({ title: courseTitle })}
 	aria-pressed={isWishlisted}
 	aria-busy={busy}
 	onclick={toggle}

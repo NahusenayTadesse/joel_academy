@@ -5,6 +5,8 @@
 	import { page } from '$app/state';
 	import Button from '$lib/components/ui/button.svelte';
 	import type { Category } from '$lib/content/catalog.types';
+	import { localizePath } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import InstallButton from '$lib/components/pwa/install-button.svelte';
@@ -13,6 +15,7 @@
 	import { mobileMenu } from './menu.svelte';
 	import CoursesMegaMenu from './courses-mega-menu.svelte';
 	import ProfileMenu from './profile-menu.svelte';
+	import LanguageSwitcher from './language-switcher.svelte';
 	import ThemeToggle from './theme-toggle.svelte';
 
 	let {
@@ -26,22 +29,22 @@
 	} = $props();
 
 	const NAV_LINKS = [
-		{ label: 'Categories', href: ROUTES.categories.list },
-		{ label: 'Instructors', href: ROUTES.instructors.list },
-		{ label: 'Pricing', href: ROUTES.pricing },
-		{ label: 'About', href: ROUTES.about },
-		{ label: 'Verify Certificate', href: ROUTES.certificates.verifyLookup },
-		{ label: 'Contact', href: ROUTES.contact }
+		{ label: m.shell_nav_categories(), href: ROUTES.categories.list },
+		{ label: m.shell_nav_instructors(), href: ROUTES.instructors.list },
+		{ label: m.shell_nav_pricing(), href: ROUTES.pricing },
+		{ label: m.shell_nav_about(), href: ROUTES.about },
+		{ label: m.shell_nav_verify_certificate(), href: ROUTES.certificates.verifyLookup },
+		{ label: m.shell_nav_contact(), href: ROUTES.contact }
 	];
 
 	// Staff work in the dashboard; students' home is their learning area.
 	const homeHref = $derived(user?.isStaff ? ROUTES.dashboard : ROUTES.student.home);
 	const STUDENT_LINKS = [
-		{ label: 'My courses', href: ROUTES.student.courses },
-		{ label: 'Wishlist', href: ROUTES.student.wishlist },
-		{ label: 'Payments', href: ROUTES.student.payments },
-		{ label: 'Notifications', href: ROUTES.student.notifications },
-		{ label: 'Certificates', href: ROUTES.student.certificates }
+		{ label: m.shell_student_my_courses(), href: ROUTES.student.courses },
+		{ label: m.shell_student_wishlist(), href: ROUTES.student.wishlist },
+		{ label: m.shell_student_payments(), href: ROUTES.student.payments },
+		{ label: m.shell_student_notifications(), href: ROUTES.student.notifications },
+		{ label: m.shell_student_certificates(), href: ROUTES.student.certificates }
 	];
 	const mobileLink = 'rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent';
 </script>
@@ -69,27 +72,29 @@
 		</nav>
 
 		<div class="flex items-center gap-2">
-			<InstallButton />
+			<!-- On phones the install action lives in the menu, leaving room for the language link. -->
+			<InstallButton class="hidden sm:inline-flex" />
+			<LanguageSwitcher />
 			<ThemeToggle />
 			{#if user}
 				<div class="flex items-center gap-2">
 					<Button variant="ghost" href={homeHref} class="hidden sm:inline-flex">
-						Dashboard
+						{m.shell_header_dashboard()}
 					</Button>
 					<NotificationBell unreadCount={unreadNotifications} />
 					<ProfileMenu {user} />
 				</div>
 			{:else}
 				<div class="hidden items-center gap-2 sm:flex">
-					<Button variant="ghost" href={ROUTES.auth.login}>Sign in</Button>
-					<Button href={ROUTES.auth.register}>Get started</Button>
+					<Button variant="ghost" href={ROUTES.auth.login}>{m.shell_header_sign_in()}</Button>
+					<Button href={ROUTES.auth.register}>{m.shell_header_get_started()}</Button>
 				</div>
 			{/if}
 
 			<Dialog.Root bind:open={mobileMenu.open}>
 				<Dialog.Trigger
 					class="inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground lg:hidden [&_svg]:size-4"
-					aria-label="Open navigation menu"
+					aria-label={m.shell_header_open_menu()}
 				>
 					<Menu class="size-5!" />
 				</Dialog.Trigger>
@@ -106,7 +111,7 @@
 							</Dialog.Title>
 						</div>
 						<a href={ROUTES.courses.list} class={mobileLink} onclick={() => (mobileMenu.open = false)}>
-							Courses
+							{m.shell_nav_courses()}
 						</a>
 						{#each NAV_LINKS as link (link.href)}
 							<a href={link.href} class={mobileLink} onclick={() => (mobileMenu.open = false)}>
@@ -114,10 +119,11 @@
 							</a>
 						{/each}
 						<InstallButton variant="menu" onDone={() => (mobileMenu.open = false)} />
+						<LanguageSwitcher class="h-auto justify-start rounded-md px-3 py-2.5 font-medium" />
 						{#if user}
 							<div class="mt-4 flex flex-col gap-1 border-t border-border pt-4">
 								<a href={homeHref} class={mobileLink} onclick={() => (mobileMenu.open = false)}>
-									{user.isStaff ? 'Dashboard' : 'My learning'}
+									{user.isStaff ? m.shell_header_dashboard() : m.shell_header_my_learning()}
 								</a>
 								{#if !user.isStaff}
 									{#each STUDENT_LINKS as link (link.href)}
@@ -126,21 +132,21 @@
 											{#if link.href === ROUTES.student.notifications && unreadNotifications > 0}
 												<span class="ml-1 rounded-full bg-destructive px-1.5 py-0.5 text-[10px] font-semibold text-destructive-foreground">
 													{unreadNotifications > 9 ? '9+' : unreadNotifications}
-													<span class="sr-only">unread</span>
+													<span class="sr-only">{m.shell_header_unread()}</span>
 												</span>
 											{/if}
 										</a>
 									{/each}
 								{/if}
 								<a href={ROUTES.student.account} class={mobileLink} onclick={() => (mobileMenu.open = false)}>
-									Account
+									{m.shell_header_account()}
 								</a>
-								<form method="post" action="/logout" class="contents">
+								<form method="post" action={localizePath('/logout')} class="contents">
 									<button
 										type="submit"
 										class="flex items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm font-medium text-destructive hover:bg-destructive/10"
 									>
-										<span>Logout</span>
+										<span>{m.shell_header_logout()}</span>
 									</button>
 								</form>
 							</div>
@@ -151,10 +157,10 @@
 									href={ROUTES.auth.login}
 									onclick={() => (mobileMenu.open = false)}
 								>
-									Sign in
+									{m.shell_header_sign_in()}
 								</Button>
 								<Button href={ROUTES.auth.register} onclick={() => (mobileMenu.open = false)}>
-									Get started
+									{m.shell_header_get_started()}
 								</Button>
 							</div>
 						{/if}
@@ -162,7 +168,7 @@
 							class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
 						>
 							<X class="h-4 w-4" />
-							<span class="sr-only">Close</span>
+							<span class="sr-only">{m.shell_close()}</span>
 						</Dialog.Close>
 					</Dialog.Content>
 				</Dialog.Portal>

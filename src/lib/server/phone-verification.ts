@@ -6,6 +6,7 @@ import { db } from '$lib/server/db';
 import { user } from '$lib/server/db/schema';
 import { describeWait, phoneChangedEmail } from '$lib/server/email';
 import { accountCodeAllowed, smsAllowed } from '$lib/server/sms';
+import { m } from '$lib/paraglide/messages';
 import { normalizeEthPhone } from '$lib/phone';
 
 /*
@@ -48,8 +49,8 @@ export async function phoneUnavailable(phone: string, userId: string | null): Pr
 		.where(eq(user.phoneNumber, phone))
 		.limit(1);
 	if (!holder) return null;
-	if (holder.id === userId) return holder.verified ? 'This is already your verified number.' : null;
-	return 'This number is already linked to another account.';
+	if (holder.id === userId) return holder.verified ? m.account_phone_already_yours() : null;
+	return m.account_phone_taken();
 }
 
 /** Texts a verification code to `raw` for the signed-in `userId`. */
@@ -59,7 +60,7 @@ export async function requestPhoneCode(
 	raw: string
 ): Promise<PhoneOutcome> {
 	const phone = normalizeEthPhone(raw);
-	if (!phone) return { ok: false, error: 'Enter an Ethiopian mobile number, like 0912 345 678.' };
+	if (!phone) return { ok: false, error: m.account_phone_invalid() };
 
 	const unavailable = await phoneUnavailable(phone, userId);
 	if (unavailable) return { ok: false, error: unavailable };
@@ -71,13 +72,13 @@ export async function requestPhoneCode(
 			ok: false,
 			error:
 				toNumber.retryAfter <= 60
-					? `We just sent a code to this number. You can ask again in ${wait}.`
-					: `This number has had several codes already. You can ask again in ${wait}.`
+					? m.account_code_just_sent({ wait })
+					: m.account_code_several_number({ wait })
 		};
 	}
 	const forAccount = accountCodeAllowed(userId);
 	if (!forAccount.allowed) {
-		return { ok: false, error: `You have asked for several codes. Try again in ${describeWait(forAccount.retryAfter)}.` };
+		return { ok: false, error: m.account_code_several_account({ wait: describeWait(forAccount.retryAfter) }) };
 	}
 
 	try {
@@ -87,11 +88,11 @@ export async function requestPhoneCode(
 			return {
 				ok: false,
 				error: err.retryAfter
-					? `We can't text this number again yet. Try again in ${describeWait(err.retryAfter)}.`
-					: "We couldn't send the code just now. Please try again in a few minutes."
+					? m.account_code_cannot_text_yet({ wait: describeWait(err.retryAfter) })
+					: m.account_code_send_failed()
 			};
 		}
-		if (err instanceof APIError) return { ok: false, error: 'Enter an Ethiopian mobile number, like 0912 345 678.' };
+		if (err instanceof APIError) return { ok: false, error: m.account_phone_invalid() };
 		throw err;
 	}
 
@@ -99,12 +100,13 @@ export async function requestPhoneCode(
 	return { ok: true, phone };
 }
 
-const CODE_ERRORS: Record<string, string> = {
-	INVALID_OTP: "That code isn't right. Check the text message and try again.",
-	OTP_EXPIRED: 'This code has expired. Send a new one.',
-	OTP_NOT_FOUND: 'This code has expired. Send a new one.',
-	TOO_MANY_ATTEMPTS: 'Too many wrong codes. Send a new one.',
-	PHONE_NUMBER_EXIST: 'This number is already linked to another account.'
+/** What a refused code means to the student, by better-auth's error code. */
+const CODE_ERRORS: Record<string, () => string> = {
+	INVALID_OTP: () => m.account_code_wrong(),
+	OTP_EXPIRED: () => m.account_code_expired(),
+	OTP_NOT_FOUND: () => m.account_code_expired(),
+	TOO_MANY_ATTEMPTS: () => m.account_code_too_many(),
+	PHONE_NUMBER_EXIST: () => m.account_phone_taken()
 };
 
 /** Checks the code for the pending number and, when right, saves the number as verified. */
@@ -114,9 +116,9 @@ export async function confirmPhoneCode(
 	code: string
 ): Promise<PhoneOutcome> {
 	const phone = pendingPhone(event.cookies, userId);
-	if (!phone) return { ok: false, error: 'No code is waiting. Enter your number and send a code first.' };
+	if (!phone) return { ok: false, error: m.account_code_none_waiting() };
 	const before = await phoneOwner(userId);
-	if (!/^\d{6}$/.test(code)) return { ok: false, error: 'Enter the 6-digit code from the text message.' };
+	if (!/^\d{6}$/.test(code)) return { ok: false, error: m.account_code_format() };
 
 	try {
 		await auth.api.verifyPhoneNumber({
@@ -126,7 +128,7 @@ export async function confirmPhoneCode(
 	} catch (err) {
 		if (!(err instanceof APIError)) throw err;
 		const reason = String(err.body?.code ?? '');
-		return { ok: false, error: CODE_ERRORS[reason] ?? 'Could not verify this number. Send a new code and try again.' };
+		return { ok: false, error: CODE_ERRORS[reason]?.() ?? m.account_code_verify_failed() };
 	}
 
 	clearPendingPhone(event.cookies);

@@ -14,6 +14,7 @@ export const access = createAccess({ root: '/dashboard', rules: [
  { prefix: '/dashboard/reviews', permission: 'courses.manage' },
  { prefix: '/dashboard/landing', permission: 'courses.manage' },
  { prefix: '/dashboard/reports', permission: 'academy.manage' },
+ { prefix: '/dashboard/analytics', permission: 'academy.manage' },
  { prefix: '/dashboard/promo-codes', permission: 'academy.manage' },
  { prefix: '/dashboard/emails', permission: 'academy.manage' },
  { prefix: '/dashboard/sms', permission: 'academy.manage' },

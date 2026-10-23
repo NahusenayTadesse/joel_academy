@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import { responsiveSrcset } from '$lib/media';
 	import type { Component } from 'svelte';
 	import BarChart3 from '@lucide/svelte/icons/chart-column';
 	import BookOpen from '@lucide/svelte/icons/book-open';
@@ -95,6 +96,8 @@
 	<div class={cn('relative aspect-video w-full overflow-hidden rounded-t-xl bg-muted', className)}>
 		<img
 			src={photo}
+			srcset={responsiveSrcset(photo)}
+			sizes="(min-width: 1280px) 400px, (min-width: 640px) 50vw, 100vw"
 			alt={categoryName ?? title}
 			loading={priority === 'lazy' ? 'lazy' : 'eager'}
 			fetchpriority={priority === 'high' ? 'high' : 'auto'}

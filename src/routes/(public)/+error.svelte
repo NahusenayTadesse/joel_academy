@@ -5,6 +5,7 @@
 	import ShieldAlert from '@lucide/svelte/icons/shield-alert';
 	import StatusPage from '$lib/components/common/status-page.svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	// The original had a not-found page and a catch-all error page; a thrown 403 reuses the look of
@@ -14,7 +15,7 @@
 
 <svelte:head>
 	<title>{siteConfig.name}</title>
-	<meta name="description" content="Digital Construct learning management system" />
+	<meta name="description" content={m.shell_error_meta_description()} />
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -22,30 +23,30 @@
 	<StatusPage
 		icon={SearchX}
 		code="404"
-		title="Page not found"
-		description="The page you're looking for doesn't exist or may have been moved."
+		title={m.shell_error_not_found_title()}
+		description={m.shell_error_not_found_description()}
 	>
 		{#snippet action()}
-			<Button href={ROUTES.courses.list}>Browse courses</Button>
+			<Button href={ROUTES.courses.list}>{m.shell_error_browse_courses()}</Button>
 		{/snippet}
 	</StatusPage>
 {:else if status === 403}
 	<StatusPage
 		icon={ShieldAlert}
 		code="403"
-		title="Access denied"
-		description="You don't have permission to view this page."
+		title={m.shell_error_forbidden_title()}
+		description={m.shell_error_forbidden_description()}
 	/>
 {:else}
 	<StatusPage
 		icon={OctagonAlert}
 		code={String(status)}
-		title="Something went wrong"
-		description="An unexpected error occurred on our end. Please try again."
+		title={m.shell_error_generic_title()}
+		description={m.shell_error_generic_description()}
 	>
 		{#snippet action()}
 			<!-- A full reload re-runs the failed load, the closest match to React's error-boundary reset. -->
-			<Button onclick={() => location.reload()}>Try again</Button>
+			<Button onclick={() => location.reload()}>{m.shell_try_again()}</Button>
 		{/snippet}
 	</StatusPage>
 {/if}

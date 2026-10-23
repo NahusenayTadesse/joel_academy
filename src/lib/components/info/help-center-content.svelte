@@ -8,6 +8,7 @@
 	import Button from '$lib/components/ui/button.svelte';
 	import Input from '$lib/components/ui/input.svelte';
 	import { HELP_CATEGORIES } from '$lib/content/help-articles.data';
+	import { m } from '$lib/paraglide/messages';
 
 	const DEBOUNCE_MS = 300;
 
@@ -65,8 +66,8 @@
 			bind:value
 			{oninput}
 			{onkeydown}
-			placeholder="Search help articles…"
-			aria-label="Search help articles"
+			placeholder={m.info_help_search_placeholder()}
+			aria-label={m.info_help_search_label()}
 			class="pr-9 pl-9"
 		/>
 		{#if value}
@@ -76,7 +77,7 @@
 				size="icon"
 				class="absolute top-1/2 right-1 size-7 -translate-y-1/2"
 				onclick={clear}
-				aria-label="Clear search"
+				aria-label={m.info_help_clear_search()}
 			>
 				<X class="size-3.5" />
 			</Button>
@@ -86,8 +87,8 @@
 	{#if filteredCategories.length === 0}
 		<EmptyState
 			icon={SearchX}
-			title="No help articles found"
-			description="Try a different search term."
+			title={m.info_help_empty_title()}
+			description={m.info_help_empty_description()}
 		/>
 	{:else}
 		<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">

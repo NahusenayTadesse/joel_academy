@@ -23,6 +23,7 @@
 	import Lock from '@lucide/svelte/icons/lock';
 	import Badge from '$lib/components/ui/badge.svelte';
 	import { formatDurationSeconds } from '$lib/format';
+	import { m } from '$lib/paraglide/messages';
 
 	let { sections }: { sections: CourseSection[] } = $props();
 
@@ -50,10 +51,10 @@
 			<Icon class="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
 			<span class="truncate text-sm text-foreground">{lesson.title}</span>
 			{#if lesson.lessonType === 'QUIZ'}
-				<Badge variant="outline" class="shrink-0">Quiz</Badge>
+				<Badge variant="outline" class="shrink-0">{m.catalog_curriculum_quiz()}</Badge>
 			{/if}
 			{#if lesson.isPreview}
-				<Badge variant="info" class="shrink-0">Preview</Badge>
+				<Badge variant="info" class="shrink-0">{m.catalog_curriculum_preview()}</Badge>
 			{/if}
 		</div>
 		<div class="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
@@ -61,7 +62,7 @@
 				<span>{formatDurationSeconds(lesson.durationSeconds)}</span>
 			{/if}
 			{#if !lesson.isPreview}
-				<Lock class="size-3.5" aria-label="Locked" />
+				<Lock class="size-3.5" aria-label={m.catalog_curriculum_locked()} />
 			{/if}
 		</div>
 	</div>
@@ -70,10 +71,10 @@
 {#if firstSectionId}
 	<div>
 		<div class="mb-3 flex items-center justify-between">
-			<h2 class="text-lg font-semibold text-foreground">Curriculum</h2>
+			<h2 class="text-lg font-semibold text-foreground">{m.catalog_curriculum_title()}</h2>
 			<span class="text-sm text-muted-foreground">
-				{sections.length} sections • {lessonCount} lessons{quizCount
-					? ` • ${quizCount} ${quizCount === 1 ? 'quiz' : 'quizzes'}`
+				{m.catalog_curriculum_summary({ sections: sections.length, lessons: lessonCount })}{quizCount
+					? ` • ${m.catalog_curriculum_quizzes({ count: quizCount })}`
 					: ''}
 			</span>
 		</div>
@@ -91,7 +92,7 @@
 							<span class="flex flex-col items-start gap-0.5 text-left">
 								<span>{section.title}</span>
 								<span class="text-xs font-normal text-muted-foreground">
-									{section.lessons.length} lessons
+									{m.catalog_curriculum_section_lessons({ count: section.lessons.length })}
 								</span>
 							</span>
 							<ChevronDown

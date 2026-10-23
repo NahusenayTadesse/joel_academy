@@ -3,6 +3,7 @@
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import { buttonVariants } from '$lib/components/ui/variants';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	let {
@@ -39,13 +40,13 @@
 
 {#if totalPages > 1}
 	<nav
-		aria-label="pagination"
+		aria-label={m.shell_pagination_label()}
 		class={cn('mx-auto flex w-full flex-wrap items-center justify-center gap-1', className)}
 	>
 		<a
 			href={buildHref(Math.max(1, page - 1))}
 			aria-disabled={page <= 1}
-			aria-label="Go to previous page"
+			aria-label={m.shell_pagination_previous_label()}
 			class={cn(
 				buttonVariants({ variant: 'ghost', size: 'default' }),
 				'gap-1 pl-2.5',
@@ -53,7 +54,7 @@
 			)}
 		>
 			<ChevronLeft class="size-4" />
-			<span class="hidden sm:inline">Previous</span>
+			<span class="hidden sm:inline">{m.shell_pagination_previous()}</span>
 		</a>
 
 		{#each pages as entry, index (entry === 'ellipsis' ? `ellipsis-${index}` : entry)}
@@ -75,14 +76,14 @@
 		<a
 			href={buildHref(Math.min(totalPages, page + 1))}
 			aria-disabled={page >= totalPages}
-			aria-label="Go to next page"
+			aria-label={m.shell_pagination_next_label()}
 			class={cn(
 				buttonVariants({ variant: 'ghost', size: 'default' }),
 				'gap-1 pr-2.5',
 				page >= totalPages && 'pointer-events-none opacity-50'
 			)}
 		>
-			<span class="hidden sm:inline">Next</span>
+			<span class="hidden sm:inline">{m.shell_pagination_next()}</span>
 			<ChevronRight class="size-4" />
 		</a>
 	</nav>

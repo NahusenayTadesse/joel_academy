@@ -7,6 +7,7 @@ import KeyRound from '@lucide/svelte/icons/key-round';
 import LifeBuoy from '@lucide/svelte/icons/life-buoy';
 import ShieldCheck from '@lucide/svelte/icons/shield-check';
 import UserCog from '@lucide/svelte/icons/user-cog';
+import { m } from '$lib/paraglide/messages';
 
 export interface HelpArticle {
 	question: string;
@@ -19,215 +20,80 @@ export interface HelpCategory {
 	articles: HelpArticle[];
 }
 
+/*
+ * The text is read through getters, so each read returns the current request's language while the
+ * export keeps its shape (an array of plain-looking objects) for every importer.
+ */
+function article(question: () => string, answer: () => string): HelpArticle {
+	return {
+		get question() {
+			return question();
+		},
+		get answer() {
+			return answer();
+		}
+	};
+}
+
+function category(icon: Component, title: () => string, articles: HelpArticle[]): HelpCategory {
+	return {
+		icon,
+		get title() {
+			return title();
+		},
+		articles
+	};
+}
+
 export const HELP_CATEGORIES: HelpCategory[] = [
-	{
-		icon: BookOpen,
-		title: 'Getting Started',
-		articles: [
-			{
-				question: 'Creating your account',
-				answer:
-					'Sign up with your email and password, or use Google sign-in for a faster setup. You can start browsing the catalog immediately, even before verifying your email.'
-			},
-			{
-				question: 'Finding your first course',
-				answer:
-					'Use the search bar or browse by category from the Courses page. Each course page shows the full curriculum, requirements, and what you will learn before you enroll.'
-			},
-			{
-				question: 'Understanding free vs. paid courses',
-				answer:
-					'Every course is individually priced by its instructor. Free courses grant instant access; paid courses walk you through checkout before you can start learning.'
-			}
-		]
-	},
-	{
-		icon: UserCog,
-		title: 'Account Management',
-		articles: [
-			{
-				question: 'Updating your profile',
-				answer:
-					'You can update your name and profile details from the Profile page in your dashboard at any time.'
-			},
-			{
-				question: 'Changing your password',
-				answer:
-					'Update your password from your account settings, or use the "Forgot password" flow from the sign-in page if you are locked out.'
-			},
-			{
-				question: 'Closing your account',
-				answer:
-					'Contact our support team through the Contact page if you would like your account closed, and we will guide you through the process.'
-			}
-		]
-	},
-	{
-		icon: KeyRound,
-		title: 'Authentication',
-		articles: [
-			{
-				question: 'Signing in with Google',
-				answer:
-					'You can create an account or sign in using Google in one click, without setting a separate password for the platform.'
-			},
-			{
-				question: 'Verifying your email',
-				answer:
-					'After registering, check your inbox for a verification link. Verifying your email secures your account and unlocks certain account actions.'
-			},
-			{
-				question: 'Resetting a forgotten password',
-				answer:
-					'Use the "Forgot password" link on the sign-in page. You will receive a secure reset link by email that expires after a short period for your security.'
-			}
-		]
-	},
-	{
-		icon: BookOpen,
-		title: 'Courses',
-		articles: [
-			{
-				question: 'How enrollment works',
-				answer:
-					'Open any course page and select enroll. Free courses grant immediate access; paid courses take you through checkout first.'
-			},
-			{
-				question: 'Tracking your progress',
-				answer:
-					'Your progress is calculated from the mandatory lessons you complete in a course. Completed lessons are always saved - you will never lose progress by leaving and coming back later.'
-			},
-			{
-				question: 'Course content updates',
-				answer:
-					'Instructors occasionally update lessons to keep content current. Updates to a published course are reflected automatically for everyone already enrolled.'
-			}
-		]
-	},
-	{
-		icon: CreditCard,
-		title: 'Payments',
-		articles: [
-			{
-				question: 'How checkout works',
-				answer:
-					'When you enroll in a paid course, you will see the price, any active discount, and payment instructions before you confirm.'
-			},
-			{
-				question: 'Using a promo code',
-				answer:
-					'If a course has an active promotion, enter your code at checkout to see the discounted price applied before you complete enrollment.'
-			},
-			{
-				question: 'Requesting a refund',
-				answer:
-					'Refund requests are reviewed by our support team on a case-by-case basis. Reach out through the Contact page with your enrollment details.'
-			}
-		]
-	},
-	{
-		icon: Award,
-		title: 'Certificates',
-		articles: [
-			{
-				question: 'Which courses offer certificates',
-				answer:
-					'Courses that offer a certificate of completion are clearly marked on their course page before you enroll.'
-			},
-			{
-				question: 'Earning your certificate',
-				answer:
-					'Completing every mandatory lesson in a certificate-enabled course triggers your certificate of completion automatically.'
-			},
-			{
-				question: 'Accessing your certificate',
-				answer:
-					'Once earned, your certificates are available from your student dashboard alongside the course you completed.'
-			}
-		]
-	},
-	{
-		icon: ShieldCheck,
-		title: 'Security',
-		articles: [
-			{
-				question: 'How your data is protected',
-				answer:
-					'We use industry-standard practices to protect your account, including secure password storage and encrypted connections throughout the platform.'
-			},
-			{
-				question: 'Recognizing phishing attempts',
-				answer:
-					'We will never ask for your password by email. If you receive a suspicious message claiming to be from us, report it through the Contact page.'
-			},
-			{
-				question: 'Keeping your account secure',
-				answer:
-					'Use a strong, unique password and keep your email account secure, since it is used for password resets and account verification.'
-			}
-		]
-	},
-	{
-		icon: BookOpen,
-		title: 'Learning Experience',
-		articles: [
-			{
-				question: 'Learning at your own pace',
-				answer:
-					'Every course is self-paced. There are no deadlines - progress is saved automatically so you can pause and resume whenever you like.'
-			},
-			{
-				question: 'Using the wishlist',
-				answer:
-					'Save courses you are interested in to your wishlist so you can find them again later without searching the catalog from scratch.'
-			},
-			{
-				question: 'Accessing course resources',
-				answer:
-					'Where an instructor has attached downloadable resources to a lesson, you can access them directly from that lesson.'
-			}
-		]
-	},
-	{
-		icon: AlertTriangle,
-		title: 'Troubleshooting',
-		articles: [
-			{
-				question: 'A lesson video will not play',
-				answer:
-					'Try refreshing the page or switching browsers first. If the issue continues, let us know through the Contact page with the course and lesson name.'
-			},
-			{
-				question: "I can't sign in to my account",
-				answer:
-					'Double check your email and password, or use "Forgot password" to reset it. If you signed up with Google, use the Google sign-in button instead.'
-			},
-			{
-				question: 'My progress does not look right',
-				answer:
-					'Completed lessons are never marked incomplete again, so this is usually a display refresh issue. Reload your dashboard, and contact support if the problem persists.'
-			}
-		]
-	},
-	{
-		icon: LifeBuoy,
-		title: 'Support',
-		articles: [
-			{
-				question: 'Contacting our team',
-				answer:
-					'Use the Contact page for any question we have not answered here - our team responds to every message.'
-			},
-			{
-				question: 'Checking system status',
-				answer:
-					'You can check the current platform status from the System status link in the site footer.'
-			},
-			{
-				question: 'Reporting a bug',
-				answer:
-					'Found something broken? Let us know through the Contact page with as much detail as possible - the page you were on and what you expected to happen.'
-			}
-		]
-	}
+	category(BookOpen, m.info_help_cat_getting_started, [
+		article(m.info_help_getting_started_q1, m.info_help_getting_started_a1),
+		article(m.info_help_getting_started_q2, m.info_help_getting_started_a2),
+		article(m.info_help_getting_started_q3, m.info_help_getting_started_a3)
+	]),
+	category(UserCog, m.info_help_cat_account, [
+		article(m.info_help_account_q1, m.info_help_account_a1),
+		article(m.info_help_account_q2, m.info_help_account_a2),
+		article(m.info_help_account_q3, m.info_help_account_a3)
+	]),
+	category(KeyRound, m.info_help_cat_auth, [
+		article(m.info_help_auth_q1, m.info_help_auth_a1),
+		article(m.info_help_auth_q2, m.info_help_auth_a2),
+		article(m.info_help_auth_q3, m.info_help_auth_a3)
+	]),
+	category(BookOpen, m.info_help_cat_courses, [
+		article(m.info_help_courses_q1, m.info_help_courses_a1),
+		article(m.info_help_courses_q2, m.info_help_courses_a2),
+		article(m.info_help_courses_q3, m.info_help_courses_a3)
+	]),
+	category(CreditCard, m.info_help_cat_payments, [
+		article(m.info_help_payments_q1, m.info_help_payments_a1),
+		article(m.info_help_payments_q2, m.info_help_payments_a2),
+		article(m.info_help_payments_q3, m.info_help_payments_a3)
+	]),
+	category(Award, m.info_help_cat_certificates, [
+		article(m.info_help_certificates_q1, m.info_help_certificates_a1),
+		article(m.info_help_certificates_q2, m.info_help_certificates_a2),
+		article(m.info_help_certificates_q3, m.info_help_certificates_a3)
+	]),
+	category(ShieldCheck, m.info_help_cat_security, [
+		article(m.info_help_security_q1, m.info_help_security_a1),
+		article(m.info_help_security_q2, m.info_help_security_a2),
+		article(m.info_help_security_q3, m.info_help_security_a3)
+	]),
+	category(BookOpen, m.info_help_cat_learning, [
+		article(m.info_help_learning_q1, m.info_help_learning_a1),
+		article(m.info_help_learning_q2, m.info_help_learning_a2),
+		article(m.info_help_learning_q3, m.info_help_learning_a3)
+	]),
+	category(AlertTriangle, m.info_help_cat_troubleshooting, [
+		article(m.info_help_troubleshooting_q1, m.info_help_troubleshooting_a1),
+		article(m.info_help_troubleshooting_q2, m.info_help_troubleshooting_a2),
+		article(m.info_help_troubleshooting_q3, m.info_help_troubleshooting_a3)
+	]),
+	category(LifeBuoy, m.info_help_cat_support, [
+		article(m.info_help_support_q1, m.info_help_support_a1),
+		article(m.info_help_support_q2, m.info_help_support_a2),
+		article(m.info_help_support_q3, m.info_help_support_a3)
+	])
 ];

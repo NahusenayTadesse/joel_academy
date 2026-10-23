@@ -1,12 +1,13 @@
 <script lang="ts">
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import type { BreadcrumbEntry } from '$lib/json-ld';
+	import { m } from '$lib/paraglide/messages';
 
 	/* The original `PageBreadcrumb` (shadcn breadcrumb) markup and classes. */
 	let { items }: { items: BreadcrumbEntry[] } = $props();
 </script>
 
-<nav aria-label="breadcrumb">
+<nav aria-label={m.shell_breadcrumb_label()}>
 	<ol
 		class="flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2.5"
 	>

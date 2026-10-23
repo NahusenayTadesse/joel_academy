@@ -3,6 +3,7 @@
 	import WifiOff from '@lucide/svelte/icons/wifi-off';
 	import { toast } from 'svelte-sonner';
 	import { onNavigate } from '$app/navigation';
+	import { m } from '$lib/paraglide/messages';
 	import { pwa } from '$lib/pwa.svelte';
 
 	onMount(() => pwa.start());
@@ -10,10 +11,10 @@
 	// A new version is installed and waiting: offer it, never force a reload mid-lesson.
 	$effect(() => {
 		if (!pwa.updateReady) return;
-		toast('A new version is available', {
-			description: 'Reload to get the latest improvements.',
+		toast(m.shell_pwa_update_title(), {
+			description: m.shell_pwa_update_description(),
 			duration: Number.POSITIVE_INFINITY,
-			action: { label: 'Reload', onClick: () => pwa.applyUpdate() }
+			action: { label: m.shell_pwa_reload(), onClick: () => pwa.applyUpdate() }
 		});
 	});
 
@@ -44,7 +45,7 @@
 			class="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-xs font-medium text-background shadow-lg"
 		>
 			<WifiOff class="size-3.5" />
-			You're offline. Saved pages still work.
+			{m.shell_pwa_offline_banner()}
 		</span>
 	</div>
 {/if}

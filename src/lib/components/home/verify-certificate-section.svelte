@@ -6,6 +6,7 @@
 	import Search from '@lucide/svelte/icons/search';
 	import ShieldCheck from '@lucide/svelte/icons/shield-check';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import { inView } from '$lib/attachments';
 </script>
@@ -23,18 +24,16 @@
 					class="glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-semibold text-brand-ink"
 				>
 					<ShieldCheck class="size-4" />
-					<span>Public Credential Verification</span>
+					<span>{m.home_verify_badge()}</span>
 				</div>
 
 				<div class="space-y-3">
 					<h2 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-						Already have a certificate? <br class="hidden sm:inline" />
-						<span class="text-gradient">Verify its authenticity</span>
+						{m.home_verify_heading()} <br class="hidden sm:inline" />
+						<span class="text-gradient">{m.home_verify_heading_accent()}</span>
 					</h2>
 					<p class="max-w-2xl text-base text-muted-foreground">
-						Employers, recruiters, and academic partners can instantly authenticate any Joel Talargie
-						Academy credential without logging in. Validate via live camera QR scanning or by typing
-						the certificate ID.
+						{m.home_verify_description()}
 					</p>
 				</div>
 
@@ -46,9 +45,9 @@
 							<Camera class="size-5" />
 						</div>
 						<div>
-							<h3 class="text-sm font-semibold text-foreground">Scan QR Code</h3>
+							<h3 class="text-sm font-semibold text-foreground">{m.home_verify_scan_title()}</h3>
 							<p class="mt-0.5 text-xs text-muted-foreground">
-								Point your camera at the QR code printed on the certificate for instant validation.
+								{m.home_verify_scan_description()}
 							</p>
 						</div>
 					</div>
@@ -60,10 +59,9 @@
 							<Search class="size-5" />
 						</div>
 						<div>
-							<h3 class="text-sm font-semibold text-foreground">Enter Certificate ID</h3>
+							<h3 class="text-sm font-semibold text-foreground">{m.home_verify_id_title()}</h3>
 							<p class="mt-0.5 text-xs text-muted-foreground">
-								Type the unique certificate ID (e.g. JTA-2026-...) to view the official verified
-								record.
+								{m.home_verify_id_description()}
 							</p>
 						</div>
 					</div>
@@ -76,11 +74,11 @@
 						class="gap-2 font-medium shadow-sm"
 					>
 						<ShieldCheck class="size-4" />
-						Verify Certificate
+						{m.home_verify_button()}
 					</Button>
 					<Button href={ROUTES.courses.list} variant="outline" size="lg" class="gap-2">
 						<Award class="size-4" />
-						Browse Certificate Courses
+						{m.home_verify_browse()}
 					</Button>
 				</div>
 			</div>
@@ -101,14 +99,14 @@
 								<p class="text-xs font-bold tracking-wider text-foreground uppercase">
 									Joel Talargie Academy
 								</p>
-								<p class="text-[11px] text-muted-foreground">Credential Verification System</p>
+								<p class="text-[11px] text-muted-foreground">{m.home_verify_system()}</p>
 							</div>
 						</div>
 						<span
 							class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400"
 						>
 							<CircleCheck class="size-3" />
-							Verified
+							{m.home_verify_verified()}
 						</span>
 					</div>
 
@@ -129,13 +127,13 @@
 						</div>
 						<p class="mt-3 font-mono text-xs font-bold text-foreground">JTA-2026-000123</p>
 						<p class="mt-1 text-[11px] text-muted-foreground">
-							Tamper-evident 256-bit cryptographic verification token
+							{m.home_verify_token()}
 						</p>
 					</div>
 
 					<div class="flex items-center justify-between text-xs text-muted-foreground">
-						<span>Free Public Access</span>
-						<span>No Login Required</span>
+						<span>{m.home_verify_free_access()}</span>
+						<span>{m.home_verify_no_login()}</span>
 					</div>
 				</div>
 			</div>

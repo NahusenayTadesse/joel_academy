@@ -5,6 +5,7 @@
 	import CourseCard from '$lib/components/catalog/course-card.svelte';
 	import Badge from '$lib/components/ui/badge.svelte';
 	import { buildBreadcrumbJsonLd, jsonLdScript } from '$lib/json-ld';
+	import { m } from '$lib/paraglide/messages';
 	import PageBreadcrumb from '$lib/components/common/page-breadcrumb.svelte';
 	import { ROUTES, siteConfig } from '$lib/site';
 
@@ -13,15 +14,15 @@
 	const instructor = $derived(data.instructor);
 	const courses = $derived(instructor.courses);
 	const breadcrumbItems = $derived([
-		{ label: 'Home', href: ROUTES.home },
-		{ label: 'Instructors', href: ROUTES.instructors.list },
+		{ label: m.catalog_breadcrumb_home(), href: ROUTES.home },
+		{ label: m.catalog_breadcrumb_instructors(), href: ROUTES.instructors.list },
 		{ label: instructor.name }
 	]);
 </script>
 
 <svelte:head>
 	<title>{instructor.name} · {siteConfig.name}</title>
-	<meta name="description" content="Meet {instructor.name}, Instructor at Joel Talargie Academy" />
+	<meta name="description" content={m.catalog_instructor_meta_description({ name: instructor.name })} />
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- serialized JSON with `<` escaped -->
 	{@html jsonLdScript(buildBreadcrumbJsonLd(page.url.origin, breadcrumbItems))}
 </svelte:head>
@@ -50,7 +51,7 @@
 				<div>
 					<div class="flex items-center gap-2">
 						<Badge variant="secondary" class="bg-brand/10 text-xs font-medium text-brand-ink">
-							MEET YOUR MENTOR
+							{m.catalog_instructor_badge()}
 						</Badge>
 					</div>
 					<h1 class="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -93,17 +94,16 @@
 	<div class="space-y-4">
 		<div class="flex items-center justify-between">
 			<h2 class="text-xl font-semibold tracking-tight text-foreground">
-				Courses Taught by {instructor.name}
+				{m.catalog_instructor_courses_heading({ name: instructor.name })}
 			</h2>
 			<span class="text-xs text-muted-foreground">
-				{courses.length}
-				{courses.length === 1 ? 'course' : 'courses'}
+				{m.catalog_course_count({ count: courses.length })}
 			</span>
 		</div>
 
 		{#if courses.length === 0}
 			<div class="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
-				<p class="text-sm">No specific courses published yet for this instructor.</p>
+				<p class="text-sm">{m.catalog_instructor_no_courses()}</p>
 			</div>
 		{:else}
 			<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

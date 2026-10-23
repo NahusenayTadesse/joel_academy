@@ -3,6 +3,7 @@
 	import CourseFilters from '$lib/components/courses/course-filters.svelte';
 	import CoursesGrid from '$lib/components/courses/courses-grid.svelte';
 	import { jsonLdScript } from '$lib/json-ld';
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
 
 	let { data } = $props();
@@ -12,10 +13,10 @@
 </script>
 
 <svelte:head>
-	<title>Browse Courses · {siteConfig.name}</title>
+	<title>{m.catalog_courses_meta_title()} · {siteConfig.name}</title>
 	<meta
 		name="description"
-		content="Explore the full course catalog — filter by category, level, and price."
+		content={m.catalog_courses_meta_description()}
 	/>
 	{#if data.itemListJsonLd}
 		{@html jsonLdScript(data.itemListJsonLd)}
@@ -24,10 +25,10 @@
 
 <div class="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-10 sm:px-6">
 	<PageHeader
-		title="Browse courses"
-		description="Explore our full catalog and find the course that fits your goals."
+		title={m.catalog_courses_title()}
+		description={m.catalog_courses_description()}
 	/>
 	<CourseFilters query={data.query} categories={data.categories} bind:view />
-	<h2 class="sr-only">Courses</h2>
+	<h2 class="sr-only">{m.catalog_courses_sr_heading()}</h2>
 	<CoursesGrid courses={data.courses} query={data.query} {view} />
 </div>

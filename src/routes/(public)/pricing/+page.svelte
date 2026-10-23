@@ -7,38 +7,30 @@
 	import FaqAccordion from '$lib/components/marketing/faq-accordion.svelte';
 	import Button from '$lib/components/ui/button.svelte';
 	import Card from '$lib/components/ui/card.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	let { data } = $props();
 
-	const PRICING_FAQ = [
-		{
-			question: 'Do you offer subscriptions?',
-			answer: 'No. Every course is priced individually and paid for once, with lifetime access.'
-		},
-		{
-			question: 'Are there really free courses?',
-			answer: 'Yes - many courses are free to enroll in and complete, no payment required.'
-		},
-		{
-			question: 'What payment methods are supported?',
-			answer: 'Payment options are shown at checkout when you enroll in a paid course.'
-		}
-	];
+	const PRICING_FAQ = $derived([
+		{ question: m.catalog_pricing_faq_q1(), answer: m.catalog_pricing_faq_a1() },
+		{ question: m.catalog_pricing_faq_q2(), answer: m.catalog_pricing_faq_a2() },
+		{ question: m.catalog_pricing_faq_q3(), answer: m.catalog_pricing_faq_a3() }
+	]);
 </script>
 
 <svelte:head>
-	<title>Pricing · {siteConfig.name}</title>
+	<title>{m.catalog_pricing_title()} · {siteConfig.name}</title>
 	<meta
 		name="description"
-		content="How pricing works on our platform - simple, one-time, per-course pricing."
+		content={m.catalog_pricing_meta_description()}
 	/>
 </svelte:head>
 
 <div class="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 py-10 sm:px-6">
 	<PageHeader
-		title="Pricing"
-		description="No subscriptions or hidden fees - just simple, one-time, per-course pricing."
+		title={m.catalog_pricing_title()}
+		description={m.catalog_pricing_description()}
 	/>
 
 	<div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
@@ -48,43 +40,46 @@
 			>
 				<Gift class="size-5" />
 			</span>
-			<h2 class="text-base font-semibold text-foreground">Free courses</h2>
+			<h2 class="text-base font-semibold text-foreground">{m.catalog_pricing_free_heading()}</h2>
 			<p class="text-sm text-muted-foreground">
-				{data.freeCount} free {data.freeCount === 1 ? 'course is' : 'courses are'} available right
-				now, with no payment required.
+				{m.catalog_pricing_free_body({ count: data.freeCount })}
 			</p>
 		</Card>
 		<Card class="flex flex-col gap-3 p-6">
 			<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 				<Tag class="size-5" />
 			</span>
-			<h2 class="text-base font-semibold text-foreground">Paid courses</h2>
+			<h2 class="text-base font-semibold text-foreground">{m.catalog_pricing_paid_heading()}</h2>
 			<p class="text-sm text-muted-foreground">
-				{data.paidCount} paid {data.paidCount === 1 ? 'course' : 'courses'}{data.priceRange
-					? `, ranging from ${data.priceRange.lowest} to ${data.priceRange.highest}.`
-					: '.'}
+				{data.priceRange
+					? m.catalog_pricing_paid_body_range({
+							count: data.paidCount,
+							lowest: data.priceRange.lowest,
+							highest: data.priceRange.highest
+						})
+					: m.catalog_pricing_paid_body({ count: data.paidCount })}
 			</p>
 		</Card>
 		<Card class="flex flex-col gap-3 p-6">
 			<span class="flex size-11 items-center justify-center rounded-full bg-info/10 text-info">
 				<InfinityIcon class="size-5" />
 			</span>
-			<h2 class="text-base font-semibold text-foreground">Lifetime access</h2>
+			<h2 class="text-base font-semibold text-foreground">{m.catalog_pricing_lifetime_heading()}</h2>
 			<p class="text-sm text-muted-foreground">
-				Once you enroll, the course is yours to revisit any time, with no expiration.
+				{m.catalog_pricing_lifetime_body()}
 			</p>
 		</Card>
 	</div>
 
 	<div class="flex justify-center">
 		<Button size="lg" href={ROUTES.courses.list}>
-			Browse courses
+			{m.catalog_courses_title()}
 			<ArrowRight class="size-4" />
 		</Button>
 	</div>
 
 	<div class="mx-auto w-full max-w-2xl">
-		<h2 class="mb-4 text-center text-xl font-semibold text-foreground">Pricing FAQ</h2>
+		<h2 class="mb-4 text-center text-xl font-semibold text-foreground">{m.catalog_pricing_faq_heading()}</h2>
 		<FaqAccordion items={PRICING_FAQ} />
 	</div>
 </div>

@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import { responsiveSrcset } from '$lib/media';
 	export interface MentorSpotlightInstructor {
 		name: string;
 		title?: string;
@@ -17,15 +18,16 @@
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import Button from '$lib/components/ui/button.svelte';
 	import { inView } from '$lib/attachments';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	let { instructor }: { instructor: MentorSpotlightInstructor | null } = $props();
 
 	const DEFAULT_ACHIEVEMENTS = [
-		'Over 10+ years of high-scale software engineering leadership',
-		'Curriculum designed specifically for career placement & promotion',
-		'Trained and certified thousands of engineers across the continent'
+		m.home_mentor_achievement_1(),
+		m.home_mentor_achievement_2(),
+		m.home_mentor_achievement_3()
 	];
 
 	const initials = $derived(
@@ -37,7 +39,7 @@
 	);
 	const photo = $derived(instructor?.photoUrl || instructor?.avatarUrl);
 	const subtitle = $derived(
-		instructor?.title || instructor?.headline || 'Founder & Lead Instructor'
+		instructor?.title || instructor?.headline || m.home_mentor_default_title()
 	);
 	const achievements = $derived(
 		instructor?.achievements?.length ? instructor.achievements : DEFAULT_ACHIEVEMENTS
@@ -62,6 +64,8 @@
 						<div class="relative aspect-square w-full overflow-hidden rounded-[2.1rem] bg-muted">
 							<img
 								src={photo}
+								srcset={responsiveSrcset(photo)}
+								sizes="(min-width: 1024px) 440px, 90vw"
 								alt={instructor.name}
 								loading="lazy"
 								decoding="async"
@@ -92,10 +96,11 @@
 			</div>
 			<div class="reveal flex flex-col gap-5" style:--delay="0.15s" {@attach inView()}>
 				<span class="text-xs font-bold tracking-[0.2em] text-brand-ink uppercase">
-					Meet your mentor
+					{m.home_mentor_eyebrow()}
 				</span>
 				<h2 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl md:text-5xl">
-					Learn from <span class="text-gradient">{instructor.name}</span>
+					{m.home_mentor_heading_before()}<span class="text-gradient">{instructor.name}</span
+					>{m.home_mentor_heading_after()}
 				</h2>
 				<p class="text-sm font-medium text-muted-foreground">{subtitle}</p>
 				<p class="text-base leading-relaxed text-muted-foreground">{instructor.bio}</p>
@@ -108,7 +113,7 @@
 					{/each}
 				</ul>
 				<Button href={ROUTES.instructors.detail(slug)} class="group mt-2 w-fit" variant="glass" size="lg">
-					View full profile
+					{m.home_mentor_view_profile()}
 					<ArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
 				</Button>
 			</div>

@@ -3,18 +3,31 @@
  * aggregation every rating display reads. No database or Node imports: the browser loads this.
  */
 
+import { m } from '$lib/paraglide/messages';
+
 export const REVIEW_COMMENT_MAX = 2000;
 export const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 
 /** Progress at which an enrolled student is asked to rate a course they have not finished. */
 export const RATE_PROMPT_PERCENT = 30;
 
+// Getters, so each read is in the current language (never translated at import time).
 export const RATING_WORDS: Record<number, string> = {
-	1: 'Poor',
-	2: 'Fair',
-	3: 'Good',
-	4: 'Very good',
-	5: 'Excellent'
+	get 1() {
+		return m.catalog_rating_poor();
+	},
+	get 2() {
+		return m.catalog_rating_fair();
+	},
+	get 3() {
+		return m.catalog_rating_good();
+	},
+	get 4() {
+		return m.catalog_rating_very_good();
+	},
+	get 5() {
+		return m.catalog_rating_excellent();
+	}
 };
 
 export interface RatingSummary {
@@ -58,11 +71,11 @@ export function summarizeRatings(tallies: { rating: number; count: number }[]): 
 /** "Abebe Kebede" → "Abebe K.": enough to be a person, not enough to find them. */
 export function reviewerName(fullName: string | null | undefined): string {
 	const parts = (fullName ?? '').trim().split(/\s+/).filter(Boolean);
-	if (parts.length === 0) return 'Student';
+	if (parts.length === 0) return m.catalog_review_student_fallback();
 	if (parts.length === 1) return parts[0];
 	const last = Array.from(parts[parts.length - 1])[0]?.toUpperCase() ?? '';
 	return `${parts[0]} ${last}.`;
 }
 
 /** "12 reviews", "1 review". */
-export const reviewCountText = (count: number) => `${count} review${count === 1 ? '' : 's'}`;
+export const reviewCountText = (count: number) => m.catalog_review_count({ count });

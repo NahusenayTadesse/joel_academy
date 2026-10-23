@@ -7,7 +7,7 @@
  * `var(--primary)` and friends directly. For an alpha variant in inline styles use
  * `color-mix(in srgb, var(--x) 35%, transparent)`; in classes, Tailwind's `bg-x/35` works as usual.
  */
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
 /*
  * Fonts are self-hosted (same origin, cached with the app) rather than loaded from Google Fonts:
  * a render-blocking third-party stylesheet cost ~1.2 s on mobile, and visitors' IPs stay with us.
@@ -16,8 +16,19 @@
 @import '@fontsource-variable/space-grotesk';
 @import 'tw-animate-css';
 
-/* The kit's components, so Tailwind generates the classes they use. */
-@source '../../node_modules/@nahu/admin-kit/dist';
+/*
+ * Only what the public site and student area render: the kit components they use, not the whole
+ * kit, and not the dashboard (its classes come from dashboard/dashboard.css, loaded there only).
+ * Visitors' phones then parse a fraction of the stylesheet before the first paint.
+ */
+@source '../lib';
+@source './(public)';
+@source './(auth)';
+@source './offline';
+@source './*.svelte';
+@source '../../node_modules/@nahu/admin-kit/dist/formComponents/ActionForm.svelte';
+@source '../../node_modules/@nahu/admin-kit/dist/formComponents/HiddenField.svelte';
+@source '../../node_modules/@nahu/admin-kit/dist/components/ui/dropdown-menu';
 
 @custom-variant dark (&:is(.dark *));
 /*
@@ -274,9 +285,16 @@
 	--radius-2xl: 1rem;
 	--radius-3xl: 1.25rem;
 
-	--font-sans: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+	/*
+	 * The brand fonts have no Ethiopic letters; Amharic text falls through to each system's own
+	 * Ethiopic face (Android, Windows, Apple), named so every device picks its best one.
+	 */
+	--font-sans:
+		'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', 'Noto Sans Ethiopic', 'Nyala', 'Ebrima', 'Kefa',
+		ui-sans-serif, system-ui, sans-serif;
 	--font-heading:
-		'Space Grotesk Variable', 'Space Grotesk', 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+		'Space Grotesk Variable', 'Space Grotesk', 'Plus Jakarta Sans Variable', 'Noto Sans Ethiopic', 'Nyala',
+		'Ebrima', 'Kefa', ui-sans-serif, system-ui, sans-serif;
 
 	--shadow-xs: 0 1px 2px 0 hsl(230 25% 9% / 0.03);
 	--shadow-sm: 0 1px 3px 0 hsl(230 25% 9% / 0.05), 0 1px 2px -1px hsl(230 25% 9% / 0.05);
@@ -617,11 +635,11 @@
  * scripts run (`html.js`, set in app.html): without JavaScript everything is simply there.
  * `--delay` staggers siblings.
  */
+/* Opacity and transform only: both run on the compositor, so they stay smooth on modest phones. */
 @keyframes enter-up {
 	from {
 		opacity: 0;
 		transform: translateY(28px);
-		filter: blur(6px);
 	}
 }
 @keyframes enter-left {
@@ -658,16 +676,13 @@
 .js .reveal {
 	opacity: 0;
 	transform: translateY(var(--reveal-y, 32px)) scale(var(--reveal-scale, 1));
-	filter: blur(var(--reveal-blur, 4px));
 	transition:
 		opacity 0.7s ease-out var(--delay, 0s),
-		transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s),
-		filter 0.7s ease-out var(--delay, 0s);
+		transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s);
 }
 .js .reveal.is-visible {
 	opacity: 1;
 	transform: none;
-	filter: none;
 }
 /*
  * Children of a `reveal-stagger` group rise one after another once the group is in view. An

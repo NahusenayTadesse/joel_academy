@@ -2,6 +2,7 @@
 	import ArrowRight from '@lucide/svelte/icons/arrow-right';
 	import { inView } from '$lib/attachments';
 	import { DEFAULT_LANDING, type LandingFinalCta } from '$lib/content/landing';
+	import { cmsHref } from './cms-link';
 
 	let { cta = DEFAULT_LANDING.finalCta }: { cta?: LandingFinalCta } = $props();
 </script>
@@ -32,7 +33,7 @@
 		<p class="mx-auto mt-5 max-w-xl text-lg text-slate-400">{cta.description}</p>
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- an editor-set path or https link -->
 		<a
-			href={cta.ctaUrl}
+			href={cmsHref(cta.ctaUrl)}
 			class="group mt-9 inline-flex h-13 items-center gap-2 rounded-2xl bg-white px-7 text-base font-semibold text-[#0b2a5c] shadow-[0_0_40px_rgb(124_196_255/0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_60px_rgb(124_196_255/0.7)]"
 		>
 			{cta.ctaText}

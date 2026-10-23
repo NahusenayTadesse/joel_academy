@@ -8,6 +8,7 @@
 	import Paperclip from '@lucide/svelte/icons/paperclip';
 	import { formatFileSize } from '$lib/lesson-files';
 	import Textarea from '$lib/components/ui/textarea.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	/*
@@ -72,14 +73,14 @@
 
 <Tabs.Root value="description" class="mt-6">
 	<Tabs.List class={listClass}>
-		<Tabs.Trigger value="description" class={triggerClass}>Description</Tabs.Trigger>
+		<Tabs.Trigger value="description" class={triggerClass}>{m.learn_tab_description()}</Tabs.Trigger>
 		<Tabs.Trigger value="resources" class={cn(triggerClass, 'gap-1.5')}>
-			Resources
+			{m.learn_tab_resources()}
 			{#if resources.length > 0}
 				<span class="rounded-full bg-white/15 px-1.5 py-0.5 text-[10px]">{resources.length}</span>
 			{/if}
 		</Tabs.Trigger>
-		<Tabs.Trigger value="notes" class={triggerClass}>Notes</Tabs.Trigger>
+		<Tabs.Trigger value="notes" class={triggerClass}>{m.learn_tab_notes()}</Tabs.Trigger>
 	</Tabs.List>
 
 	<Tabs.Content value="description" class={contentClass}>
@@ -99,16 +100,16 @@
 				)}
 			>
 				<ExternalLink class="size-4" />
-				Open external resource
+				{m.learn_open_external()}
 			</a>
 		{:else if !html}
-			<p class="text-sm text-sidebar-foreground/60">This lesson has no written description.</p>
+			<p class="text-sm text-sidebar-foreground/60">{m.learn_no_description()}</p>
 		{/if}
 	</Tabs.Content>
 
 	<Tabs.Content value="resources" class={contentClass}>
 		{#if resources.length === 0}
-			<p class="text-sm text-sidebar-foreground/60">No resources for this lesson.</p>
+			<p class="text-sm text-sidebar-foreground/60">{m.learn_no_resources()}</p>
 		{:else}
 			<div class="grid gap-3 sm:grid-cols-2">
 				{#each resources as resource (resource.id)}
@@ -134,7 +135,7 @@
 							download={resource.file.name}
 							data-sveltekit-reload
 							class="flex items-center gap-3 rounded-xl border border-sidebar-border bg-white/5 p-3 transition-colors hover:border-sidebar-primary"
-							aria-label="Download {resource.title} ({resource.file.name})"
+							aria-label={m.learn_download_resource({ title: resource.title, name: resource.file.name })}
 						>
 							{@render body()}
 							<Download class="size-4 shrink-0 text-sidebar-foreground/50" aria-hidden="true" />
@@ -152,7 +153,7 @@
 					{:else}
 						<div
 							class="flex items-center gap-3 rounded-xl border border-sidebar-border bg-white/5 p-3 opacity-70"
-							title="Contact your instructor to access this file"
+							title={m.learn_contact_instructor()}
 						>
 							{@render body()}
 						</div>
@@ -166,16 +167,16 @@
 		<div class="space-y-2">
 			<Textarea
 				bind:value={() => notes, (value) => ((notes = value ?? ''), saveNotes(notes))}
-				placeholder="Write notes for this lesson..."
+				placeholder={m.learn_notes_placeholder()}
 				rows={8}
-				aria-label="Lesson notes"
+				aria-label={m.learn_notes_label()}
 				class="border-sidebar-border bg-white/5 text-sidebar-foreground placeholder:text-sidebar-foreground/40 focus-visible:ring-sidebar-primary"
 			/>
 			<p class="flex items-center gap-1.5 text-xs text-sidebar-foreground/50">
 				<NotebookPen class="size-3.5" aria-hidden="true" />
 				{savedHere
-					? 'Saved - on this device only'
-					: 'Notes are saved on this device only, not synced across devices.'}
+					? m.learn_notes_saved()
+					: m.learn_notes_hint()}
 			</p>
 		</div>
 	</Tabs.Content>

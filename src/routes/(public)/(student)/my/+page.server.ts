@@ -5,6 +5,7 @@ import { progressByCourse } from '$lib/server/enrollment';
 import { latestNotifications } from '$lib/server/notifications';
 import { requireUser } from '$lib/server/student';
 import { mediaUrl } from '$lib/media';
+import { m } from '$lib/paraglide/messages';
 import type { PageServerLoad } from './$types';
 
 const time = (date: Date | null) => date?.getTime() ?? 0;
@@ -77,7 +78,7 @@ export const load: PageServerLoad = async (event) => {
 				slug: row.slug,
 				title: row.title,
 				thumbnailUrl: mediaUrl(row.thumbnail),
-				categoryName: row.categoryName ?? 'Course',
+				categoryName: row.categoryName ?? m.learn_course_fallback(),
 				categorySlug: row.categorySlug ?? undefined,
 				completed: row.completedAt !== null,
 				progressPercent: row.completedAt ? 100 : (current?.percent ?? 0),

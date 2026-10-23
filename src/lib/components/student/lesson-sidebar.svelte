@@ -18,6 +18,7 @@
 	import Lock from '@lucide/svelte/icons/lock';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { formatDurationSeconds } from '$lib/format';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	let {
@@ -47,8 +48,8 @@
 <div class="flex h-full flex-col bg-sidebar text-sidebar-foreground">
 	<div class="flex items-center justify-between gap-4 border-b border-sidebar-border p-5">
 		<div>
-			<h2 class="text-sm font-bold text-white">Course Content</h2>
-			<p class="mt-1 text-xs text-sidebar-foreground/60">{overallProgress}% completed</p>
+			<h2 class="text-sm font-bold text-white">{m.learn_course_content()}</h2>
+			<p class="mt-1 text-xs text-sidebar-foreground/60">{m.learn_percent_completed({ percent: overallProgress })}</p>
 		</div>
 		<div class="relative size-10 shrink-0">
 			<svg class="size-10 -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
@@ -68,7 +69,7 @@
 			</svg>
 		</div>
 	</div>
-	<nav class="flex-1 overflow-y-auto py-3" aria-label="Course lessons">
+	<nav class="flex-1 overflow-y-auto py-3" aria-label={m.learn_course_lessons()}>
 		{#each curriculum as section (section.id)}
 			{@const collapsed = collapsedSections.has(section.id)}
 			{@const completedCount = section.lessons.filter((lesson) => lesson.completed).length}
@@ -93,7 +94,7 @@
 							class="inline-flex shrink-0 items-center gap-1 rounded-full bg-brand/20 px-2 py-0.5 text-[10px] font-medium text-brand-ink"
 						>
 							<Check class="size-3" />
-							<span>Completed</span>
+							<span>{m.learn_completed_badge()}</span>
 						</span>
 					{:else}
 						<span class="shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-sidebar-foreground/60">

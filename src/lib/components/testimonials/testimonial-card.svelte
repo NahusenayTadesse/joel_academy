@@ -3,6 +3,7 @@
 	import Star from '@lucide/svelte/icons/star';
 	import type { Testimonial } from '$lib/content/testimonial.types';
 	import { cn } from '@nahu/admin-kit/utils.js';
+	import { m } from '$lib/paraglide/messages';
 
 	let { testimonial, class: className = '' }: { testimonial: Testimonial; class?: string } =
 		$props();
@@ -19,7 +20,7 @@
 <div class={cn('glass-card lift flex h-full flex-col gap-4 rounded-3xl p-7', className)}>
 	<Quote class="size-8 text-brand/50" aria-hidden="true" />
 	<p class="flex-1 text-base leading-relaxed text-foreground">&ldquo;{testimonial.quote}&rdquo;</p>
-	<div class="flex items-center gap-1" role="img" aria-label="{testimonial.rating} out of 5 stars">
+	<div class="flex items-center gap-1" role="img" aria-label={m.catalog_stars_out_of_five({ value: testimonial.rating })}>
 		{#each { length: 5 }, index (index)}
 			<Star
 				class={cn(

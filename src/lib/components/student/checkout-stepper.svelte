@@ -1,9 +1,32 @@
 <script lang="ts" module>
+	import { m } from '$lib/paraglide/messages';
+
+	/* Labels are getters: the language is the page's, known only when they are read. */
 	export const CHECKOUT_STEPS = [
-		{ id: 1, label: 'Course Summary' },
-		{ id: 2, label: 'Promo Code' },
-		{ id: 3, label: 'Payment Method' },
-		{ id: 4, label: 'Confirmation' }
+		{
+			id: 1,
+			get label() {
+				return m.account_step_summary();
+			}
+		},
+		{
+			id: 2,
+			get label() {
+				return m.account_step_promo();
+			}
+		},
+		{
+			id: 3,
+			get label() {
+				return m.account_step_payment();
+			}
+		},
+		{
+			id: 4,
+			get label() {
+				return m.account_step_confirmation();
+			}
+		}
 	] as const;
 	export type CheckoutStepId = (typeof CHECKOUT_STEPS)[number]['id'];
 </script>

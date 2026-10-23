@@ -1,6 +1,7 @@
 <script lang="ts">
 	import CircleHelp from '@lucide/svelte/icons/circle-help';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
+	import Languages from '@lucide/svelte/icons/languages';
 	import Layers from '@lucide/svelte/icons/layers';
 	import LayoutDashboard from '@lucide/svelte/icons/layout-dashboard';
 	import ListOrdered from '@lucide/svelte/icons/list-ordered';
@@ -22,18 +23,26 @@
 	import { Switch } from '@nahu/admin-kit/components/ui/switch/index.js';
 	import { Textarea } from '@nahu/admin-kit/components/ui/textarea/index.js';
 	import { confirmLeave, createForm } from '@nahu/admin-kit/forms/createForm';
-	import {
-		defaultSection,
-		landingSchema,
-		type LandingSettings,
-		type SectionKey
-	} from '$lib/content/landing';
+	import { defaultSection, type SectionKey } from '$lib/content/landing';
+	import { landingSchema, type LandingSettings } from '$lib/content/landing-schema';
 	import { landingIcon } from '$lib/components/home/landing-icons';
 	import Field from './Field.svelte';
 	import IconPicker from './IconPicker.svelte';
 	import ItemControls from './ItemControls.svelte';
+	import { localizePath, type Locale } from '$lib/i18n';
 
 	let { data } = $props();
+
+	/*
+	 * Each language has its own landing document. The switch reloads the page, so the form is
+	 * seeded afresh from the chosen language (and the unsaved-changes prompt still guards it).
+	 */
+	const LANGUAGES: { id: Locale; label: string; name: string }[] = [
+		{ id: 'en', label: 'English', name: 'English' },
+		{ id: 'am', label: 'አማርኛ', name: 'Amharic' }
+	];
+	const lang = $derived(data.lang);
+	const langName = $derived(LANGUAGES.find((entry) => entry.id === lang)?.name ?? 'English');
 
 	// Seeded once from the load; after a save superforms keeps what the server returned.
 	// svelte-ignore state_referenced_locally
@@ -98,7 +107,7 @@
 	}
 
 	function resetSection(key: Tab) {
-		$form[key] = defaultSection(key) as never;
+		$form[key] = defaultSection(key, lang) as never;
 		toast.info('Defaults restored for this section. Save to publish.');
 	}
 
@@ -138,17 +147,51 @@
 
 <div class="flex flex-col gap-6">
 	<PageHeader
-		title="Landing page"
+		title="Landing page ({langName})"
 		description="Edit the public home page, its announcement bar and the FAQ. Changes go live when you save."
 	>
 		{#snippet actions()}
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- the public site, in a new tab -->
-			<Button href="/" target="_blank" rel="noopener" variant="outline">
+			<Button href={localizePath('/', lang)} target="_blank" rel="noopener" variant="outline">
 				<ExternalLink class="size-4" /> View site
 			</Button>
 			{@render saveButton()}
 		{/snippet}
 	</PageHeader>
+
+	<div
+		class="flex flex-col gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4 sm:flex-row sm:items-center sm:justify-between"
+	>
+		<div class="flex items-start gap-3">
+			<Languages class="mt-0.5 size-5 shrink-0 text-primary-ink" />
+			<div class="space-y-0.5">
+				<p class="text-sm font-semibold text-foreground">
+					Editing the {langName} version
+				</p>
+				<p class="text-xs text-muted-foreground">
+					{lang === 'am'
+						? 'Shown to visitors of the Amharic site (/am). The English version is edited separately.'
+						: 'Shown to visitors of the English site (/). The Amharic version is edited separately.'}
+				</p>
+			</div>
+		</div>
+		<nav class="flex shrink-0 items-center gap-1 rounded-lg border bg-card p-1" aria-label="Language">
+			{#each LANGUAGES as entry (entry.id)}
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- this page, another language -->
+				<Button
+					href="?lang={entry.id}"
+					hreflang={entry.id}
+					lang={entry.id}
+					data-sveltekit-reload
+					size="sm"
+					variant={lang === entry.id ? 'default' : 'ghost'}
+					aria-current={lang === entry.id ? 'page' : undefined}
+				>
+					{entry.label}
+				</Button>
+			{/each}
+		</nav>
+	</div>
 
 	{#if $allErrors.length}
 		<Notice tone="danger" title="{$allErrors.length} field(s) need attention. ">
@@ -175,7 +218,7 @@
 		{/each}
 	</nav>
 
-	<form id="landing-form" method="POST" action="?/save" use:enhance class="flex flex-col gap-6">
+	<form id="landing-form" method="POST" action="?/save&lang={lang}" use:enhance class="flex flex-col gap-6">
 		{#if activeTab === 'sections'}
 			<Card.Root>
 				<Card.Header>

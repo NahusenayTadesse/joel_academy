@@ -9,18 +9,19 @@
 	import Select from '$lib/components/courses/select.svelte';
 	import CertificateCard from '$lib/components/student/certificate-card.svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	let { data } = $props();
 
 	const STATUS_OPTIONS = [
-		{ value: 'ALL', label: 'All statuses' },
-		{ value: 'ISSUED', label: 'Issued' },
-		{ value: 'REVOKED', label: 'Revoked' }
+		{ value: 'ALL', label: m.learn_all_statuses() },
+		{ value: 'ISSUED', label: m.learn_issued() },
+		{ value: 'REVOKED', label: m.learn_revoked() }
 	];
 	const SORT_OPTIONS = [
-		{ value: 'newest', label: 'Newest first' },
-		{ value: 'oldest', label: 'Oldest first' }
+		{ value: 'newest', label: m.learn_newest_first() },
+		{ value: 'oldest', label: m.learn_oldest_first() }
 	];
 
 	function setFilter(key: string, value: string | undefined) {
@@ -35,17 +36,17 @@
 </script>
 
 <svelte:head>
-	<title>Certificates · {siteConfig.name}</title>
+	<title>{m.learn_certificates()} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
-	<PageHeader title="Certificates" description="Certificates you've earned from completed courses." />
+	<PageHeader title={m.learn_certificates()} description={m.learn_certificates_desc()} />
 
 	<div class="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
 		<div class="flex flex-wrap items-center gap-2">
 			<SearchBar
-				placeholder="Search by course or certificate number..."
+				placeholder={m.learn_certificates_search()}
 				value={data.filters.search}
 				onSearch={(value) => setFilter('search', value || undefined)}
 				class="w-full sm:w-64"
@@ -67,19 +68,19 @@
 
 	{#if data.items.length === 0}
 		{#if hasActiveFilters && data.total > 0}
-			<EmptyState icon={SearchX} title="No results found" description="Try adjusting your search or filters.">
+			<EmptyState icon={SearchX} title={m.learn_no_results()} description={m.learn_no_results_desc()}>
 				{#snippet action()}
-					<Button variant="outline" href={page.url.pathname}>Reset filters</Button>
+					<Button variant="outline" href={page.url.pathname}>{m.learn_reset_filters()}</Button>
 				{/snippet}
 			</EmptyState>
 		{:else}
 			<EmptyState
 				icon={Award}
-				title="No certificates yet"
-				description="Complete a certificate-eligible course to earn your first certificate."
+				title={m.learn_no_certificates_title()}
+				description={m.learn_no_certificates_desc()}
 			>
 				{#snippet action()}
-					<Button href={ROUTES.student.courses}>View my courses</Button>
+					<Button href={ROUTES.student.courses}>{m.learn_view_my_courses()}</Button>
 				{/snippet}
 			</EmptyState>
 		{/if}

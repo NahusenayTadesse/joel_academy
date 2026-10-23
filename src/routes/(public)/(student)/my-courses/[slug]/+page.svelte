@@ -19,6 +19,7 @@
 	import LessonTabs from '$lib/components/student/lesson-tabs.svelte';
 	import QuizPlayer from '$lib/components/student/quiz/quiz-player.svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
@@ -60,19 +61,19 @@
 	const lockedCopy = $derived(
 		data.enrollment?.status === 'PENDING'
 			? {
-					title: 'Payment under review',
-					description: "We're reviewing your payment - you'll get access as soon as it's approved."
+					title: m.learn_locked_pending_title(),
+					description: m.learn_locked_pending_desc()
 				}
 			: data.enrollment?.status === 'REJECTED'
 				? {
-						title: 'Payment required',
+						title: m.learn_locked_rejected_title(),
 						description: data.enrollment.rejectionReason
-							? `Your payment was not approved: ${data.enrollment.rejectionReason}`
-							: 'Your payment was not approved. Submit payment for this course to start learning.'
+							? m.learn_locked_rejected_reason({ reason: data.enrollment.rejectionReason })
+							: m.learn_locked_rejected_desc()
 					}
 				: {
-						title: 'Enroll to unlock this lesson',
-						description: 'This lesson is part of the full course. Enroll to start learning.'
+						title: m.learn_locked_enroll_title(),
+						description: m.learn_locked_enroll_desc()
 					}
 	);
 </script>
@@ -85,12 +86,12 @@
 {#snippet lockedAction()}
 	{#if data.enrollment?.status === 'PENDING'}
 		<Button variant="outline" href={checkoutHref} class="gap-2 border-white/20 bg-transparent text-white hover:bg-white/10">
-			View Payment Status
+			{m.learn_view_payment_status()}
 		</Button>
 	{:else if data.enrollment?.status === 'REJECTED'}
-		<Button href={checkoutHref}>Resubmit Payment</Button>
+		<Button href={checkoutHref}>{m.learn_resubmit_payment_cta()}</Button>
 	{:else}
-		<Button href={courseHref}>View Course</Button>
+		<Button href={courseHref}>{m.learn_view_course()}</Button>
 	{/if}
 {/snippet}
 
@@ -103,7 +104,7 @@
 			action={lockedAction}
 		/>
 		<Button variant="outline" href={ROUTES.student.courses} class="gap-2 border-white/20 bg-transparent text-white hover:bg-white/10">
-			Back to My Courses
+			{m.learn_back_to_my_courses()}
 		</Button>
 	</div>
 {:else}
@@ -114,12 +115,12 @@
 					type="button"
 					onclick={() => (sidebarToggled = !sidebarOpen)}
 					class="shrink-0 text-sidebar-foreground/60 hover:text-white"
-					aria-label={sidebarOpen ? 'Hide course content' : 'Show course content'}
+					aria-label={sidebarOpen ? m.learn_hide_content() : m.learn_show_content()}
 				>
 					{#if sidebarOpen}<PanelLeftClose class="size-5" />{:else}<PanelLeftOpen class="size-5" />{/if}
 				</button>
-				<nav class="hidden min-w-0 items-center gap-2 text-xs text-sidebar-foreground/60 md:flex" aria-label="breadcrumb">
-					<a href={ROUTES.student.courses} class="shrink-0 hover:text-white">My Courses</a>
+				<nav class="hidden min-w-0 items-center gap-2 text-xs text-sidebar-foreground/60 md:flex" aria-label={m.learn_breadcrumb()}>
+					<a href={ROUTES.student.courses} class="shrink-0 hover:text-white">{m.learn_my_courses()}</a>
 					<ChevronRight class="size-3.5 shrink-0" />
 					<span class="max-w-40 truncate text-sidebar-foreground/80">{data.course.title}</span>
 					{#if activeSection}
@@ -140,7 +141,7 @@
 					class="shrink-0 gap-1.5 text-xs text-sidebar-foreground/70 hover:bg-white/10 hover:text-white"
 				>
 					<ChevronLeft class="size-4" />
-					<span>Back to Courses</span>
+					<span>{m.learn_back_to_courses()}</span>
 				</Button>
 			</div>
 		</header>
@@ -151,7 +152,7 @@
 					type="button"
 					class="absolute inset-0 z-30 bg-black/50"
 					onclick={() => (sidebarToggled = false)}
-					aria-label="Hide course content"
+					aria-label={m.learn_hide_content()}
 				></button>
 			{/if}
 			{#if sidebarOpen}
@@ -175,7 +176,7 @@
 			<div class="flex-1 overflow-y-auto">
 				<div class="mx-auto w-full max-w-5xl px-4 py-8 pb-28 sm:px-6">
 					{#if !activeLesson}
-						<p class="text-sm text-sidebar-foreground/60">This course has no lessons yet.</p>
+						<p class="text-sm text-sidebar-foreground/60">{m.learn_no_lessons_yet()}</p>
 					{:else if activeLesson.locked || !data.lessonContent}
 						<h1 class="text-2xl font-bold text-white">{activeLesson.title}</h1>
 						<ErrorState
@@ -236,7 +237,7 @@
 				class="gap-2 border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
 			>
 				<ChevronLeft class="size-4" />
-				<span class="hidden sm:inline">Previous Lesson</span>
+				<span class="hidden sm:inline">{m.learn_previous_lesson()}</span>
 			</Button>
 
 			{#if data.progress.completed && data.certificate}
@@ -245,24 +246,24 @@
 					class="gap-2 bg-gradient-to-r from-amber-500 to-emerald-600 font-semibold text-white shadow-md hover:from-amber-600 hover:to-emerald-700"
 				>
 					<Award class="size-4" />
-					<span>View Certificate</span>
+					<span>{m.learn_view_certificate_cta()}</span>
 					<ArrowRight class="size-4" />
 				</Button>
 			{:else if data.progress.completed}
 				<Button href={ROUTES.student.courses} class="gap-2 bg-sidebar-primary bg-none text-sidebar-primary-foreground hover:bg-sidebar-primary/90">
 					<CircleCheck class="size-4" />
-					<span>Course Completed</span>
+					<span>{m.learn_course_completed_badge()}</span>
 				</Button>
 			{:else if !isActive}
 				<Button href={hasPreview ? courseHref : checkoutHref} class="gap-2">
-					<span>Enroll to Track Progress</span>
+					<span>{m.learn_enroll_to_track()}</span>
 					<ArrowRight class="size-4" />
 				</Button>
 			{:else if quizGate}
 				<div class="flex items-center gap-3">
-					<span class="hidden text-xs text-sidebar-foreground/60 sm:inline">Pass the quiz to continue</span>
+					<span class="hidden text-xs text-sidebar-foreground/60 sm:inline">{m.learn_pass_quiz_to_continue()}</span>
 					<Button disabled class="gap-2 bg-sidebar-primary bg-none text-sidebar-primary-foreground shadow-none">
-						Complete & Next
+						{m.learn_complete_next()}
 						<ArrowRight class="size-4" />
 					</Button>
 				</div>
@@ -272,8 +273,8 @@
 						return async ({ result, update }) => {
 							completing = false;
 							if (result.type === 'failure') {
-								toast.error('Could not mark this lesson complete', {
-									description: String(result.data?.error ?? 'Please try again.')
+								toast.error(m.learn_complete_failed(), {
+									description: String(result.data?.error ?? m.learn_try_again())
 								});
 								return;
 							}
@@ -283,10 +284,10 @@
 							}
 							const outcome = result.data as { courseCompleted: boolean; certificateCode: string | null };
 							if (outcome.courseCompleted) {
-								toast.success('Course completed!', {
+								toast.success(m.learn_course_completed_toast(), {
 									description: outcome.certificateCode
-										? "Congratulations! You've finished all required lessons and earned your certificate."
-										: "Congratulations! You've finished all required lessons."
+										? m.learn_course_completed_cert()
+										: m.learn_course_completed_desc()
 								});
 								await goto(
 									outcome.certificateCode ? ROUTES.student.certificate(outcome.certificateCode) : ROUTES.student.courses,
@@ -294,7 +295,7 @@
 								);
 								return;
 							}
-							toast.success('Lesson completed');
+							toast.success(m.learn_lesson_completed_toast());
 							if (nextLesson) await goto(lessonHref(nextLesson.id), { replaceState: true, noScroll: true, invalidateAll: true });
 							else await update();
 						};
@@ -302,16 +303,16 @@
 					<HiddenField name="lessonId" value={data.activeLessonId ?? ''} />
 					<HiddenField name="next" value={nextLesson?.id ?? ''} />
 					{#if mustWatch}
-						<span class="mr-3 hidden text-xs text-sidebar-foreground/60 sm:inline">Watch the video to continue</span>
+						<span class="mr-3 hidden text-xs text-sidebar-foreground/60 sm:inline">{m.learn_watch_to_continue()}</span>
 					{/if}
 					<Button
 						type="submit"
 						class="gap-2 bg-sidebar-primary bg-none text-sidebar-primary-foreground shadow-none hover:bg-sidebar-primary/90"
 						disabled={completing || !activeLesson || activeLesson.locked || mustWatch}
-						title={mustWatch ? 'Watch the video to complete this lesson' : undefined}
+						title={mustWatch ? m.learn_watch_to_complete() : undefined}
 					>
 						{#if completing}<LoaderCircle class="size-4 animate-spin" />{/if}
-						Complete & Next
+						{m.learn_complete_next()}
 						<ArrowRight class="size-4" />
 					</Button>
 				</ActionForm>

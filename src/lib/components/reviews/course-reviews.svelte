@@ -1,6 +1,7 @@
 <script lang="ts">
 	import MessageSquare from '@lucide/svelte/icons/message-square';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import ReviewForm from './review-form.svelte';
 	import ReviewItem from './review-item.svelte';
 	import ReviewSummary from './review-summary.svelte';
@@ -33,7 +34,7 @@
 </script>
 
 <section id="reviews" class="flex scroll-mt-24 flex-col gap-6" aria-labelledby="reviews-heading">
-	<h2 id="reviews-heading" class="text-lg font-semibold text-foreground">Student reviews</h2>
+	<h2 id="reviews-heading" class="text-lg font-semibold text-foreground">{m.catalog_reviews_heading()}</h2>
 
 	{#if summary.count > 0}
 		<ReviewSummary {summary} />
@@ -45,9 +46,9 @@
 		<p class="flex items-center gap-2 rounded-lg border border-dashed border-border px-4 py-3 text-sm text-muted-foreground">
 			<MessageSquare class="size-4 shrink-0" aria-hidden="true" />
 			{#if viewer.enrollment === 'PENDING'}
-				You can review this course once your enrollment is active.
+				{m.catalog_reviews_pending()}
 			{:else}
-				Enroll to review this course.
+				{m.catalog_reviews_enroll_to_review()}
 			{/if}
 		</p>
 	{/if}
@@ -72,10 +73,10 @@
 				data-sveltekit-noscroll
 				data-sveltekit-replacestate
 			>
-				Show more reviews
+				{m.catalog_reviews_show_more()}
 			</Button>
 		{/if}
 	{:else if summary.count === 0}
-		<p class="text-sm text-muted-foreground">No reviews yet.{canWrite ? ' Be the first to share what you think.' : ''}</p>
+		<p class="text-sm text-muted-foreground">{m.catalog_reviews_none()}{canWrite ? ` ${m.catalog_reviews_be_first()}` : ''}</p>
 	{/if}
 </section>

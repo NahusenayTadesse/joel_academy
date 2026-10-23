@@ -13,6 +13,7 @@
 	import PageHeader from '$lib/components/common/page-header.svelte';
 	import ContactForm from '$lib/components/info/contact-form.svelte';
 	import Card from '$lib/components/ui/card.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	let { data, form } = $props();
@@ -20,26 +21,23 @@
 	const DEPARTMENTS = [
 		{
 			icon: MessageCircle,
-			title: 'General Inquiries',
-			description:
-				'Questions about the platform, your account, or anything else - this is the right place to start.'
+			title: m.info_contact_dept_general_title(),
+			description: m.info_contact_dept_general_body()
 		},
 		{
 			icon: GraduationCap,
-			title: 'Admissions & Courses',
-			description: 'Questions about a specific course, curriculum, or which course fits your goals.'
+			title: m.info_contact_dept_admissions_title(),
+			description: m.info_contact_dept_admissions_body()
 		},
 		{
 			icon: Wrench,
-			title: 'Technical Support',
-			description:
-				'Run into a bug, a broken page, or something not working as expected? Let us know the details.'
+			title: m.info_contact_dept_support_title(),
+			description: m.info_contact_dept_support_body()
 		},
 		{
 			icon: Briefcase,
-			title: 'Partnerships & Sales',
-			description:
-				'Interested in bringing the academy to your team or organization? Tell us about your use case.'
+			title: m.info_contact_dept_partnerships_title(),
+			description: m.info_contact_dept_partnerships_body()
 		}
 	];
 
@@ -52,14 +50,14 @@
 </script>
 
 <svelte:head>
-	<title>Contact Us · {siteConfig.name}</title>
-	<meta name="description" content="Get in touch with our team." />
+	<title>{m.info_contact_meta_title()} · {siteConfig.name}</title>
+	<meta name="description" content={m.info_contact_meta_description()} />
 </svelte:head>
 
 <div class="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-10 sm:px-6">
 	<PageHeader
-		title="Contact us"
-		description="Have a question? Send us a message and our team will get back to you."
+		title={m.info_contact_title()}
+		description={m.info_contact_description()}
 	/>
 
 	<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -76,7 +74,7 @@
 
 	<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
 		<Card class="p-6 lg:col-span-2">
-			<h2 class="mb-4 text-lg font-semibold text-foreground">Send us a message</h2>
+			<h2 class="mb-4 text-lg font-semibold text-foreground">{m.info_contact_send_title()}</h2>
 			<ContactForm {form} token={data.formToken} />
 		</Card>
 
@@ -84,42 +82,42 @@
 			<Card class="flex items-start gap-3 p-5">
 				<Clock class="mt-0.5 size-5 shrink-0 text-brand-ink" />
 				<div>
-					<h3 class="text-sm font-semibold text-foreground">Response times</h3>
+					<h3 class="text-sm font-semibold text-foreground">{m.info_contact_response_title()}</h3>
 					<p class="text-sm text-muted-foreground">
-						Our team typically responds within one business day. Support is available around the
-						clock through this form.
+						{m.info_contact_response_body()}
 					</p>
 				</div>
 			</Card>
 			<Card class="flex items-start gap-3 p-5">
 				<CircleQuestionMark class="mt-0.5 size-5 shrink-0 text-brand-ink" />
 				<div>
-					<h3 class="text-sm font-semibold text-foreground">Common questions</h3>
+					<h3 class="text-sm font-semibold text-foreground">{m.info_contact_common_title()}</h3>
 					<p class="text-sm text-muted-foreground">
-						Check our
-						<a href={ROUTES.faq} class="text-brand-ink underline underline-offset-4 hover:no-underline">FAQ</a>
-						first - it may already have your answer.
+						{m.info_contact_common_before()}
+						<a href={ROUTES.faq} class="text-brand-ink underline underline-offset-4 hover:no-underline"
+							>{m.info_contact_common_link()}</a
+						>
+						{m.info_contact_common_after()}
 					</p>
 				</div>
 			</Card>
 			<Card class="flex items-start gap-3 p-5">
 				<LifeBuoy class="mt-0.5 size-5 shrink-0 text-brand-ink" />
 				<div>
-					<h3 class="text-sm font-semibold text-foreground">Need more help?</h3>
+					<h3 class="text-sm font-semibold text-foreground">{m.info_contact_more_title()}</h3>
 					<p class="text-sm text-muted-foreground">
-						Visit the
+						{m.info_contact_more_before()}
 						<a href={ROUTES.helpCenter} class="text-brand-ink underline underline-offset-4 hover:no-underline"
-							>Help Center</a
+							>{m.info_contact_more_link()}</a
 						>
-						for guides and troubleshooting.
+						{m.info_contact_more_after()}
 					</p>
 				</div>
 			</Card>
 			<Card class="flex flex-col gap-3 p-5">
-				<h3 class="text-sm font-semibold text-foreground">Follow along</h3>
+				<h3 class="text-sm font-semibold text-foreground">{m.info_contact_follow_title()}</h3>
 				<p class="text-sm text-muted-foreground">
-					We are a remote-first, globally distributed team - the fastest way to reach us is always
-					this form.
+					{m.info_contact_follow_body()}
 				</p>
 				<div class="flex items-center gap-2">
 					{#each SOCIAL_LINKS as social (social.label)}

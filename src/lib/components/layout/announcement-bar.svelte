@@ -6,6 +6,8 @@
 		announcementVersion,
 		type LandingAnnouncement
 	} from '$lib/content/landing';
+	import { localizePath } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
 
 	let { announcement = DEFAULT_LANDING.announcement }: { announcement?: LandingAnnouncement } =
 		$props();
@@ -17,6 +19,12 @@
 	const storageKey = $derived(STORAGE_PREFIX + announcement.id);
 	// Stored as the dismissed announcement's version, so changing the wording shows it again.
 	const version = $derived(announcementVersion(announcement));
+	// Site paths follow the page's language; outside links are left alone.
+	const linkHref = $derived(
+		announcement.linkUrl?.startsWith('/') && !announcement.linkUrl.startsWith('//')
+			? localizePath(announcement.linkUrl)
+			: announcement.linkUrl
+	);
 
 	let dismissed = $state(false);
 
@@ -47,14 +55,14 @@
 			{announcement.text}
 			{#if announcement.linkText && announcement.linkUrl}
 				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- an editor-set path or https link -->
-				<a href={announcement.linkUrl} class="underline underline-offset-2 hover:no-underline">
+				<a href={linkHref} class="underline underline-offset-2 hover:no-underline">
 					{announcement.linkText}
 				</a>
 			{/if}
 		</span>
 		<button
 			type="button"
-			aria-label="Dismiss announcement"
+			aria-label={m.shell_announcement_dismiss()}
 			class="ml-2 shrink-0 rounded-full p-0.5 hover:bg-white/15"
 			onclick={dismiss}
 		>

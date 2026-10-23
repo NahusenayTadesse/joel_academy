@@ -5,6 +5,8 @@ import { certificate } from '$lib/server/db/schema';
 import { certificatePdf } from '$lib/server/certificate-pdf';
 import { siteUrl } from '$lib/server/email/notify';
 import { signInHref } from '$lib/safe-redirect';
+import { delocalizePath } from '$lib/i18n';
+import { m } from '$lib/paraglide/messages';
 import { ROUTES, siteConfig } from '$lib/site';
 import type { RequestHandler } from './$types';
 
@@ -23,8 +25,8 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		.from(certificate)
 		.where(and(eq(certificate.code, code), ...mine))
 		.limit(1);
-	if (!found) error(404, 'Certificate not found');
-	if (found.revokedAt) error(410, 'This certificate has been revoked');
+	if (!found) error(404, m.learn_certificate_not_found());
+	if (found.revokedAt) error(410, m.learn_certificate_revoked_error());
 
 	const bytes = await certificatePdf({
 		academyName: siteConfig.name,
@@ -32,7 +34,8 @@ export const GET: RequestHandler = async ({ params, locals, url }) => {
 		courseTitle: found.courseTitle,
 		code: found.code,
 		issuedAt: found.issuedAt,
-		verificationUrl: siteUrl(ROUTES.certificates.verify(found.token))
+		// The PDF is English only, so its link (and QR code) carries no language prefix.
+		verificationUrl: siteUrl(delocalizePath(ROUTES.certificates.verify(found.token)))
 	});
 
 	return new Response(bytes as Uint8Array<ArrayBuffer>, {

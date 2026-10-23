@@ -13,6 +13,8 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import Button from '$lib/components/ui/button.svelte';
+	import { getLocale, INTL_LOCALES } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import QuizQuestion from './quiz-question.svelte';
@@ -45,7 +47,7 @@
 
 	const total = $derived(quiz.questions.length);
 	const resultFor = (questionId: number) => outcome?.results.find((item) => item.questionId === questionId);
-	const dateFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+	const dateFormat = new Intl.DateTimeFormat(INTL_LOCALES[getLocale()], { dateStyle: 'medium', timeStyle: 'short' });
 
 	function countAnswered(form: HTMLFormElement) {
 		const values = new FormData(form);
@@ -77,34 +79,33 @@
 		<div class="flex flex-wrap items-start justify-between gap-3">
 			<div>
 				<p class="flex items-center gap-2 text-xs font-semibold tracking-wider text-sidebar-primary uppercase">
-					<ListChecks class="size-4" aria-hidden="true" /> Quiz
+					<ListChecks class="size-4" aria-hidden="true" /> {m.learn_quiz()}
 				</p>
 				<h2 id="quiz-heading" class="mt-2 text-sm text-sidebar-foreground/80">
-					{total}
-					{total === 1 ? 'question' : 'questions'} · score {quiz.passingScore}% or more to pass
+					{m.learn_quiz_summary({ count: total, score: quiz.passingScore })}
 				</h2>
 			</div>
 			{#if quiz.passed}
 				<span class="inline-flex items-center gap-1.5 rounded-full bg-sidebar-primary/15 px-3 py-1 text-xs font-semibold text-sidebar-primary">
-					<CircleCheck class="size-3.5" aria-hidden="true" /> Passed
+					<CircleCheck class="size-3.5" aria-hidden="true" /> {m.learn_quiz_passed()}
 				</span>
 			{:else if quiz.attempts.length}
-				<span class="rounded-full bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-200">Not passed yet</span>
+				<span class="rounded-full bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-200">{m.learn_quiz_not_passed()}</span>
 			{:else}
-				<span class="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-sidebar-foreground/80">Not attempted</span>
+				<span class="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-sidebar-foreground/80">{m.learn_quiz_not_attempted()}</span>
 			{/if}
 		</div>
 		<dl class="mt-5 grid grid-cols-3 gap-3 text-center">
 			<div class="rounded-xl bg-white/5 px-2 py-3">
-				<dt class="text-[11px] tracking-wide text-sidebar-foreground/60 uppercase">Pass mark</dt>
+				<dt class="text-[11px] tracking-wide text-sidebar-foreground/60 uppercase">{m.learn_quiz_pass_mark()}</dt>
 				<dd class="mt-1 text-lg font-bold text-white">{quiz.passingScore}%</dd>
 			</div>
 			<div class="rounded-xl bg-white/5 px-2 py-3">
-				<dt class="text-[11px] tracking-wide text-sidebar-foreground/60 uppercase">Best score</dt>
+				<dt class="text-[11px] tracking-wide text-sidebar-foreground/60 uppercase">{m.learn_quiz_best_score()}</dt>
 				<dd class="mt-1 text-lg font-bold text-white">{quiz.bestScore === null ? '—' : `${quiz.bestScore}%`}</dd>
 			</div>
 			<div class="rounded-xl bg-white/5 px-2 py-3">
-				<dt class="text-[11px] tracking-wide text-sidebar-foreground/60 uppercase">Attempts</dt>
+				<dt class="text-[11px] tracking-wide text-sidebar-foreground/60 uppercase">{m.learn_quiz_attempts()}</dt>
 				<dd class="mt-1 text-lg font-bold text-white">{quiz.attempts.length}</dd>
 			</div>
 		</dl>
@@ -112,8 +113,7 @@
 
 	{#if !canSubmit}
 		<p class="rounded-xl border border-amber-300/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">
-			This is a preview: you can read the questions, but enroll in the course to submit your answers and complete
-			the quiz.
+			{m.learn_quiz_preview()}
 		</p>
 	{/if}
 
@@ -136,17 +136,17 @@
 			<div class="flex flex-wrap items-end justify-between gap-4">
 				<div>
 					<p class={cn('text-sm font-semibold', outcome.passed ? 'text-sidebar-primary' : 'text-red-300')}>
-						{outcome.passed ? 'You passed!' : 'Not quite yet'}
+						{outcome.passed ? m.learn_quiz_you_passed() : m.learn_quiz_not_quite()}
 					</p>
 					<p class="mt-1 text-4xl font-bold text-white">{outcome.score}%</p>
 					<p class="mt-1 text-sm text-sidebar-foreground/80">
-						{outcome.correctCount} of {outcome.total} correct · {outcome.passingScore}% needed
+						{m.learn_quiz_correct_summary({ correct: outcome.correctCount, total: outcome.total, passing: outcome.passingScore })}
 					</p>
 				</div>
 				<div class="flex flex-wrap gap-2">
 					{#if outcome.certificateCode}
 						<Button href={ROUTES.student.certificate(outcome.certificateCode)} class="gap-2">
-							<Award class="size-4" /> View certificate
+							<Award class="size-4" /> {m.learn_quiz_view_certificate()}
 						</Button>
 					{/if}
 					<Button
@@ -155,7 +155,7 @@
 						class="gap-2 border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
 					>
 						<RotateCcw class="size-4" />
-						{outcome.passed ? 'Take it again' : 'Retake quiz'}
+						{outcome.passed ? m.learn_quiz_take_again() : m.learn_quiz_retake()}
 					</Button>
 				</div>
 			</div>
@@ -168,11 +168,11 @@
 			</div>
 			<p class="mt-4 text-sm text-sidebar-foreground/80">
 				{#if outcome.passed && outcome.courseCompleted}
-					This lesson is complete, and so is the course.
+					{m.learn_quiz_done_course()}
 				{:else if outcome.passed}
-					This lesson is now complete. Review your answers below, then carry on.
+					{m.learn_quiz_done_lesson()}
 				{:else}
-					Read the explanations below, then try again. Correct answers are shown once you pass.
+					{m.learn_quiz_failed_hint()}
 				{/if}
 			</p>
 		</div>
@@ -184,7 +184,7 @@
 		</div>
 	{:else if total === 0}
 		<p class="rounded-xl border border-sidebar-border bg-white/5 px-4 py-6 text-center text-sm text-sidebar-foreground/70">
-			This quiz has no questions yet.
+			{m.learn_quiz_no_questions()}
 		</p>
 	{:else}
 		<ActionForm action="?lesson={lessonId}&/quiz" class="space-y-4" onchange={(event) => countAnswered(event.currentTarget)} submit={({ cancel }) => {
@@ -200,10 +200,13 @@
 						outcome = graded;
 						errorText = '';
 						if (graded.passed)
-							toast.success(graded.courseCompleted ? 'Quiz passed - course completed!' : 'Quiz passed', {
-								description: graded.certificateCode ? 'Your certificate is ready.' : 'This lesson is complete.'
+							toast.success(graded.courseCompleted ? m.learn_quiz_passed_course_toast() : m.learn_quiz_passed_toast(), {
+								description: graded.certificateCode ? m.learn_quiz_cert_ready() : m.learn_quiz_lesson_complete()
 							});
-						else toast.error(`You scored ${graded.score}%`, { description: `${graded.passingScore}% is needed to pass.` });
+						else
+							toast.error(m.learn_quiz_you_scored({ score: graded.score }), {
+								description: m.learn_quiz_needed_to_pass({ passing: graded.passingScore })
+							});
 						await tick();
 						revealResult();
 						// Progress, the sidebar ticks and the attempt history.
@@ -211,8 +214,8 @@
 						return;
 					}
 					if (result.type === 'failure') {
-						errorText = String(result.data?.quizError ?? 'Could not submit the quiz. Please try again.');
-						toast.error('Quiz not submitted', { description: errorText });
+						errorText = String(result.data?.quizError ?? m.learn_quiz_submit_failed());
+						toast.error(m.learn_quiz_not_submitted(), { description: errorText });
 						return;
 					}
 					// A redirect or an error: update() applies it, as applyAction(result) did.
@@ -225,9 +228,8 @@
 			{/each}
 			<div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sidebar-border bg-white/5 px-5 py-4">
 				<p class="text-sm text-sidebar-foreground/70">
-					<span class="font-semibold text-white">{answered}</span> of {total} answered{answered < total
-						? ' · unanswered questions count as wrong'
-						: ''}
+					<span class="font-semibold text-white">{answered}</span>
+					{m.learn_quiz_answered_of({ total })}{answered < total ? ` · ${m.learn_quiz_unanswered_wrong()}` : ''}
 				</p>
 				<Button
 					type="submit"
@@ -235,7 +237,7 @@
 					class="gap-2 bg-sidebar-primary bg-none text-sidebar-primary-foreground shadow-none hover:bg-sidebar-primary/90"
 				>
 					{#if submitting}<LoaderCircle class="size-4 animate-spin" />{:else}<Send class="size-4" />{/if}
-					Submit answers
+					{m.learn_quiz_submit()}
 				</Button>
 			</div>
 		</ActionForm>
@@ -247,11 +249,10 @@
 				class="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-medium text-white [&::-webkit-details-marker]:hidden"
 			>
 				<span class="flex items-center gap-2">
-					<History class="size-4 text-sidebar-foreground/60" aria-hidden="true" /> Attempt history
+					<History class="size-4 text-sidebar-foreground/60" aria-hidden="true" /> {m.learn_quiz_history()}
 				</span>
 				<span class="text-xs text-sidebar-foreground/60">
-					{quiz.attempts.length}
-					{quiz.attempts.length === 1 ? 'attempt' : 'attempts'} · best {quiz.bestScore}%
+					{m.learn_quiz_attempt_summary({ count: quiz.attempts.length, best: quiz.bestScore ?? 0 })}
 				</span>
 			</summary>
 			<ol class="divide-y divide-sidebar-border border-t border-sidebar-border">
@@ -268,7 +269,7 @@
 									attempt.passed ? 'bg-sidebar-primary/15 text-sidebar-primary' : 'bg-red-500/15 text-red-300'
 								)}
 							>
-								{attempt.passed ? 'Passed' : 'Failed'}
+								{attempt.passed ? m.learn_quiz_passed() : m.learn_quiz_failed_badge()}
 							</span>
 						</span>
 					</li>

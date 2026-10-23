@@ -3,6 +3,7 @@
 	import FileIcon from '@lucide/svelte/icons/file';
 	import X from '@lucide/svelte/icons/x';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { formatFileSize } from '$lib/receipt';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
@@ -70,10 +71,10 @@
 		<input bind:this={input} type="file" {name} {accept} {disabled} class="sr-only" onchange={sync} />
 		<CloudUpload class="size-8 text-muted-foreground" aria-hidden="true" />
 		<p class="text-sm font-medium text-foreground">
-			{dragActive ? 'Drop the file here' : 'Drag & drop a file, or click to browse'}
+			{dragActive ? m.account_drop_file_here() : m.account_drag_drop()}
 		</p>
 		{#if maxSizeBytes}
-			<p class="text-xs text-muted-foreground">Maximum size {formatFileSize(maxSizeBytes)}</p>
+			<p class="text-xs text-muted-foreground">{m.account_max_size({ size: formatFileSize(maxSizeBytes) })}</p>
 		{/if}
 	</label>
 	{#if file}
@@ -92,7 +93,7 @@
 					size="icon"
 					class="size-6 shrink-0"
 					onclick={remove}
-					aria-label="Remove {file.name}"
+					aria-label={m.account_remove_file({ name: file.name })}
 				>
 					<X class="size-3.5" />
 				</Button>

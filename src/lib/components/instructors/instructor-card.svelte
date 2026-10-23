@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { responsiveSrcset } from '$lib/media';
 	import Card from '$lib/components/ui/card.svelte';
 	import type { Instructor } from '$lib/content/instructor.types';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 
 	let { instructor }: { instructor: Pick<Instructor, 'name' | 'title' | 'photoUrl' | 'avatarUrl' | 'courseCount'> } =
@@ -28,6 +30,8 @@
 			>
 				<img
 					src={photo}
+					srcset={responsiveSrcset(photo)}
+					sizes="72px"
 					alt={instructor.name}
 					loading="lazy"
 					decoding="async"
@@ -43,15 +47,14 @@
 			</span>
 		{/if}
 		<div>
-			<h3 class="text-sm font-semibold text-foreground transition-colors group-hover:text-brand-ink">
+			<h2 class="text-sm font-semibold text-foreground transition-colors group-hover:text-brand-ink">
 				{instructor.name}
-			</h3>
+			</h2>
 			{#if instructor.title}
 				<p class="mt-0.5 text-[11px] font-medium text-brand-ink">{instructor.title}</p>
 			{/if}
 			<p class="mt-1 text-xs text-muted-foreground">
-				{instructor.courseCount}
-				{instructor.courseCount === 1 ? 'course' : 'courses'}
+				{m.catalog_course_count({ count: instructor.courseCount })}
 			</p>
 		</div>
 	</a>

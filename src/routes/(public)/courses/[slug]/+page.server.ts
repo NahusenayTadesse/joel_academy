@@ -1,6 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { buildBreadcrumbJsonLd, type BreadcrumbEntry } from '$lib/json-ld';
 import type { CourseDetail } from '$lib/content/catalog.types';
+import { m } from '$lib/paraglide/messages';
 import { EnrollmentError, enrollFree, getEnrollment, progressByCourse } from '$lib/server/enrollment';
 import { getCourse, listCourses } from '$lib/server/public-catalog';
 import {
@@ -43,7 +44,7 @@ async function viewerEnrollment(userId: string | undefined, courseId: number) {
 
 export const load: PageServerLoad = async ({ params, url, locals }) => {
 	const found = await getCourse(params.slug);
-	if (!found) error(404, 'Course not found');
+	if (!found) error(404, m.catalog_course_not_found());
 
 	// The page only lists lessons, so their bodies, video links and resources stay on the server.
 	const course = {
@@ -62,8 +63,8 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 	} satisfies CourseDetail;
 
 	const breadcrumbs: BreadcrumbEntry[] = [
-		{ label: 'Home', href: ROUTES.home },
-		{ label: 'Courses', href: ROUTES.courses.list },
+		{ label: m.catalog_breadcrumb_home(), href: ROUTES.home },
+		{ label: m.catalog_breadcrumb_courses(), href: ROUTES.courses.list },
 		...(course.categoryName && course.categorySlug
 			? [{ label: course.categoryName, href: ROUTES.categories.detail(course.categorySlug) }]
 			: []),
@@ -132,7 +133,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 async function reviewTarget(event: RequestEvent) {
 	const user = requireActionUser(event);
 	const found = await getCourse(event.params.slug);
-	if (!found) error(404, 'Course not found');
+	if (!found) error(404, m.catalog_course_not_found());
 	return { user, courseId: Number(found.id) };
 }
 
@@ -142,7 +143,7 @@ export const actions: Actions = {
 		const { params } = event;
 		const user = requireActionUser(event);
 		const found = await getCourse(params.slug);
-		if (!found) error(404, 'Course not found');
+		if (!found) error(404, m.catalog_course_not_found());
 		if (found.accessType === 'PAID') redirect(303, ROUTES.student.checkout(found.slug));
 		try {
 			await enrollFree(user.id, Number(found.id));
@@ -158,13 +159,13 @@ export const actions: Actions = {
 		const { user, courseId } = await reviewTarget(event);
 		const enrollment = await getEnrollment(user.id, courseId);
 		if (enrollment?.status !== 'ACTIVE') {
-			return fail(403, { reviewError: 'Only students enrolled in this course can review it.' });
+			return fail(403, { reviewError: m.catalog_review_error_not_enrolled() });
 		}
 		const parsed = parseReview(await event.request.formData());
 		if (!parsed.ok) return fail(400, { reviewError: parsed.error });
 		// Counted after validation, so fixing a mistake in the form does not use up attempts.
 		const wait = reviewWriteWait(user.id);
-		if (wait) return fail(429, { reviewError: `Too many changes. Try again in ${waitText(wait)}.` });
+		if (wait) return fail(429, { reviewError: m.catalog_review_error_too_many({ wait: waitText(wait) }) });
 		return { reviewSaved: await saveReview(user.id, courseId, parsed) };
 	},
 
@@ -172,9 +173,9 @@ export const actions: Actions = {
 	deleteReview: async (event) => {
 		const { user, courseId } = await reviewTarget(event);
 		const wait = reviewWriteWait(user.id);
-		if (wait) return fail(429, { reviewError: `Too many changes. Try again in ${waitText(wait)}.` });
+		if (wait) return fail(429, { reviewError: m.catalog_review_error_too_many({ wait: waitText(wait) }) });
 		if (!(await deleteOwnReview(user.id, courseId))) {
-			return fail(404, { reviewError: 'You have not reviewed this course.' });
+			return fail(404, { reviewError: m.catalog_review_error_none() });
 		}
 		return { reviewDeleted: true };
 	}

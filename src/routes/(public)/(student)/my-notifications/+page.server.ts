@@ -7,11 +7,15 @@ import {
 	type ReadFilter
 } from '$lib/server/notifications';
 import { requireActionUser, requireUser } from '$lib/server/student';
+import { localizePath } from '$lib/i18n';
+import { m } from '$lib/paraglide/messages';
 import { ROUTES } from '$lib/site';
 import type { Actions, PageServerLoad } from './$types';
 
 const PAGE_SIZE = 30;
 const FILTERS: ReadFilter[] = ['ALL', 'UNREAD', 'READ'];
+/** Paths that have no language versions (staff area, files, endpoints). */
+const UNLOCALIZED = /^\/(dashboard|api|media|lesson-files)(?=$|[/?#])/;
 
 export const load: PageServerLoad = async (event) => {
 	const user = requireUser(event);
@@ -30,10 +34,12 @@ export const actions: Actions = {
 	open: async (event) => {
 		const user = requireActionUser(event);
 		const id = Number((await event.request.formData()).get('id'));
-		if (!Number.isSafeInteger(id) || id <= 0) return fail(400, { error: 'Unknown notification.' });
+		if (!Number.isSafeInteger(id) || id <= 0) return fail(400, { error: m.learn_unknown_notification() });
 		const row = await markNotificationRead(user.id, id);
-		if (!row) return fail(404, { error: 'That notification no longer exists.' });
-		redirect(303, safeRedirectPath(row.link, event.url.origin) ?? ROUTES.student.notifications);
+		if (!row) return fail(404, { error: m.learn_notification_gone() });
+		// Links are stored without a language prefix (older ones too): followed in the reader's language.
+		const link = safeRedirectPath(row.link, event.url.origin);
+		redirect(303, link ? (UNLOCALIZED.test(link) ? link : localizePath(link)) : ROUTES.student.notifications);
 	},
 	readAll: async (event) => {
 		const user = requireActionUser(event);

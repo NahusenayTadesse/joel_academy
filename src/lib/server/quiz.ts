@@ -2,6 +2,7 @@ import { and, asc, count, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { enrollment, lesson, quizAttempt, quizOption, quizQuestion } from '$lib/server/db/schema';
 import { markLessonComplete, type CompletionResult } from '$lib/server/enrollment';
+import { m } from '$lib/paraglide/messages';
 import {
 	answersFromForm,
 	gradeQuiz,
@@ -142,8 +143,8 @@ export async function submitQuizAttempt(userId: string, lessonId: number, form: 
 			.from(lesson)
 			.where(eq(lesson.id, lessonId))
 			.limit(1);
-		if (!target) throw new QuizError('LESSON_NOT_FOUND', 'That lesson does not exist.');
-		if (target.lessonType !== 'QUIZ') throw new QuizError('NOT_A_QUIZ', 'This lesson is not a quiz.');
+		if (!target) throw new QuizError('LESSON_NOT_FOUND', m.learn_quiz_err_not_found());
+		if (target.lessonType !== 'QUIZ') throw new QuizError('NOT_A_QUIZ', m.learn_quiz_err_not_quiz());
 
 		const [current] = await tx
 			.select({ status: enrollment.status })
@@ -151,7 +152,7 @@ export async function submitQuizAttempt(userId: string, lessonId: number, form: 
 			.where(and(eq(enrollment.userId, userId), eq(enrollment.courseId, target.courseId)))
 			.limit(1)
 			.for('update');
-		if (current?.status !== 'ACTIVE') throw new QuizError('NOT_ENROLLED', 'Enroll in this course to take the quiz.');
+		if (current?.status !== 'ACTIVE') throw new QuizError('NOT_ENROLLED', m.learn_quiz_err_not_enrolled());
 
 		// Compared on the database's clock, the one that stamped `created_at`.
 		const [recent] = await tx
@@ -168,11 +169,11 @@ export async function submitQuizAttempt(userId: string, lessonId: number, form: 
 			.limit(1);
 		if (recent) {
 			const wait = Math.max(1, QUIZ_RETRY_SECONDS - Number(recent.elapsed));
-			throw new QuizError('TOO_SOON', `Take a moment before trying again: ${wait}s.`, wait);
+			throw new QuizError('TOO_SOON', m.learn_quiz_err_too_soon({ seconds: wait }), wait);
 		}
 
 		const questions = await questionsOf(lessonId, tx);
-		if (questions.length === 0) throw new QuizError('NO_QUESTIONS', 'This quiz has no questions yet.');
+		if (questions.length === 0) throw new QuizError('NO_QUESTIONS', m.learn_quiz_no_questions());
 		const passingScore = passingScoreOf(target.passingScore);
 		const answers = answersFromForm(
 			form,

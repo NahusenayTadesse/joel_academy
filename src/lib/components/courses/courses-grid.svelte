@@ -5,6 +5,7 @@
 	import EmptyState from '$lib/components/common/empty-state.svelte';
 	import { DEFAULT_CATALOG_FILTERS, DEFAULT_PAGE_SIZE } from '$lib/content/catalog.constants';
 	import type { CourseListResult } from '$lib/content/catalog.types';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import { catalogHref, type CatalogQuery } from './catalog-query';
 	import { navigateCatalog } from './catalog-navigation';
@@ -35,9 +36,9 @@
 	<EmptyState
 		icon={SearchX}
 		title={query.filters.search
-			? `No courses found for "${query.filters.search}"`
-			: 'No courses found'}
-		description="Try adjusting your search terms or filters."
+			? m.catalog_grid_none_for({ search: query.filters.search })
+			: m.catalog_grid_none()}
+		description={m.catalog_grid_none_hint()}
 	>
 		{#snippet action()}
 			<button
@@ -45,7 +46,7 @@
 				onclick={resetFilters}
 				class="text-sm font-medium text-brand-ink underline-offset-4 hover:underline"
 			>
-				Reset filters
+				{m.catalog_grid_reset_filters()}
 			</button>
 		{/snippet}
 	</EmptyState>
@@ -59,11 +60,15 @@
 			)}
 		>
 			{#each courses.items as course, index (course.id)}
-				<!-- The first card is the page's main image; the rest of the first row is on screen too. -->
+				<!--
+					The first card is the page's main image. The rest load lazily: on a phone they are below
+					the fold and would compete with it for bandwidth; on a wide screen the browser still loads
+					the ones in view straight away.
+				-->
 				<CourseCard
 					{course}
 					{view}
-					priority={index === 0 ? 'high' : index < 4 ? 'eager' : 'lazy'}
+					priority={index === 0 ? 'high' : 'lazy'}
 					href={linkBase ? `${linkBase}/${course.slug}` : undefined}
 				/>
 			{/each}

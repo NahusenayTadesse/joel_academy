@@ -15,6 +15,7 @@
 	import Badge from '$lib/components/ui/badge.svelte';
 	import Button from '$lib/components/ui/button.svelte';
 	import { formatCurrency } from '$lib/format';
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
 
 	let { data } = $props();
@@ -33,10 +34,10 @@
 
 	const tabs = $derived(
 		[
-			{ value: 'ALL', label: 'All' },
-			{ value: 'PENDING', label: 'Pending' },
-			{ value: 'APPROVED', label: 'Approved' },
-			{ value: 'DECLINED', label: 'Declined' }
+			{ value: 'ALL', label: m.account_filter_all() },
+			{ value: 'PENDING', label: m.account_pending() },
+			{ value: 'APPROVED', label: m.account_status_approved() },
+			{ value: 'DECLINED', label: m.account_status_declined() }
 		].map((tab) => ({ ...tab, href: withParams({ status: tab.value === 'ALL' ? undefined : tab.value }) }))
 	);
 	const hasActiveFilters = $derived(data.filters.status !== 'ALL' || Boolean(data.filters.search));
@@ -44,26 +45,26 @@
 </script>
 
 <svelte:head>
-	<title>Payments · {siteConfig.name}</title>
+	<title>{m.account_payments()} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
-	<PageHeader title="Payments" description="Your payment history and receipts." />
+	<PageHeader title={m.account_payments()} description={m.account_payments_description()} />
 
 	{#if data.hasPending}
 		<p class="flex items-center gap-2 rounded-xl border border-warning/40 bg-warning/5 px-4 py-3 text-sm {warningText}">
 			<Clock class="size-4 shrink-0" aria-hidden="true" />
-			You have a payment awaiting review. Course access unlocks once an admin approves it.
+			{m.account_payments_pending_note()}
 		</p>
 	{/if}
 
 	<div class="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
 		<div class="max-w-full overflow-x-auto">
-			<LinkTabs label="Filter by status" {tabs} current={data.filters.status} />
+			<LinkTabs label={m.account_filter_by_status()} {tabs} current={data.filters.status} />
 		</div>
 		<SearchBar
-			placeholder="Search by course or transaction ID..."
+			placeholder={m.account_payments_search()}
 			value={data.filters.search}
 			onSearch={(value) => goto(withParams({ search: value || undefined }), { keepFocus: true, noScroll: true })}
 			class="w-full sm:w-64"
@@ -72,13 +73,13 @@
 
 	{#if data.items.length === 0}
 		{#if hasActiveFilters && data.total > 0}
-			<EmptyState icon={SearchX} title="No results found" description="Try adjusting your search or filters.">
+			<EmptyState icon={SearchX} title={m.account_no_results()} description={m.account_no_results_description()}>
 				{#snippet action()}
-					<Button variant="outline" href={page.url.pathname}>Reset filters</Button>
+					<Button variant="outline" href={page.url.pathname}>{m.account_reset_filters()}</Button>
 				{/snippet}
 			</EmptyState>
 		{:else}
-			<EmptyState icon={CreditCard} title="No payments yet" description="Your payment history will appear here." />
+			<EmptyState icon={CreditCard} title={m.account_no_payments()} description={m.account_no_payments_description()} />
 		{/if}
 	{:else}
 		<!-- Phones: one card per payment. -->
@@ -112,11 +113,11 @@
 			<table class="w-full caption-bottom text-sm">
 				<thead class="[&_tr]:border-b">
 					<tr class="border-b border-border">
-						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Course Details</th>
-						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Method</th>
-						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Date &amp; Time</th>
-						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Amount</th>
-						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
+						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">{m.account_course_details()}</th>
+						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">{m.account_method()}</th>
+						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">{m.account_date_time()}</th>
+						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">{m.account_amount()}</th>
+						<th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">{m.account_status()}</th>
 					</tr>
 				</thead>
 				<tbody class="[&_tr:last-child]:border-0">
@@ -131,7 +132,7 @@
 								>
 									<span class="block truncate font-medium text-foreground">{payment.courseTitle}</span>
 									<span class="block truncate text-xs text-muted-foreground">
-										{payment.reference ?? 'No reference'}
+										{payment.reference ?? m.account_no_reference()}
 									</span>
 								</button>
 							</td>
@@ -150,8 +151,7 @@
 		</div>
 
 		<p class="text-center text-sm text-muted-foreground">
-			Showing {data.items.length}
-			{data.items.length === 1 ? 'transaction' : 'transactions'}
+			{m.account_showing_transactions({ count: data.items.length })}
 		</p>
 	{/if}
 

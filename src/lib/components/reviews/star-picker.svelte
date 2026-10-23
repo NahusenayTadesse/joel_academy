@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Star from '@lucide/svelte/icons/star';
 	import { cn } from '@nahu/admin-kit/utils.js';
+	import { m } from '$lib/paraglide/messages';
 	import { RATING_WORDS } from './rules';
 
 	/*
@@ -10,7 +11,7 @@
 	let {
 		value = $bindable(),
 		name = 'rating',
-		legend = 'Your rating',
+		legend = m.catalog_review_your_rating(),
 		required = true
 	}: { value?: number; name?: string; legend?: string; required?: boolean } = $props();
 
@@ -43,12 +44,12 @@
 							n <= shown ? 'fill-warning text-warning' : 'text-muted-foreground'
 						)}
 					/>
-					<span class="sr-only">{n} star{n === 1 ? '' : 's'}, {RATING_WORDS[n]}</span>
+					<span class="sr-only">{m.catalog_review_star_option({ stars: n, word: RATING_WORDS[n] })}</span>
 				</label>
 			{/each}
 		</div>
 		<span class="text-sm text-muted-foreground" aria-hidden="true">
-			{shown ? RATING_WORDS[shown] : 'Select a rating'}
+			{shown ? RATING_WORDS[shown] : m.catalog_review_select_rating()}
 		</span>
 	</div>
 </fieldset>

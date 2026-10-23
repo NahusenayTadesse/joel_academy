@@ -19,6 +19,7 @@
 	import WelcomeBanner from '$lib/components/student/home/welcome-banner.svelte';
 	import Badge from '$lib/components/ui/badge.svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	let { data } = $props();
@@ -27,40 +28,43 @@
 	const banner = $derived.by(() => {
 		if (mostRecent)
 			return {
-				description: `You've completed ${Math.round(mostRecent.progressPercent)}% of "${mostRecent.title}". Keep up the momentum!`,
-				ctaLabel: 'Resume Learning',
+				description: m.learn_home_banner_progress({ percent: Math.round(mostRecent.progressPercent), title: mostRecent.title }),
+				ctaLabel: m.learn_home_resume(),
 				ctaHref: ROUTES.student.learn(mostRecent.slug),
 				icon: undefined
 			};
 		if (data.stats.completed > 0)
 			return {
-				description: `You've completed ${data.stats.completed === 1 ? 'your course' : `all ${data.stats.completed} of your courses`}. Find your next one in the catalog.`,
-				ctaLabel: 'Browse Courses',
+				description:
+					data.stats.completed === 1
+						? m.learn_home_banner_completed_one()
+						: m.learn_home_banner_completed_many({ count: data.stats.completed }),
+				ctaLabel: m.learn_browse_courses_cta(),
 				ctaHref: ROUTES.courses.list,
 				icon: Search
 			};
 		return {
-			description: "You haven't enrolled in any courses yet - browse the catalog to get started.",
-			ctaLabel: 'Browse Courses',
+			description: m.learn_home_banner_empty(),
+			ctaLabel: m.learn_browse_courses_cta(),
 			ctaHref: ROUTES.courses.list,
 			icon: Search
 		};
 	});
 
 	const stats = $derived([
-		{ icon: BookOpen, label: 'Enrolled Courses', value: data.stats.enrolled, tone: 'primary' as const, href: ROUTES.student.courses },
-		{ icon: Loader, label: 'In Progress', value: data.stats.inProgress, tone: 'info' as const, href: `${ROUTES.student.courses}?status=IN_PROGRESS` },
-		{ icon: CircleCheck, label: 'Completed', value: data.stats.completed, tone: 'success' as const, href: `${ROUTES.student.courses}?status=COMPLETED` },
-		{ icon: Award, label: 'Certificates', value: data.stats.certificates, tone: 'warning' as const, href: ROUTES.student.certificates },
-		{ icon: ListChecks, label: 'Lessons Done', value: data.stats.lessonsDone, tone: 'teal' as const, href: undefined },
-		{ icon: Clock, label: 'Time Learned', value: formatLearningTime(data.stats.secondsLearned), tone: 'primary' as const, href: undefined }
+		{ icon: BookOpen, label: m.learn_stat_enrolled(), value: data.stats.enrolled, tone: 'primary' as const, href: ROUTES.student.courses },
+		{ icon: Loader, label: m.learn_in_progress(), value: data.stats.inProgress, tone: 'info' as const, href: `${ROUTES.student.courses}?status=IN_PROGRESS` },
+		{ icon: CircleCheck, label: m.learn_completed_plural(), value: data.stats.completed, tone: 'success' as const, href: `${ROUTES.student.courses}?status=COMPLETED` },
+		{ icon: Award, label: m.learn_certificates(), value: data.stats.certificates, tone: 'warning' as const, href: ROUTES.student.certificates },
+		{ icon: ListChecks, label: m.learn_stat_lessons_done(), value: data.stats.lessonsDone, tone: 'teal' as const, href: undefined },
+		{ icon: Clock, label: m.learn_stat_time_learned(), value: formatLearningTime(data.stats.secondsLearned), tone: 'primary' as const, href: undefined }
 	]);
 	const wishlistCount = $derived(data.wishlistIds?.length ?? 0);
 	const warningText = 'text-[color-mix(in_srgb,var(--warning)_45%,black)] dark:text-warning';
 </script>
 
 <svelte:head>
-	<title>My Learning · {siteConfig.name}</title>
+	<title>{m.learn_home_title()} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -68,7 +72,7 @@
 	<div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
 		<WelcomeBanner
 			class={mostRecent ? 'lg:col-span-2' : 'lg:col-span-3'}
-			greeting="Welcome back, {data.firstName} 👋"
+			greeting="{m.learn_home_greeting({ name: data.firstName })} 👋"
 			description={banner.description}
 			ctaLabel={banner.ctaLabel}
 			ctaHref={banner.ctaHref}
@@ -93,14 +97,15 @@
 				<Clock class="mt-0.5 size-4 shrink-0" aria-hidden="true" />
 				<span>
 					{#if data.pendingPayments.length === 1}
-						Your payment for <strong class="font-semibold">{data.pendingPayments[0].title}</strong> is awaiting review.
+						{m.learn_home_pending_one_before()} <strong class="font-semibold">{data.pendingPayments[0].title}</strong>
+						{m.learn_home_pending_one_after()}
 					{:else}
-						You have {data.pendingPayments.length} payments awaiting review.
+						{m.learn_home_pending_many({ count: data.pendingPayments.length })}
 					{/if}
-					Course access unlocks once an admin approves it.
+					{m.learn_home_pending_unlock()}
 				</span>
 			</p>
-			<a href={ROUTES.student.payments} class="shrink-0 font-medium underline-offset-4 hover:underline">View payments</a>
+			<a href={ROUTES.student.payments} class="shrink-0 font-medium underline-offset-4 hover:underline">{m.learn_home_view_payments()}</a>
 		</div>
 	{/if}
 
@@ -112,13 +117,13 @@
 			<p class="flex min-w-0 items-start gap-2">
 				<TriangleAlert class="mt-0.5 size-4 shrink-0" aria-hidden="true" />
 				<span class="min-w-0 break-words">
-					Payment not approved for <strong class="font-semibold">{payment.title}</strong>{payment.rejectionReason
+					{m.learn_home_rejected_before()} <strong class="font-semibold">{payment.title}</strong>{payment.rejectionReason
 						? `: ${payment.rejectionReason}`
 						: '.'}
 				</span>
 			</p>
 			<Button href={ROUTES.student.checkout(payment.slug)} variant="outline" size="sm" class="shrink-0">
-				Resubmit payment
+				{m.learn_home_resubmit_payment()}
 			</Button>
 		</div>
 	{/each}
@@ -132,19 +137,19 @@
 	<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 		<section class="flex min-w-0 flex-col gap-4 lg:col-span-2" aria-labelledby="continue-learning">
 			<div class="flex items-center justify-between">
-				<h2 id="continue-learning" class="text-2xl font-bold text-foreground">Continue Learning</h2>
-				<Button variant="link" href={ROUTES.student.courses} class="h-auto p-0">View All</Button>
+				<h2 id="continue-learning" class="text-2xl font-bold text-foreground">{m.learn_home_continue()}</h2>
+				<Button variant="link" href={ROUTES.student.courses} class="h-auto p-0">{m.learn_view_all()}</Button>
 			</div>
 			{#if data.continueLearning.length === 0}
 				<EmptyState
 					icon={BookOpen}
-					title={data.stats.completed > 0 ? 'All caught up' : 'No courses yet'}
+					title={data.stats.completed > 0 ? m.learn_all_caught_up() : m.learn_no_courses_title()}
 					description={data.stats.completed > 0
-						? "You've finished every course you're enrolled in."
-						: "You haven't enrolled in any courses yet."}
+						? m.learn_home_all_done_desc()
+						: m.learn_no_courses_desc()}
 				>
 					{#snippet action()}
-						<Button href={ROUTES.courses.list}>Browse courses</Button>
+						<Button href={ROUTES.courses.list}>{m.learn_browse_courses()}</Button>
 					{/snippet}
 				</EmptyState>
 			{:else}
@@ -170,20 +175,20 @@
 						<Heart class="size-4" aria-hidden="true" />
 					</span>
 					<span class="min-w-0 flex-1 text-foreground">
-						{wishlistCount === 1 ? '1 course' : `${wishlistCount} courses`} saved in your wishlist
+						{m.learn_home_wishlist_saved({ count: wishlistCount })}
 					</span>
-					<span class="shrink-0 font-medium text-primary-ink">View</span>
+					<span class="shrink-0 font-medium text-primary-ink">{m.learn_view()}</span>
 				</a>
 			{/if}
 		</section>
 
 		<div class="flex min-w-0 flex-col gap-6">
-			<ActivityCard title="Recent Notifications" viewAllHref={ROUTES.student.notifications}>
+			<ActivityCard title={m.learn_home_recent_notifications()} viewAllHref={ROUTES.student.notifications}>
 				{#if data.notifications.length === 0}
 					<EmptyState
 						icon={Bell}
-						title="You're all caught up"
-						description="New notifications will appear here."
+						title={m.learn_caught_up_title()}
+						description={m.learn_caught_up_desc()}
 						class="border-none bg-transparent p-6"
 					/>
 				{:else}
@@ -195,12 +200,12 @@
 				{/if}
 			</ActivityCard>
 
-			<ActivityCard title="Recent Certificates" viewAllHref={ROUTES.student.certificates}>
+			<ActivityCard title={m.learn_home_recent_certificates()} viewAllHref={ROUTES.student.certificates}>
 				{#if data.recentCertificates.length === 0}
 					<EmptyState
 						icon={Award}
-						title="No certificates yet"
-						description="Complete a certificate-eligible course to earn your first certificate."
+						title={m.learn_no_certificates_title()}
+						description={m.learn_no_certificates_desc()}
 						class="border-none bg-transparent p-6"
 					/>
 				{:else}
@@ -217,10 +222,10 @@
 									<span class="min-w-0 flex-1">
 										<span class="block text-sm font-medium break-words text-foreground">{item.courseTitle}</span>
 										<span class="mt-0.5 block text-xs text-muted-foreground">
-											{item.code} · Issued {formatDate(item.issuedAt)}
+											{item.code} · {m.learn_issued_on({ date: formatDate(item.issuedAt) })}
 										</span>
 									</span>
-									{#if item.revoked}<Badge variant="destructive" class="shrink-0">Revoked</Badge>{/if}
+									{#if item.revoked}<Badge variant="destructive" class="shrink-0">{m.learn_revoked()}</Badge>{/if}
 								</a>
 							</li>
 						{/each}

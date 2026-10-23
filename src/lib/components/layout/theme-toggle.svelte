@@ -4,13 +4,14 @@
 	import Sun from '@lucide/svelte/icons/sun';
 	import { mode, setMode } from 'mode-watcher';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 
 	// The server cannot know the stored theme, so render the neutral icon until mounted.
 	let mounted = $state(false);
 	onMount(() => (mounted = true));
 
 	const isDark = $derived(mounted && mode.current === 'dark');
-	const label = $derived(isDark ? 'Switch to light mode' : 'Switch to dark mode');
+	const label = $derived(isDark ? m.shell_theme_to_light() : m.shell_theme_to_dark());
 </script>
 
 <Button

@@ -11,6 +11,8 @@ export const user = mysqlTable('user', {
 	phoneNumber: varchar('phone_number', { length: 20 }).unique(),
 	/** Only verified numbers receive SMS: an unverified one could be anyone's. */
 	phoneNumberVerified: boolean('phone_number_verified').default(false).notNull(),
+	/** The language the person last used the site in ('en' or 'am'): emails and texts follow it. */
+	locale: varchar('locale', { length: 5 }).default('en').notNull(),
 	createdAt: timestamp('created_at', { fsp: 3 }).defaultNow().notNull(),
 	updatedAt: timestamp('updated_at', { fsp: 3 })
 		.defaultNow()

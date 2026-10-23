@@ -14,6 +14,8 @@ import {
 	requestPhoneCode
 } from '$lib/server/phone-verification';
 import { requireActionUser, requireUser } from '$lib/server/student';
+import { getLocale } from '$lib/i18n';
+import { m } from '$lib/paraglide/messages';
 import { normalizeEthPhone } from '$lib/phone';
 import { safeRedirectPath } from '$lib/safe-redirect';
 import { strongPassword } from '../../../(auth)/register/schema';
@@ -61,7 +63,11 @@ export const load: PageServerLoad = async (event) => {
 	};
 };
 
-const nameSchema = z.string().trim().min(2, 'Enter your name').max(120, 'Use at most 120 characters');
+const nameSchema = z
+	.string()
+	.trim()
+	.min(2, { error: () => m.account_name_required() })
+	.max(120, { error: () => m.account_name_max() });
 
 const passwordSchema = z
 	.object({
@@ -71,7 +77,7 @@ const passwordSchema = z
 	})
 	.refine((value) => value.newPassword === value.confirmPassword, {
 		path: ['confirmPassword'],
-		message: 'Passwords do not match'
+		error: () => m.account_passwords_mismatch()
 	});
 
 const field = (data: FormData, name: string) => String(data.get(name) ?? '');
@@ -132,7 +138,7 @@ export const actions: Actions = {
 		try {
 			if (hasPassword) {
 				if (!parsed.data.currentPassword) {
-					return fail(400, { password: { error: 'Enter your current password', field: 'currentPassword' } });
+					return fail(400, { password: { error: m.account_current_password_required(), field: 'currentPassword' } });
 				}
 				// Other devices are signed out; this one gets a fresh session cookie.
 				await auth.api.changePassword({
@@ -150,9 +156,9 @@ export const actions: Actions = {
 		} catch (err) {
 			if (!(err instanceof APIError)) throw err;
 			if (err.body?.code === 'INVALID_PASSWORD') {
-				return fail(400, { password: { error: 'Your current password is not right', field: 'currentPassword' } });
+				return fail(400, { password: { error: m.account_current_password_wrong(), field: 'currentPassword' } });
 			}
-			return fail(400, { password: { error: err.body?.message ?? 'Could not change your password.', field: '' } });
+			return fail(400, { password: { error: (getLocale() === 'en' && err.body?.message) || m.account_password_change_failed(), field: '' } });
 		}
 		void passwordChangedEmail({ email: current.email, name: current.name });
 		return { password: { saved: hasPassword ? ('changed' as const) : ('set' as const) } };

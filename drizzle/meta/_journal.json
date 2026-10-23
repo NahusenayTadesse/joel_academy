@@ -36,6 +36,20 @@
       "when": 1791312782866,
       "tag": "0004_lms_features",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1792754196787,
+      "tag": "0005_user_locale",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1792754596706,
+      "tag": "0006_page_views",
+      "breakpoints": true
     }
   ]
 }

@@ -3,6 +3,8 @@ import { APIError } from 'better-auth/api';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
+import { m } from '$lib/paraglide/messages';
+import { ROUTES } from '$lib/site';
 import { resetSchema } from './schema';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -29,10 +31,10 @@ export const actions: Actions = {
 			if (!(err instanceof APIError)) throw err;
 			return message(
 				form,
-				{ type: 'error', text: 'This reset link is invalid or has expired. Request a new one.', expired: true },
+				{ type: 'error', text: m.account_reset_expired(), expired: true },
 				{ status: 400 }
 			);
 		}
-		redirect(303, '/login?reset=1');
+		redirect(303, `${ROUTES.auth.login}?reset=1`);
 	}
 };

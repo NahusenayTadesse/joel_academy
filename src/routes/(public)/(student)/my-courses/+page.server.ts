@@ -10,6 +10,7 @@ import { reviewedCourseIds } from '$lib/server/reviews';
 import { requireActionUser, requireUser } from '$lib/server/student';
 import { RATE_PROMPT_PERCENT } from '$lib/components/reviews/rules';
 import { mediaUrl } from '$lib/media';
+import { m } from '$lib/paraglide/messages';
 import type { Actions, PageServerLoad } from './$types';
 
 const STATUS_TABS = ['ALL', 'IN_PROGRESS', 'COMPLETED'] as const;
@@ -59,7 +60,7 @@ export const load: PageServerLoad = async (event) => {
 				slug: row.slug,
 				title: row.title,
 				thumbnailUrl: mediaUrl(row.thumbnail),
-				categoryName: row.categoryName ?? 'Course',
+				categoryName: row.categoryName ?? m.learn_course_fallback(),
 				categorySlug: row.categorySlug ?? undefined,
 				status: row.status,
 				completed: row.status === 'ACTIVE' && row.completedAt !== null,
@@ -103,13 +104,13 @@ export const actions: Actions = {
 
 		const limit = await requestedEmailAllowed(user.email, 'verify-email');
 		if (!limit.allowed) {
-			return fail(429, { resendError: `We just sent one. You can ask again in ${describeWait(limit.retryAfter)}.` });
+			return fail(429, { resendError: m.learn_resend_wait({ wait: describeWait(limit.retryAfter) }) });
 		}
 		try {
 			await auth.api.sendVerificationEmail({ body: { email: user.email }, headers: event.request.headers });
 		} catch (err) {
 			if (!(err instanceof APIError)) throw err;
-			return fail(400, { resendError: 'Could not send the email. Try again later.' });
+			return fail(400, { resendError: m.learn_resend_failed() });
 		}
 		return { resent: true };
 	}

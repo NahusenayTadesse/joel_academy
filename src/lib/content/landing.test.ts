@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import {
-	DEFAULT_LANDING,
-	announcementVersion,
-	isSafeLink,
-	landingSchema,
-	mergeLanding
-} from './landing';
-import { FAQ_ITEMS } from './faq.data';
+import { DEFAULT_LANDING, DEFAULT_LANDING_AM, announcementVersion, defaultSection, isSafeLink } from './landing';
+import { landingSchema, mergeLanding } from './landing-schema';
+import { FAQ_ITEMS, FAQ_ITEMS_AM } from './faq.data';
 
 describe('isSafeLink', () => {
 	it('accepts site paths and https links', () => {
@@ -67,6 +62,59 @@ describe('landingSchema', () => {
 		expect(landingSchema.safeParse(value).success).toBe(true);
 		value.announcement.linkUrl = 'javascript:void(0)';
 		expect(landingSchema.safeParse(value).success).toBe(false);
+	});
+});
+
+/** A value's shape: its keys and array lengths, with every string and boolean left out. */
+function shape(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map(shape);
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, shape(entry)]));
+	}
+	return typeof value;
+}
+
+describe('DEFAULT_LANDING_AM', () => {
+	it('passes the schema', () => {
+		const result = landingSchema.safeParse(DEFAULT_LANDING_AM);
+		expect(result.error?.issues ?? []).toEqual([]);
+		expect(DEFAULT_LANDING_AM.faqs).toHaveLength(FAQ_ITEMS_AM.length);
+	});
+
+	it('has the same shape as the English defaults', () => {
+		expect(shape(DEFAULT_LANDING_AM)).toEqual(shape(DEFAULT_LANDING));
+		expect(FAQ_ITEMS_AM).toHaveLength(FAQ_ITEMS.length);
+	});
+
+	it('keeps links, icons, picture, announcement name and switches, and changes the text', () => {
+		const en = DEFAULT_LANDING;
+		const am = DEFAULT_LANDING_AM;
+		expect(am.sections).toEqual(en.sections);
+		expect(am.mentor).toEqual(en.mentor);
+		expect([am.hero.image, am.hero.primaryCtaUrl, am.hero.secondaryCtaUrl]).toEqual([
+			en.hero.image,
+			en.hero.primaryCtaUrl,
+			en.hero.secondaryCtaUrl
+		]);
+		expect(am.valuePills.map((item) => item.icon)).toEqual(en.valuePills.map((item) => item.icon));
+		expect(am.whyChooseUs.map((item) => item.icon)).toEqual(en.whyChooseUs.map((item) => item.icon));
+		expect(am.finalCta.ctaUrl).toBe(en.finalCta.ctaUrl);
+		expect({ ...am.announcement, text: '', linkText: '' }).toEqual({
+			...en.announcement,
+			text: '',
+			linkText: ''
+		});
+		expect(am.hero.heading).not.toBe(en.hero.heading);
+		expect(am.faqs[0].question).not.toBe(en.faqs[0].question);
+	});
+
+	it('is what Amharic falls back to', () => {
+		expect(mergeLanding(undefined, 'am')).toEqual(DEFAULT_LANDING_AM);
+		expect(mergeLanding({ finalCta: { heading: 'broken' } }, 'am').finalCta).toEqual(
+			DEFAULT_LANDING_AM.finalCta
+		);
+		expect(defaultSection('hero', 'am')).toEqual(DEFAULT_LANDING_AM.hero);
+		expect(defaultSection('hero')).toEqual(DEFAULT_LANDING.hero);
 	});
 });
 

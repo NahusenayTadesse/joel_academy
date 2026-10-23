@@ -1,9 +1,10 @@
 import { env } from '$env/dynamic/private';
 import { listCategories, listCourses, listInstructors } from '$lib/server/public-catalog';
+import { localizePath, locales } from '$lib/i18n';
 import { ROUTES } from '$lib/site';
 import type { RequestHandler } from './$types';
 
-const STATIC_PAGES: { path: string; priority: string; changefreq: string }[] = [
+const staticPages = (): { path: string; priority: string; changefreq: string }[] => [
 	{ path: ROUTES.home, priority: '1.0', changefreq: 'daily' },
 	{ path: ROUTES.courses.list, priority: '0.9', changefreq: 'daily' },
 	{ path: ROUTES.categories.list, priority: '0.7', changefreq: 'weekly' },
@@ -22,7 +23,7 @@ const STATIC_PAGES: { path: string; priority: string; changefreq: string }[] = [
 const xml = (value: string) =>
 	value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-/** Every public page, every published course, category and instructor. */
+/** Every public page, every published course, category and instructor, in each language. */
 export const GET: RequestHandler = async ({ url }) => {
 	const origin = (env.ORIGIN || url.origin).replace(/\/$/, '');
 	const [courses, categories, instructors] = await Promise.all([
@@ -31,18 +32,28 @@ export const GET: RequestHandler = async ({ url }) => {
 		listInstructors()
 	]);
 
-	const entry = (path: string, extra: { lastmod?: string | null; priority?: string; changefreq?: string } = {}) =>
-		[
-			'<url>',
-			`<loc>${xml(`${origin}${path}`)}</loc>`,
-			extra.lastmod ? `<lastmod>${extra.lastmod.slice(0, 10)}</lastmod>` : '',
-			extra.changefreq ? `<changefreq>${extra.changefreq}</changefreq>` : '',
-			extra.priority ? `<priority>${extra.priority}</priority>` : '',
-			'</url>'
-		].join('');
+	// One <url> per language, each listing all of the page's language versions.
+	const entry = (path: string, extra: { lastmod?: string | null; priority?: string; changefreq?: string } = {}) => {
+		const alternates = locales
+			.map((locale) => `<xhtml:link rel="alternate" hreflang="${locale}" href="${xml(`${origin}${localizePath(path, locale)}`)}"/>`)
+			.join('');
+		return locales
+			.map((locale) =>
+				[
+					'<url>',
+					`<loc>${xml(`${origin}${localizePath(path, locale)}`)}</loc>`,
+					alternates,
+					extra.lastmod ? `<lastmod>${extra.lastmod.slice(0, 10)}</lastmod>` : '',
+					extra.changefreq ? `<changefreq>${extra.changefreq}</changefreq>` : '',
+					extra.priority ? `<priority>${extra.priority}</priority>` : '',
+					'</url>'
+				].join('')
+			)
+			.join('');
+	};
 
 	const urls = [
-		...STATIC_PAGES.map(({ path, ...extra }) => entry(path, extra)),
+		...staticPages().map(({ path, ...extra }) => entry(path, extra)),
 		...courses.items.map((course) =>
 			entry(ROUTES.courses.detail(course.slug), { lastmod: course.publishedAt, priority: '0.8', changefreq: 'weekly' })
 		),
@@ -52,7 +63,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		)
 	];
 
-	const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.join('')}</urlset>\n`;
+	const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls.join('')}</urlset>\n`;
 	return new Response(body, {
 		headers: { 'content-type': 'application/xml; charset=utf-8', 'cache-control': 'public, max-age=3600' }
 	});

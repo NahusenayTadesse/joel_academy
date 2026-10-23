@@ -7,6 +7,7 @@
 	import Card from '$lib/components/ui/card.svelte';
 	import { DIFFICULTY_LABELS } from '$lib/content/catalog.constants';
 	import type { CourseSummary } from '$lib/content/catalog.types';
+	import { m } from '$lib/paraglide/messages';
 	import { formatCompactNumber, formatDurationMinutes } from '$lib/format';
 	import { ROUTES } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
@@ -44,9 +45,9 @@
 				</span>
 			{/if}
 			<span class="sr-only">
-				Rated {course.rating.toFixed(1)} out of 5{course.reviewCount !== undefined
-					? ` from ${course.reviewCount} review${course.reviewCount === 1 ? '' : 's'}`
-					: ''}
+				{course.reviewCount !== undefined
+					? m.catalog_card_rated_reviews({ rating: course.rating.toFixed(1), count: course.reviewCount })
+					: m.catalog_card_rated({ rating: course.rating.toFixed(1) })}
 			</span>
 		</span>
 	{/if}
@@ -78,7 +79,7 @@
 					<WishlistButton courseId={course.id} courseTitle={course.title} />
 				</div>
 				<p class="line-clamp-2 text-sm text-muted-foreground">{course.shortDescription}</p>
-				<p class="text-xs text-muted-foreground">by {course.presenterName}</p>
+				<p class="text-xs text-muted-foreground">{m.catalog_card_by({ name: course.presenterName })}</p>
 				<div class="mt-auto flex flex-wrap items-center gap-3 pt-2 text-xs text-muted-foreground">
 					{@render rating()}
 					<span class="flex items-center gap-1">
@@ -113,7 +114,7 @@
 					class="absolute top-2 right-2"
 				/>
 				{#if course.featured}
-					<Badge class="absolute top-2 left-2 rounded-full border-0 bg-linear-to-r from-brand-gradient-from to-brand-gradient-to px-2.5 text-primary-foreground shadow-glow">Featured</Badge>
+					<Badge class="absolute top-2 left-2 rounded-full border-0 bg-linear-to-r from-brand-gradient-from to-brand-gradient-to px-2.5 text-primary-foreground shadow-glow">{m.catalog_card_featured()}</Badge>
 				{/if}
 			</div>
 			<div class="flex flex-col gap-2 p-4">
@@ -121,14 +122,14 @@
 					{course.title}
 				</h3>
 				<p class="line-clamp-2 text-sm text-muted-foreground">{course.shortDescription}</p>
-				<p class="text-xs text-muted-foreground">by {course.presenterName}</p>
+				<p class="text-xs text-muted-foreground">{m.catalog_card_by({ name: course.presenterName })}</p>
 				<div class="flex items-center gap-3 pt-1">
 					{@render rating()}
 					{#if course.studentsCount !== undefined}
 						<span class="flex items-center gap-1 text-xs text-muted-foreground">
 							<Users class="size-3.5" aria-hidden="true" />
 							{formatCompactNumber(course.studentsCount)}
-							<span class="sr-only">students</span>
+							<span class="sr-only">{m.catalog_card_students_sr()}</span>
 						</span>
 					{/if}
 				</div>

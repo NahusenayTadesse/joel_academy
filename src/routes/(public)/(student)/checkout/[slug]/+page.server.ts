@@ -14,6 +14,7 @@ import {
 import { PromoError, quoteCourse } from '$lib/server/promo';
 import { getCourse } from '$lib/server/public-catalog';
 import { requireActionUser, requireUser } from '$lib/server/student';
+import { m } from '$lib/paraglide/messages';
 import { effectivePrice } from '$lib/progress';
 import { normalizePromoCode } from '$lib/promo';
 import { receiptProblem } from '$lib/receipt';
@@ -22,7 +23,7 @@ import type { Actions, PageServerLoad } from './$types';
 
 async function paidCourse(slug: string) {
 	const found = await getCourse(slug);
-	if (!found) error(404, 'Course not found');
+	if (!found) error(404, m.account_course_not_found());
 	// Free courses skip checkout: the course page enrolls them in place.
 	if (found.accessType === 'FREE') redirect(303, ROUTES.courses.detail(found.slug));
 	return found;
@@ -131,9 +132,9 @@ export const actions: Actions = {
 		const values = { paymentMethodId: String(posted.get('paymentMethodId') ?? ''), transactionReference };
 
 		const errors: Partial<Record<'paymentMethodId' | 'transactionReference' | 'receipt', string>> = {};
-		if (!Number.isSafeInteger(methodId) || methodId <= 0) errors.paymentMethodId = 'Choose a payment method.';
-		if (transactionReference.length < 3) errors.transactionReference = 'Enter the transaction ID from your payment.';
-		else if (transactionReference.length > 120) errors.transactionReference = 'The transaction ID is too long.';
+		if (!Number.isSafeInteger(methodId) || methodId <= 0) errors.paymentMethodId = m.account_choose_payment_method();
+		if (transactionReference.length < 3) errors.transactionReference = m.account_transaction_id_required();
+		else if (transactionReference.length > 120) errors.transactionReference = m.account_transaction_id_too_long();
 		const receiptError = receiptProblem(receipt instanceof File ? receipt : null, MAX_UPLOAD_BYTES);
 		if (receiptError) errors.receipt = receiptError;
 		if (Object.keys(errors).length > 0) return fail(400, { values, errors });
@@ -142,7 +143,7 @@ export const actions: Actions = {
 		const current = await getEnrollment(user.id, Number(found.id));
 		if (current?.status === 'ACTIVE') redirect(303, ROUTES.student.learn(found.slug));
 		if (current?.status === 'PENDING')
-			return fail(409, { values, errors: { form: 'A payment for this course is already under review.' } });
+			return fail(409, { values, errors: { form: m.account_payment_under_review() } });
 		try {
 			await quoteCourse({ userId: user.id, courseId: Number(found.id), code: promo });
 		} catch (err) {
@@ -203,7 +204,7 @@ export const actions: Actions = {
 		const user = requireActionUser(event);
 		const found = await paidCourse(event.params.slug);
 		const promo = postedPromo(await event.request.formData());
-		if (!promo) return fail(400, { errors: { redeem: 'Enter a promo code first.' } });
+		if (!promo) return fail(400, { errors: { redeem: m.account_enter_promo_first() } });
 		try {
 			await enrollWithFullDiscount(user.id, Number(found.id), promo);
 		} catch (err) {

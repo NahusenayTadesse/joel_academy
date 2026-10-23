@@ -12,6 +12,7 @@
 	import Users from '@lucide/svelte/icons/users';
 	import AnimatedCounter from '$lib/components/common/animated-counter.svelte';
 	import { formatCompactNumber } from '$lib/format';
+	import { m } from '$lib/paraglide/messages';
 	import StatCard from './stat-card.svelte';
 
 	// The about page only ever passed catalog counts, so the original's three-column variant is all
@@ -19,9 +20,9 @@
 	let { stats }: { stats: CatalogStats } = $props();
 
 	const cards = $derived([
-		{ icon: BookOpen, label: 'Courses available', value: stats.totalCourses },
-		{ icon: Layers, label: 'Categories', value: stats.totalCategories },
-		{ icon: Users, label: 'Instructors', value: stats.instructorCount }
+		{ icon: BookOpen, label: m.info_stats_courses(), value: stats.totalCourses },
+		{ icon: Layers, label: m.info_stats_categories(), value: stats.totalCategories },
+		{ icon: Users, label: m.info_stats_instructors(), value: stats.instructorCount }
 	]);
 </script>
 

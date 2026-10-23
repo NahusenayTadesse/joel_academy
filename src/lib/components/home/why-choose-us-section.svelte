@@ -2,6 +2,7 @@
 	import { inView } from '$lib/attachments';
 	import { DEFAULT_LANDING, type LandingIconItem } from '$lib/content/landing';
 	import { landingIcon } from './landing-icons';
+	import { m } from '$lib/paraglide/messages';
 	import SectionTitle from './section-title.svelte';
 
 	let { items = DEFAULT_LANDING.whyChooseUs }: { items?: LandingIconItem[] } = $props();
@@ -9,10 +10,10 @@
 
 <section class="mx-auto w-full max-w-7xl px-4 py-24 sm:px-6">
 	<SectionTitle
-		eyebrow="Why the academy"
-		title="Everything you need to"
-		accent="learn and level up"
-		subtitle="Structured lessons, real instructors and certificates that prove it, in one place."
+		eyebrow={m.home_why_eyebrow()}
+		title={m.home_why_title()}
+		accent={m.home_why_accent()}
+		subtitle={m.home_why_subtitle()}
 		align="center"
 	/>
 	<div class="reveal-stagger grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4" {@attach inView()}>

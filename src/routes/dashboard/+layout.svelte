@@ -1,4 +1,5 @@
 <script lang="ts">
+	import './dashboard.css';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import LogOut from '@lucide/svelte/icons/log-out';
 	import { Toaster, toast } from 'svelte-sonner';

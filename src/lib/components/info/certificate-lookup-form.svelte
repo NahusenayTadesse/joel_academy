@@ -10,6 +10,7 @@
 	import Button from '$lib/components/ui/button.svelte';
 	import Input from '$lib/components/ui/input.svelte';
 	import Label from '$lib/components/ui/label.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import CertificateQrScanner from './certificate-qr-scanner.svelte';
@@ -74,11 +75,11 @@
 			>
 				<Tabs.Trigger value="manual" class={cn(tabTriggerClass, 'gap-2 text-xs sm:text-sm')}>
 					<KeyRound class="size-4" />
-					Enter Certificate Code
+					{m.info_verify_tab_manual()}
 				</Tabs.Trigger>
 				<Tabs.Trigger value="qr" class={cn(tabTriggerClass, 'gap-2 text-xs sm:text-sm')}>
 					<Camera class="size-4" />
-					Scan QR Code
+					{m.info_verify_tab_qr()}
 				</Tabs.Trigger>
 			</Tabs.List>
 
@@ -94,14 +95,14 @@
 							for="certificate-code"
 							class="text-xs font-semibold tracking-wider text-muted-foreground uppercase"
 						>
-							Certificate Code / Verification ID
+							{m.info_verify_code_label()}
 						</Label>
 						<div class="relative">
 							<Input
 								id="certificate-code"
 								name="token"
 								bind:value={code}
-								placeholder="e.g. JTA-2026-000123 or paste verification token"
+								placeholder={m.info_verify_code_placeholder()}
 								autocomplete="off"
 								disabled={isVerifying}
 								class="h-11 pr-10 font-mono text-sm tracking-wide"
@@ -113,9 +114,9 @@
 							</div>
 						</div>
 						<p class="text-xs text-muted-foreground">
-							Enter the unique certificate number (e.g.
-							<span class="font-mono font-medium text-foreground">JTA-2026-...</span>) or public
-							token printed on the certificate.
+							{m.info_verify_code_hint_before()}
+							<span class="font-mono font-medium text-foreground">JTA-2026-...</span
+							>{m.info_verify_code_hint_after()}
 						</p>
 					</div>
 
@@ -126,10 +127,10 @@
 					>
 						{#if isVerifying}
 							<LoaderCircle class="size-4 animate-spin" />
-							Verifying Certificate...
+							{m.info_verify_submitting()}
 						{:else}
 							<Search class="size-4" />
-							Verify Certificate
+							{m.info_verify_submit()}
 						{/if}
 					</Button>
 				</form>
@@ -137,8 +138,7 @@
 
 			<Tabs.Content value="qr" class={cn(tabContentClass, 'mt-6 space-y-4')}>
 				<div class="text-center text-xs text-muted-foreground">
-					Point your device camera at the QR code printed on the bottom-right corner of the
-					certificate.
+					{m.info_verify_qr_hint()}
 				</div>
 				<CertificateQrScanner onSwitchToManual={() => (activeTab = 'manual')} />
 			</Tabs.Content>

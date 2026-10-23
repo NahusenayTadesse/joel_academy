@@ -1,3 +1,4 @@
+import { m } from '$lib/paraglide/messages';
 import { getLandingSettings } from '$lib/server/landing';
 import {
 	featuredCourses,
@@ -19,7 +20,7 @@ function structuredData(origin: string) {
 			name: siteConfig.name,
 			url: `${origin}/`,
 			logo: `${origin}/icons/icon-512.png`,
-			description: siteConfig.description
+			description: m.shell_site_description()
 		},
 		{
 			'@context': 'https://schema.org',

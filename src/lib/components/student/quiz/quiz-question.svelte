@@ -2,6 +2,7 @@
 	import Check from '@lucide/svelte/icons/check';
 	import Lightbulb from '@lucide/svelte/icons/lightbulb';
 	import X from '@lucide/svelte/icons/x';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import type { QuizResult, QuizView } from './types';
 
@@ -35,10 +36,10 @@
 	)}
 	aria-describedby={promptId}
 >
-	<legend class="sr-only">Question {number}</legend>
+	<legend class="sr-only">{m.learn_quiz_question({ number })}</legend>
 	<div class="flex items-center justify-between gap-3">
 		<span class="text-xs font-semibold tracking-wider text-sidebar-foreground/60 uppercase" aria-hidden="true">
-			Question {number}
+			{m.learn_quiz_question({ number })}
 		</span>
 		{#if result}
 			<span
@@ -47,13 +48,13 @@
 					result.correct ? 'bg-sidebar-primary/15 text-sidebar-primary' : 'bg-red-500/15 text-red-300'
 				)}
 			>
-				{#if result.correct}<Check class="size-3.5" aria-hidden="true" /> Correct{:else}<X
+				{#if result.correct}<Check class="size-3.5" aria-hidden="true" /> {m.learn_quiz_correct()}{:else}<X
 						class="size-3.5"
 						aria-hidden="true"
-					/> Incorrect{/if}
+					/> {m.learn_quiz_incorrect()}{/if}
 			</span>
 		{:else if question.allowMultiple}
-			<span class="text-xs text-sidebar-foreground/60">Select all that apply</span>
+			<span class="text-xs text-sidebar-foreground/60">{m.learn_quiz_select_all()}</span>
 		{/if}
 	</div>
 	<p id={promptId} class="mt-2 text-base leading-relaxed font-medium whitespace-pre-line text-white">
@@ -87,11 +88,11 @@
 					<span class="flex-1">{option.text}</span>
 					{#if revealed && right}
 						<span class="shrink-0 text-xs font-semibold text-sidebar-primary">
-							{picked ? 'Your answer · correct' : 'Correct answer'}
+							{picked ? m.learn_quiz_your_answer_correct() : m.learn_quiz_correct_answer()}
 						</span>
 					{:else if picked}
 						<span class={cn('shrink-0 text-xs font-semibold', revealed ? 'text-red-300' : 'text-sidebar-foreground/70')}>
-							Your answer
+							{m.learn_quiz_your_answer()}
 						</span>
 					{/if}
 				</div>
@@ -121,7 +122,7 @@
 		<div class="mt-4 flex gap-3 rounded-xl bg-white/5 px-4 py-3 text-sm text-sidebar-foreground/80">
 			<Lightbulb class="mt-0.5 size-4 shrink-0 text-amber-300" aria-hidden="true" />
 			<div>
-				<p class="font-semibold text-white">Explanation</p>
+				<p class="font-semibold text-white">{m.learn_quiz_explanation()}</p>
 				<p class="mt-1 whitespace-pre-line">{result.explanation}</p>
 			</div>
 		</div>

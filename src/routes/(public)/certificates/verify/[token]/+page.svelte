@@ -3,17 +3,15 @@
 	import CertificateVerificationResult from '$lib/components/info/certificate-verification-result.svelte';
 	import Card from '$lib/components/ui/card.svelte';
 	import CardContent from '$lib/components/ui/card-content.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
 
 	let { data } = $props();
 </script>
 
 <svelte:head>
-	<title>Verify Certificate · {siteConfig.name}</title>
-	<meta
-		name="description"
-		content="Official digital credential verification result for Joel Talargie Academy certificate of completion."
-	/>
+	<title>{m.info_verify_meta_title()} · {siteConfig.name}</title>
+	<meta name="description" content={m.info_verify_result_meta_description()} />
 </svelte:head>
 
 <div class="relative min-h-[calc(100vh-4rem)] overflow-hidden py-12 sm:py-16">
@@ -29,7 +27,7 @@
 				class="inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand/5 px-3 py-1 text-xs font-semibold text-brand-ink"
 			>
 				<ShieldCheck class="size-3.5" />
-				Official Credential Verification
+				{m.info_verify_badge()}
 			</div>
 		</div>
 
@@ -40,7 +38,7 @@
 		</Card>
 
 		<div class="max-w-sm text-center text-xs text-muted-foreground/80">
-			Official tamper-evident credential registry record • Joel Talargie Academy
+			{m.info_verify_registry_record()} • Joel Talargie Academy
 		</div>
 	</div>
 </div>

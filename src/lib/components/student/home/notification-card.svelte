@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ActionForm from '@nahu/admin-kit/formComponents/ActionForm.svelte';
 	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import { formatRelativeTime } from './format';
@@ -69,7 +70,7 @@
 		</span>
 		{#if !notification.read}
 			<span class="mt-1.5 size-2 shrink-0 rounded-full bg-brand" aria-hidden="true"></span>
-			<span class="sr-only">Unread</span>
+			<span class="sr-only">{m.learn_unread_sr()}</span>
 		{/if}
 	</button>
 </ActionForm>

@@ -2,6 +2,7 @@
 	import Download from '@lucide/svelte/icons/download';
 	import { toast } from 'svelte-sonner';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { pwa } from '$lib/pwa.svelte';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import IosInstallDialog from './ios-install-dialog.svelte';
@@ -25,7 +26,7 @@
 			iosOpen = true;
 			return;
 		}
-		if (await pwa.install()) toast.success('Installing Joel Talargie Academy', { description: 'Find it with your other apps.' });
+		if (await pwa.install()) toast.success(m.shell_install_toast(), { description: m.shell_install_toast_description() });
 		onDone?.();
 	}
 </script>
@@ -36,8 +37,8 @@
 			variant="ghost"
 			size="icon"
 			onclick={install}
-			aria-label="Install the app"
-			title="Install the app"
+			aria-label={m.shell_install_app()}
+			title={m.shell_install_app()}
 			class={cn('size-9 rounded-lg text-foreground', className)}
 		>
 			<Download class="size-4" />
@@ -52,7 +53,7 @@
 			)}
 		>
 			<Download class="size-4" />
-			Install the app
+			{m.shell_install_app()}
 		</button>
 	{/if}
 {/if}

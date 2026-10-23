@@ -1,7 +1,9 @@
 import { error, redirect } from '@sveltejs/kit';
 import { APIError } from 'better-auth/api';
 import { auth, googleEnabled } from '$lib/server/auth';
+import { m } from '$lib/paraglide/messages';
 import { safeRedirectPath } from '$lib/safe-redirect';
+import { ROUTES } from '$lib/site';
 import type { RequestHandler } from './$types';
 
 /**
@@ -10,10 +12,11 @@ import type { RequestHandler } from './$types';
  * dashboard), or shows why Google sign-in failed.
  */
 export const POST: RequestHandler = async ({ request, url }) => {
-	if (!googleEnabled) error(404, 'Google sign-in is not set up');
+	if (!googleEnabled) error(404, m.account_google_not_setup());
 
 	const target = safeRedirectPath(String((await request.formData()).get('redirectTo') ?? ''), url.origin);
-	const back = target ? `/login?redirectTo=${encodeURIComponent(target)}` : '/login';
+	const login = ROUTES.auth.login;
+	const back = target ? `${login}?redirectTo=${encodeURIComponent(target)}` : login;
 
 	let authorizeUrl: string | undefined;
 	try {

@@ -1,13 +1,14 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import Card from '$lib/components/ui/card.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	/** A titled side card (the original `ActivityCard` frame) with an optional "View all" link. */
 	let {
 		title,
 		viewAllHref,
-		viewAllLabel = 'View All',
+		viewAllLabel = m.learn_view_all(),
 		children,
 		class: className = ''
 	}: { title: string; viewAllHref?: string; viewAllLabel?: string; children: Snippet; class?: string } =

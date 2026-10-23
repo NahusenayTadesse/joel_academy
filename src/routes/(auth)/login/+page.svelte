@@ -11,6 +11,7 @@
 	import Label from '$lib/components/ui/label.svelte';
 	import LoadingButton from '$lib/components/ui/loading-button.svelte';
 	import { safeRedirectPath } from '$lib/safe-redirect';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 	import { loginSchema } from './schema';
 
@@ -27,20 +28,20 @@
 </script>
 
 <svelte:head>
-	<title>Sign in · {siteConfig.name}</title>
-	<meta name="robots" content="noindex" />
+	<title>{m.account_login_page_title()} · {siteConfig.name}</title>
+	<meta name="description" content={m.misc_login_meta()} />
 </svelte:head>
 
 <div>
-	<h2 class="text-center text-2xl font-bold text-foreground">Welcome Back</h2>
-	<p class="mt-1.5 text-center text-sm text-muted-foreground">Sign in to {siteConfig.name}</p>
+	<h2 class="text-center text-2xl font-bold text-foreground">{m.account_login_heading()}</h2>
+	<p class="mt-1.5 text-center text-sm text-muted-foreground">{m.account_login_subheading({ site: siteConfig.name })}</p>
 
 	{#if data.googleEnabled}
 		<div class="mt-8">
 			<GoogleLoginButton redirectTo={redirectTarget} disabled={$submitting} />
 			<div class="my-5 flex items-center gap-3 text-xs text-muted-foreground">
 				<span class="h-px flex-1 bg-border"></span>
-				Or continue with
+				{m.account_or_continue_with()}
 				<span class="h-px flex-1 bg-border"></span>
 			</div>
 		</div>
@@ -48,7 +49,7 @@
 	<form method="post" use:enhance class={data.googleEnabled ? 'space-y-4' : 'mt-8 space-y-4'}>
 		<AuthField
 			name="email"
-			label="Email Address"
+			label={m.account_email_label()}
 			type="email"
 			placeholder="student@example.com"
 			autocomplete="email"
@@ -59,7 +60,7 @@
 		/>
 		<AuthField
 			name="password"
-			label="Password"
+			label={m.account_password_label()}
 			type="password"
 			autocomplete="current-password"
 			icon={Lock}
@@ -69,7 +70,7 @@
 		>
 			{#snippet labelExtra()}
 				<a href={ROUTES.auth.forgotPassword} class="text-xs font-medium text-brand-ink hover:underline">
-					Forgot Password?
+					{m.account_forgot_password_link()}
 				</a>
 			{/snippet}
 		</AuthField>
@@ -86,7 +87,7 @@
 				{/snippet}
 			</Checkbox.Root>
 			<Label for="rememberMe" class="text-sm font-normal text-muted-foreground">
-				Remember me for 30 days
+				{m.account_remember_me()}
 			</Label>
 		</div>
 		{#if $message?.text}
@@ -100,16 +101,16 @@
 				{data.notice.text}
 			</p>
 		{/if}
-		<LoadingButton type="submit" class="w-full" loading={$submitting} loadingText="Signing in...">
-			Sign In
+		<LoadingButton type="submit" class="w-full" loading={$submitting} loadingText={m.account_signing_in()}>
+			{m.account_sign_in()}
 		</LoadingButton>
 	</form>
 
 	<div class="mt-6 text-center text-sm">
 		<p class="text-muted-foreground">
-			Don't have an account?
+			{m.account_no_account()}
 			<a href="{ROUTES.auth.register}{redirectQuery}" class="font-medium text-brand-ink hover:underline">
-				Create an Account
+				{m.account_create_account_link()}
 			</a>
 		</p>
 	</div>

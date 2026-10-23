@@ -19,6 +19,7 @@
 	import Label from '$lib/components/ui/label.svelte';
 	import Textarea from '$lib/components/ui/textarea.svelte';
 	import SpamGuard from '$lib/components/common/spam-guard.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { contactErrors, contactSchema } from './contact-schema';
 
 	let { form, token }: { form?: ContactFormResult | null; token?: string } = $props();
@@ -49,28 +50,28 @@
 		return async ({ result }) => {
 			submitting = false;
 			if (result.type === 'success') {
-				toast.success('Message sent', {
-					description: "Thanks for reaching out. We'll reply to your email soon."
+				toast.success(m.info_contact_sent_title(), {
+					description: m.info_contact_sent_description()
 				});
 				name = email = message = '';
 				attempted = false;
 			} else if (result.type === 'failure' && typeof result.data?.message === 'string') {
-				toast.error('Unable to send message', { description: result.data.message });
+				toast.error(m.info_contact_error_title(), { description: result.data.message });
 			} else if (result.type === 'error') {
-				toast.error('Unable to send message', {
-					description: 'Something went wrong. Please try again.'
+				toast.error(m.info_contact_error_title(), {
+					description: m.info_contact_error_description()
 				});
 			}
 		};
 	}}>
 	<SpamGuard {token} />
 	<div class="flex flex-col gap-1.5">
-		<Label for="contact-name">Name</Label>
+		<Label for="contact-name">{m.info_contact_name_label()}</Label>
 		<Input id="contact-name" name="name" aria-invalid={Boolean(errors.name)} bind:value={name} />
 		{#if errors.name}<p class="text-xs text-destructive">{errors.name}</p>{/if}
 	</div>
 	<div class="flex flex-col gap-1.5">
-		<Label for="contact-email">Email</Label>
+		<Label for="contact-email">{m.info_contact_email_label()}</Label>
 		<Input
 			id="contact-email"
 			name="email"
@@ -81,7 +82,7 @@
 		{#if errors.email}<p class="text-xs text-destructive">{errors.email}</p>{/if}
 	</div>
 	<div class="flex flex-col gap-1.5">
-		<Label for="contact-message">Message</Label>
+		<Label for="contact-message">{m.info_contact_message_label()}</Label>
 		<Textarea
 			id="contact-message"
 			name="message"
@@ -93,9 +94,9 @@
 	</div>
 	<!-- Without JavaScript there is no toast, so the action's message is shown inline instead. -->
 	{#if form?.message}<p class="text-xs text-destructive">{form.message}</p>{/if}
-	{#if form?.sent}<p class="text-xs text-success-ink">Message sent. We'll reply to your email soon.</p>{/if}
+	{#if form?.sent}<p class="text-xs text-success-ink">{m.info_contact_sent_inline()}</p>{/if}
 	<Button type="submit" disabled={submitting} class="self-start">
 		<Send class="size-4" />
-		Send message
+		{m.info_contact_submit()}
 	</Button>
 </ActionForm>

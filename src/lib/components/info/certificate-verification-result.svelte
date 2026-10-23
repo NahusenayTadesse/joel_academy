@@ -9,6 +9,8 @@
 	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 	import Badge from '$lib/components/ui/badge.svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import { getLocale, INTL_LOCALES } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import type { CertificateVerification } from './certificate-verification';
 
@@ -17,7 +19,7 @@
 		onVerifyAnother
 	}: { result: CertificateVerification; onVerifyAnother?: () => void } = $props();
 
-	const dateFormatter = new Intl.DateTimeFormat('en-US', {
+	const dateFormatter = new Intl.DateTimeFormat(INTL_LOCALES[getLocale()], {
 		month: 'short',
 		day: 'numeric',
 		year: 'numeric'
@@ -56,13 +58,13 @@
 				<div
 					class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold tracking-wider text-emerald-700 uppercase dark:text-emerald-400"
 				>
-					Official Credential Verified
+					{m.info_verify_valid_badge()}
 				</div>
 				<h1 class="mt-2 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-					Certificate Verified
+					{m.info_verify_valid_title()}
 				</h1>
 				<p class="mt-1.5 text-sm text-muted-foreground">
-					This credential is valid and authentically issued by Joel Talargie Academy.
+					{m.info_verify_valid_body()}
 				</p>
 			</div>
 		</div>
@@ -77,13 +79,13 @@
 				<div
 					class="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold tracking-wider text-amber-600 uppercase dark:text-amber-400"
 				>
-					Credential Status
+					{m.info_verify_revoked_badge()}
 				</div>
 				<h1 class="mt-2 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-					Certificate Revoked
+					{m.info_verify_revoked_title()}
 				</h1>
 				<p class="mt-1.5 text-sm text-muted-foreground">
-					This certificate was officially issued but has since been revoked by the academy.
+					{m.info_verify_revoked_body()}
 				</p>
 			</div>
 		</div>
@@ -98,14 +100,13 @@
 				<div
 					class="inline-flex items-center gap-1.5 rounded-full bg-destructive/10 px-3 py-1 text-xs font-semibold tracking-wider text-destructive uppercase"
 				>
-					Lookup Failed
+					{m.info_verify_invalid_badge()}
 				</div>
 				<h1 class="mt-2 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-					Certificate Not Found
+					{m.info_verify_invalid_title()}
 				</h1>
 				<p class="mt-1.5 max-w-sm text-sm text-muted-foreground">
-					The certificate code you entered could not be verified. Please check the ID or QR code
-					link and try again.
+					{m.info_verify_invalid_body()}
 				</p>
 			</div>
 		</div>
@@ -121,7 +122,7 @@
 						<GraduationCap class="size-4" />
 					</span>
 					<span class="text-xs font-bold tracking-wider text-muted-foreground uppercase">
-						Certificate of Completion
+						{m.info_verify_certificate_of_completion()}
 					</span>
 				</div>
 				{#if result.state === 'VALID'}
@@ -130,12 +131,12 @@
 						class="gap-1 bg-emerald-700 px-2.5 py-0.5 text-white hover:bg-emerald-700"
 					>
 						<CircleCheck class="size-3" />
-						VALID
+						{m.info_verify_status_valid()}
 					</Badge>
 				{:else}
 					<Badge variant="destructive" class="gap-1 px-2.5 py-0.5">
 						<TriangleAlert class="size-3" />
-						REVOKED
+						{m.info_verify_status_revoked()}
 					</Badge>
 				{/if}
 			</div>
@@ -143,32 +144,32 @@
 			<dl class="grid grid-cols-1 gap-x-4 gap-y-3.5 text-sm sm:grid-cols-2">
 				{#if result.studentName}
 					{@render field(
-						'Awarded to Student',
+						m.info_verify_field_student(),
 						result.studentName,
 						'mt-0.5 text-lg font-bold tracking-tight text-foreground',
 						true
 					)}
 				{/if}
 				{#if result.courseTitle}
-					{@render field('Course', result.courseTitle, 'mt-0.5 font-semibold text-foreground', true)}
+					{@render field(m.info_verify_field_course(), result.courseTitle, 'mt-0.5 font-semibold text-foreground', true)}
 				{/if}
-				{@render field('Issued By', 'Joel Talargie Academy', 'mt-0.5 font-medium text-foreground')}
+				{@render field(m.info_verify_field_issued_by(), 'Joel Talargie Academy', 'mt-0.5 font-medium text-foreground')}
 				{#if result.certificateNumber}
 					{@render field(
-						'Certificate ID',
+						m.info_verify_field_certificate_id(),
 						result.certificateNumber,
 						'mt-0.5 font-mono text-xs font-bold tracking-wide break-all text-foreground'
 					)}
 				{/if}
 				{#if result.completionDate}
 					{@render field(
-						'Completion Date',
+						m.info_verify_field_completion_date(),
 						formatDate(result.completionDate),
 						'mt-0.5 font-medium text-foreground'
 					)}
 				{/if}
 				{#if result.issuedAt}
-					{@render field('Issue Date', formatDate(result.issuedAt), 'mt-0.5 font-medium text-foreground')}
+					{@render field(m.info_verify_field_issue_date(), formatDate(result.issuedAt), 'mt-0.5 font-medium text-foreground')}
 				{/if}
 			</dl>
 
@@ -177,8 +178,7 @@
 			>
 				<ShieldCheck class="size-4 shrink-0 text-emerald-500" />
 				<span>
-					Cryptographically registered credential • Tamper-evident record verified against Joel
-					Talargie Academy public ledger.
+					{m.info_verify_ledger_notice()}
 				</span>
 			</div>
 		</div>
@@ -188,24 +188,24 @@
 		{#if onVerifyAnother}
 			<Button variant="outline" onclick={onVerifyAnother} class="gap-2">
 				<RotateCcw class="size-4" />
-				Verify Another Certificate
+				{m.info_verify_another()}
 			</Button>
 		{:else}
 			<Button variant="outline" href={ROUTES.certificates.verifyLookup} class="gap-2">
 				<RotateCcw class="size-4" />
-				Verify Another Certificate
+				{m.info_verify_another()}
 			</Button>
 		{/if}
 
 		{#if result.state === 'VALID'}
 			<Button variant="secondary" onclick={() => window.print()} class="gap-2">
 				<Printer class="size-4" />
-				Print Record
+				{m.info_verify_print()}
 			</Button>
 		{/if}
 
 		<Button variant="ghost" href={ROUTES.courses.list} class="gap-1.5 text-xs text-muted-foreground">
-			<span>Browse Courses</span>
+			<span>{m.info_verify_browse_courses()}</span>
 			<ExternalLink class="size-3.5" />
 		</Button>
 	</div>

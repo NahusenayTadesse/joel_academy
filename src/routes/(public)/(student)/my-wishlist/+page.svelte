@@ -9,6 +9,7 @@
 	import EmptyState from '$lib/components/common/empty-state.svelte';
 	import PageHeader from '$lib/components/common/page-header.svelte';
 	import Button from '$lib/components/ui/button.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	let { data } = $props();
@@ -17,32 +18,32 @@
 
 	/** Where the button under each card leads, given any place the student already has. */
 	function nextStep({ course, enrollmentStatus }: Item) {
-		if (enrollmentStatus === 'ACTIVE') return { label: 'Go to Course', href: ROUTES.student.learn(course.slug) };
-		if (enrollmentStatus === 'PENDING') return { label: 'Payment Under Review', href: ROUTES.student.payments };
-		if (enrollmentStatus === 'REJECTED') return { label: 'Resubmit Payment', href: ROUTES.student.checkout(course.slug) };
+		if (enrollmentStatus === 'ACTIVE') return { label: m.learn_go_to_course(), href: ROUTES.student.learn(course.slug) };
+		if (enrollmentStatus === 'PENDING') return { label: m.learn_payment_under_review_cta(), href: ROUTES.student.payments };
+		if (enrollmentStatus === 'REJECTED') return { label: m.learn_resubmit_payment_cta(), href: ROUTES.student.checkout(course.slug) };
 		return course.accessType === 'FREE'
-			? { label: 'Enroll Free', href: ROUTES.courses.detail(course.slug) }
-			: { label: 'Move to Checkout', href: ROUTES.student.checkout(course.slug) };
+			? { label: m.learn_enroll_free(), href: ROUTES.courses.detail(course.slug) }
+			: { label: m.learn_move_to_checkout(), href: ROUTES.student.checkout(course.slug) };
 	}
 
 	let removing = $state<string | null>(null);
 </script>
 
 <svelte:head>
-	<title>Wishlist · {siteConfig.name}</title>
+	<title>{m.learn_wishlist()} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="mx-auto w-full max-w-7xl space-y-6 p-4 sm:p-6">
 	<PageHeader
-		title="Wishlist"
-		description="Courses you've saved for later - kept on your account, on every device you sign in to."
+		title={m.learn_wishlist()}
+		description={m.learn_wishlist_desc()}
 	/>
 
 	{#if data.items.length === 0}
-		<EmptyState icon={Heart} title="Your wishlist is empty" description="Courses you save for later will show up here.">
+		<EmptyState icon={Heart} title={m.learn_wishlist_empty()} description={m.learn_wishlist_empty_desc()}>
 			{#snippet action()}
-				<Button href={ROUTES.courses.list}>Browse courses</Button>
+				<Button href={ROUTES.courses.list}>{m.learn_browse_courses()}</Button>
 			{/snippet}
 		</EmptyState>
 	{:else}
@@ -60,8 +61,8 @@
 								removing = item.course.id;
 								return async ({ result, update }) => {
 									removing = null;
-									if (result.type === 'success') toast.info('Removed from wishlist', { description: item.course.title });
-									else toast.error('Could not update your wishlist', { description: 'Please try again.' });
+									if (result.type === 'success') toast.info(m.learn_wishlist_removed(), { description: item.course.title });
+									else toast.error(m.learn_wishlist_update_failed(), { description: m.learn_try_again() });
 									await update();
 								};
 							}}>
@@ -72,8 +73,8 @@
 								size="icon"
 								class="h-11 w-11"
 								disabled={removing === item.course.id}
-								aria-label="Remove {item.course.title} from wishlist"
-								title="Remove from wishlist"
+								aria-label={m.learn_wishlist_remove_label({ title: item.course.title })}
+								title={m.learn_wishlist_remove()}
 							>
 								<Trash2 class="size-4" />
 							</Button>

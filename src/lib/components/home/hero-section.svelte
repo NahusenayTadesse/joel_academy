@@ -8,8 +8,10 @@
 	import Sparkles from '@lucide/svelte/icons/sparkles';
 	import Button from '$lib/components/ui/button.svelte';
 	import { DEFAULT_LANDING, type LandingHero } from '$lib/content/landing';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import BrandGlobe from './brand-globe.svelte';
+	import { cmsHref } from './cms-link';
 
 	let { hero = DEFAULT_LANDING.hero }: { hero?: LandingHero } = $props();
 
@@ -21,9 +23,9 @@
 	});
 
 	const HIGHLIGHTS = [
-		{ icon: Sparkles, label: 'AI-first curriculum' },
-		{ icon: Award, label: 'Verified certificates' },
-		{ icon: Globe, label: 'Learn from anywhere' }
+		{ icon: Sparkles, label: m.home_hero_highlight_ai() },
+		{ icon: Award, label: m.home_hero_highlight_certificates() },
+		{ icon: Globe, label: m.home_hero_highlight_anywhere() }
 	];
 
 	let query = $state('');
@@ -45,15 +47,19 @@
 </script>
 
 <section class="relative isolate overflow-hidden">
-	<!-- Backdrop: a faint grid and two colour clouds. -->
+	<!--
+		Backdrop: a faint grid and two colour clouds. The clouds hang from fixed offsets at the top, not
+		from a share of the section's height, so they stay put when the web font swaps in and the
+		text above re-wraps (a moving cloud counts as a layout shift).
+	-->
 	<div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
 		<div class="bg-grid absolute inset-0 opacity-70"></div>
 		<div
-			class="glow absolute -top-1/3 -left-1/4 size-[70rem] opacity-20"
+			class="glow absolute -top-[18rem] -left-1/4 size-[70rem] opacity-20"
 			style:--glow-color="var(--primary)"
 		></div>
 		<div
-			class="glow absolute -right-1/4 -bottom-1/2 size-[60rem] opacity-15"
+			class="glow absolute top-[16rem] -right-1/4 size-[60rem] opacity-15"
 			style:--glow-color="var(--tertiary)"
 		></div>
 	</div>
@@ -101,8 +107,8 @@
 					<input
 						name="search"
 						bind:value={query}
-						placeholder="What do you want to learn?"
-						aria-label="Search courses"
+						placeholder={m.home_hero_search_placeholder()}
+						aria-label={m.home_hero_search_label()}
 						disabled={isPending}
 						class="h-11 w-full min-w-0 rounded-xl bg-transparent pr-3 pl-10 text-base text-foreground placeholder:text-placeholder focus-visible:outline-none md:text-sm"
 					/>
@@ -110,19 +116,19 @@
 				<Button type="submit" disabled={isPending} class="h-11 shrink-0 rounded-xl">
 					{#if isPending}
 						<LoaderCircle class="size-4 animate-spin" />
-						Searching...
+						{m.home_hero_searching()}
 					{:else}
-						Search
+						{m.home_hero_search_button()}
 					{/if}
 				</Button>
 			</form>
 
 			<div class="enter-up flex flex-wrap items-center gap-3" style:--delay="0.32s">
-				<Button href={hero.primaryCtaUrl} size="lg" class="group">
+				<Button href={cmsHref(hero.primaryCtaUrl)} size="lg" class="group">
 					{hero.primaryCtaText}
 					<ArrowRight class="size-4 transition-transform group-hover:translate-x-1" />
 				</Button>
-				<Button href={hero.secondaryCtaUrl} variant="glass" size="lg">
+				<Button href={cmsHref(hero.secondaryCtaUrl)} variant="glass" size="lg">
 					{hero.secondaryCtaText}
 				</Button>
 			</div>

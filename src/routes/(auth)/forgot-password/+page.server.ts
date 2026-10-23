@@ -2,13 +2,12 @@ import { APIError } from 'better-auth/api';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { auth } from '$lib/server/auth';
+import { m } from '$lib/paraglide/messages';
 import { requestedEmailAllowed } from '$lib/server/email';
 import { forgotSchema } from './schema';
 import { clientAddress, hit, waitText } from '$lib/server/spam';
 import type { Actions, PageServerLoad } from './$types';
 
-/* The same answer whether or not an account uses the address, so the form cannot be used to find out. */
-const SENT = "If an account uses that email, we've sent it a link to reset your password. The link expires in one hour.";
 
 export const load: PageServerLoad = async () => ({ form: await superValidate(zod4(forgotSchema)) });
 
@@ -22,7 +21,7 @@ export const actions: Actions = {
 		// Per connection too, so one client can't fan reset emails out across many addresses.
 		const wait = hit('passwordReset', clientAddress(event));
 		if (wait) {
-			return message(form, { type: 'error', text: `Too many requests. Try again in ${waitText(wait)}.` }, { status: 429 });
+			return message(form, { type: 'error', text: m.account_too_many_requests({ wait: waitText(wait) }) }, { status: 429 });
 		}
 
 		// A repeat within the limit gets the same answer and no email: the last link still works.
@@ -33,9 +32,10 @@ export const actions: Actions = {
 			} catch (err) {
 				if (!(err instanceof APIError)) throw err;
 				console.error('Password reset request failed:', err.body?.message ?? err.message);
-				return message(form, { type: 'error', text: 'Something went wrong. Try again in a moment.' }, { status: 500 });
+				return message(form, { type: 'error', text: m.account_something_wrong() }, { status: 500 });
 			}
 		}
-		return message(form, { type: 'success', text: SENT });
+		// The same answer whether or not an account uses the address, so the form cannot be used to find out.
+		return message(form, { type: 'success', text: m.account_forgot_sent() });
 	}
 };

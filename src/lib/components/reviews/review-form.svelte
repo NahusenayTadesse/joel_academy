@@ -9,6 +9,7 @@
 	import Button from '$lib/components/ui/button.svelte';
 	import Label from '$lib/components/ui/label.svelte';
 	import Textarea from '$lib/components/ui/textarea.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import StarPicker from './star-picker.svelte';
 	import StarRating from './star-rating.svelte';
 	import { REVIEW_COMMENT_MAX } from './rules';
@@ -51,9 +52,9 @@
 			return async ({ result, update }) => {
 				if (result.type === 'failure') {
 					localError =
-						typeof result.data?.reviewError === 'string' ? result.data.reviewError : 'Could not save your review.';
+						typeof result.data?.reviewError === 'string' ? result.data.reviewError : m.catalog_review_save_failed();
 				} else if (result.type === 'error') {
-					localError = 'Something went wrong. Please try again.';
+					localError = m.catalog_review_something_wrong();
 				} else {
 					await update({ reset: false });
 					editing = false;
@@ -70,18 +71,18 @@
 
 <div class="rounded-xl border border-border bg-card p-5">
 	{#if showForm}
-		<ActionForm action="?/review" class="flex flex-col gap-4" submit={submit(own ? 'Review updated.' : 'Thanks for your review!')}>
-			<h3 class="text-base font-semibold text-foreground">{own ? 'Edit your review' : 'Rate this course'}</h3>
-			<StarPicker bind:value={rating} legend="Your rating" />
+		<ActionForm action="?/review" class="flex flex-col gap-4" submit={submit(own ? m.catalog_review_updated() : m.catalog_review_thanks())}>
+			<h3 class="text-base font-semibold text-foreground">{own ? m.catalog_review_edit_heading() : m.catalog_review_rate_heading()}</h3>
+			<StarPicker bind:value={rating} legend={m.catalog_review_your_rating()} />
 			<div class="flex flex-col gap-1.5">
-				<Label for="review-comment">Your review <span class="font-normal text-muted-foreground">(optional)</span></Label>
+				<Label for="review-comment">{m.catalog_review_your_review()} <span class="font-normal text-muted-foreground">{m.catalog_review_optional()}</span></Label>
 				<Textarea
 					id="review-comment"
 					name="comment"
 					rows={4}
 					maxlength={REVIEW_COMMENT_MAX}
 					bind:value={comment}
-					placeholder="What did you like? What could be better?"
+					placeholder={m.catalog_review_placeholder()}
 					aria-describedby="review-comment-count"
 				/>
 				<p id="review-comment-count" class="text-right text-xs text-muted-foreground tabular-nums">
@@ -94,23 +95,23 @@
 			<div class="flex flex-wrap gap-2">
 				<Button type="submit" disabled={busy}>
 					{#if busy}<LoaderCircle class="size-4 animate-spin" aria-hidden="true" />{/if}
-					{own ? 'Save changes' : 'Submit review'}
+					{own ? m.catalog_review_save_changes() : m.catalog_review_submit()}
 				</Button>
 				{#if own}
-					<Button variant="outline" onclick={() => (editing = false)} disabled={busy}>Cancel</Button>
+					<Button variant="outline" onclick={() => (editing = false)} disabled={busy}>{m.catalog_review_cancel()}</Button>
 				{/if}
 			</div>
 		</ActionForm>
 	{:else if own}
 		<div class="flex flex-col gap-3">
 			<div class="flex flex-wrap items-center justify-between gap-2">
-				<h3 class="text-base font-semibold text-foreground">Your review</h3>
+				<h3 class="text-base font-semibold text-foreground">{m.catalog_review_your_review()}</h3>
 				<StarRating value={own.rating} />
 			</div>
 			{#if own.status === 'HIDDEN'}
 				<p class="flex items-start gap-2 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
 					<EyeOff class="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-					Our team has hidden this review, so other visitors don't see it.
+					{m.catalog_review_hidden()}
 				</p>
 			{/if}
 			{#if own.comment}
@@ -120,25 +121,25 @@
 				<p class="text-sm text-destructive" role="alert">{shownError}</p>
 			{/if}
 			{#if confirmingDelete}
-				<ActionForm action="?/deleteReview" class="flex flex-wrap items-center gap-2" submit={submit('Review deleted.')}>
-					<p class="w-full text-sm text-foreground sm:w-auto">Delete your review?</p>
+				<ActionForm action="?/deleteReview" class="flex flex-wrap items-center gap-2" submit={submit(m.catalog_review_deleted())}>
+					<p class="w-full text-sm text-foreground sm:w-auto">{m.catalog_review_delete_confirm()}</p>
 					<Button type="submit" size="sm" variant="destructive" disabled={busy}>
 						{#if busy}<LoaderCircle class="size-4 animate-spin" aria-hidden="true" />{/if}
-						Delete
+						{m.catalog_review_delete()}
 					</Button>
 					<Button size="sm" variant="outline" onclick={() => (confirmingDelete = false)} disabled={busy}>
-						Keep it
+						{m.catalog_review_keep()}
 					</Button>
 				</ActionForm>
 			{:else}
 				<div class="flex flex-wrap gap-2">
 					{#if canEdit}
 						<Button size="sm" variant="outline" onclick={startEdit}>
-							<Pencil aria-hidden="true" /> Edit
+							<Pencil aria-hidden="true" /> {m.catalog_review_edit()}
 						</Button>
 					{/if}
 					<Button size="sm" variant="ghost" class="text-destructive" onclick={() => (confirmingDelete = true)}>
-						<Trash2 aria-hidden="true" /> Delete
+						<Trash2 aria-hidden="true" /> {m.catalog_review_delete()}
 					</Button>
 				</div>
 			{/if}

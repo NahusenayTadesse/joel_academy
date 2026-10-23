@@ -114,7 +114,7 @@
 <div class="flex flex-col gap-6">
 	<PageHeader
 		title="Promo codes"
-		description="Discount codes students enter at checkout. Redeemed counts students who used the code on a course (paid, under review, or an online payment started in the last hour)."
+		description="Discount codes students enter at checkout. Redeemed counts students who used the code on a course (paid or with a receipt under review)."
 	/>
 	<LookupPage {data} tabTitle={false} schemas={{ add: addSchema, edit: editSchema }} {config} />
 </div>

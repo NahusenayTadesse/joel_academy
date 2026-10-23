@@ -1,12 +1,13 @@
 import { error } from '@sveltejs/kit';
 import { DEFAULT_PAGE_SIZE } from '$lib/content/catalog.constants';
+import { m } from '$lib/paraglide/messages';
 import { getCategory } from '$lib/server/public-catalog';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, url }) => {
 	const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
 	const result = await getCategory(params.slug, page, DEFAULT_PAGE_SIZE);
-	if (!result) error(404, 'Category not found');
+	if (!result) error(404, m.catalog_category_not_found());
 	return {
 		...result,
 		page,

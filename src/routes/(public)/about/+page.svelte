@@ -13,6 +13,7 @@
 	import FeatureCard from '$lib/components/marketing/feature-card.svelte';
 	import Timeline, { type TimelineEntry } from '$lib/components/marketing/timeline.svelte';
 	import Card from '$lib/components/ui/card.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
 
 	let { data } = $props();
@@ -20,61 +21,53 @@
 	const CORE_VALUES = [
 		{
 			icon: Target,
-			title: 'Outcomes over hours',
-			description:
-				'We measure success by what students can actually do, not just how many hours of video they watched.'
+			title: m.info_about_value_outcomes_title(),
+			description: m.info_about_value_outcomes_body()
 		},
 		{
 			icon: Heart,
-			title: 'Students first',
-			description:
-				'Every product and content decision starts with what genuinely helps students learn and finish.'
+			title: m.info_about_value_students_title(),
+			description: m.info_about_value_students_body()
 		},
 		{
 			icon: Lightbulb,
-			title: 'Practical over theoretical',
-			description:
-				'Courses are built around real projects and real problems, not abstract theory disconnected from practice.'
+			title: m.info_about_value_practical_title(),
+			description: m.info_about_value_practical_body()
 		},
 		{
 			icon: Handshake,
-			title: 'Instructor quality',
-			description:
-				'Every instructor is vetted for real-world experience, not just presentation skills.'
+			title: m.info_about_value_instructors_title(),
+			description: m.info_about_value_instructors_body()
 		}
 	];
 
 	const TIMELINE: TimelineEntry[] = [
 		{
-			year: 'Year 1',
-			title: 'The academy is founded',
-			description:
-				'Started with a small catalog and a simple goal: make high-quality, practical education accessible online.'
+			year: m.info_about_timeline_year1(),
+			title: m.info_about_timeline_year1_title(),
+			description: m.info_about_timeline_year1_body()
 		},
 		{
-			year: 'Year 2',
-			title: 'Instructor network grows',
-			description:
-				'Expanded to a global network of industry instructors across engineering, design, data, and business.'
+			year: m.info_about_timeline_year2(),
+			title: m.info_about_timeline_year2_title(),
+			description: m.info_about_timeline_year2_body()
 		},
 		{
-			year: 'Year 3',
-			title: 'Certificates launched',
-			description:
-				'Introduced certificates of completion so students could show what they learned to employers.'
+			year: m.info_about_timeline_year3(),
+			title: m.info_about_timeline_year3_title(),
+			description: m.info_about_timeline_year3_body()
 		},
 		{
-			year: 'Today',
-			title: 'A growing course catalog',
-			description:
-				'Courses spanning web development, cloud, security, data, design, and business, taught by real practitioners.'
+			year: m.info_about_timeline_today(),
+			title: m.info_about_timeline_today_title(),
+			description: m.info_about_timeline_today_body()
 		}
 	];
 </script>
 
 <svelte:head>
-	<title>About Us · {siteConfig.name}</title>
-	<meta name="description" content="Learn about {siteConfig.name} and our mission." />
+	<title>{m.info_about_meta_title()} · {siteConfig.name}</title>
+	<meta name="description" content={m.info_about_meta_description({ name: siteConfig.name })} />
 </svelte:head>
 
 <div>
@@ -83,11 +76,11 @@
 			class="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-4 py-20 text-center sm:px-6"
 		>
 			<h1 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-				About {siteConfig.name}
+				{m.info_about_heading({ name: siteConfig.name })}
 			</h1>
 			<p class="text-lg text-muted-foreground">
-				{siteConfig.description} We build a straightforward, self-paced learning platform where
-				instructors publish real courses and learners make steady progress at their own speed.
+				{m.shell_site_description()}
+				{m.info_about_intro()}
 			</p>
 		</div>
 	</section>
@@ -98,18 +91,13 @@
 
 	<Reveal>
 		<section class="mx-auto w-full max-w-4xl px-4 py-16 sm:px-6">
-			<h2 class="text-2xl font-semibold tracking-tight text-foreground">Our story</h2>
+			<h2 class="text-2xl font-semibold tracking-tight text-foreground">{m.info_about_story_title()}</h2>
 			<div class="mt-4 space-y-4 text-sm leading-relaxed text-muted-foreground">
 				<p>
-					{siteConfig.name} started from a simple frustration: most online courses either move too
-					slowly to be worth the time, or move so fast that they leave real understanding behind. We
-					wanted to build something different - courses taught by people who actually do the work
-					they teach, organized around outcomes instead of just video runtime.
+					{m.info_about_story_p1({ name: siteConfig.name })}
 				</p>
 				<p>
-					Every course on the platform is built around a clear set of skills a student should walk
-					away with, backed by real projects rather than passive watching. That philosophy shapes
-					everything from how we vet instructors to how we structure a single lesson.
+					{m.info_about_story_p2()}
 				</p>
 			</div>
 		</section>
@@ -124,20 +112,18 @@
 					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 						<Compass class="size-5" />
 					</span>
-					<h3 class="text-lg font-semibold text-foreground">Our mission</h3>
+					<h3 class="text-lg font-semibold text-foreground">{m.info_about_mission_title()}</h3>
 					<p class="text-sm text-muted-foreground">
-						Make practical, high-quality education accessible to anyone with the motivation to
-						learn, regardless of where they are starting from.
+						{m.info_about_mission_body()}
 					</p>
 				</Card>
 				<Card class="flex flex-col gap-3 p-6">
 					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 						<Award class="size-5" />
 					</span>
-					<h3 class="text-lg font-semibold text-foreground">Our vision</h3>
+					<h3 class="text-lg font-semibold text-foreground">{m.info_about_vision_title()}</h3>
 					<p class="text-sm text-muted-foreground">
-						A world where a learner's skills - not their credentials or connections - determine the
-						opportunities available to them.
+						{m.info_about_vision_body()}
 					</p>
 				</Card>
 			</div>
@@ -147,7 +133,7 @@
 	<Reveal>
 		<section class="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
 			<div class="mb-8 text-center">
-				<h2 class="text-2xl font-semibold tracking-tight text-foreground">Core values</h2>
+				<h2 class="text-2xl font-semibold tracking-tight text-foreground">{m.info_about_values_title()}</h2>
 			</div>
 			<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
 				{#each CORE_VALUES as value (value.title)}
@@ -166,20 +152,18 @@
 					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 						<BookOpen class="size-5" />
 					</span>
-					<h3 class="text-lg font-semibold text-foreground">Teaching philosophy</h3>
+					<h3 class="text-lg font-semibold text-foreground">{m.info_about_philosophy_title()}</h3>
 					<p class="text-sm text-muted-foreground">
-						We believe people learn by doing, not by watching. Every course is built around projects
-						and exercises that mirror real work, so what you practice is what you will actually use.
+						{m.info_about_philosophy_body()}
 					</p>
 				</div>
 				<div class="flex flex-col gap-3">
 					<span class="flex size-11 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 						<Users class="size-5" />
 					</span>
-					<h3 class="text-lg font-semibold text-foreground">Learning methodology</h3>
+					<h3 class="text-lg font-semibold text-foreground">{m.info_about_methodology_title()}</h3>
 					<p class="text-sm text-muted-foreground">
-						Courses are self-paced with structured sections and lessons, so you can move quickly
-						through what you already know and slow down where you need it.
+						{m.info_about_methodology_body()}
 					</p>
 				</div>
 			</div>
@@ -188,7 +172,7 @@
 
 	<Reveal>
 		<section class="mx-auto w-full max-w-4xl px-4 py-16 sm:px-6">
-			<h2 class="mb-8 text-2xl font-semibold tracking-tight text-foreground">Our journey</h2>
+			<h2 class="mb-8 text-2xl font-semibold tracking-tight text-foreground">{m.info_about_journey_title()}</h2>
 			<Timeline entries={TIMELINE} />
 		</section>
 	</Reveal>

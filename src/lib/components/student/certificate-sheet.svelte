@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from '$lib/paraglide/messages';
 	import { siteConfig } from '$lib/site';
 	import { isoDay } from './certificate-format';
 
@@ -64,7 +65,7 @@
 	viewBox="0 0 842 595"
 	xmlns="http://www.w3.org/2000/svg"
 	role="img"
-	aria-label="Certificate of Completion awarded to {recipientName} for {courseTitle}, number {code}"
+	aria-label={m.learn_cert_sheet_label({ name: recipientName, title: courseTitle, code })}
 	class="block h-auto w-full"
 	font-family={font}
 >
@@ -144,7 +145,7 @@
 	<!-- Verification card: the QR code links to the public verification page -->
 	<rect x="615" y="345" width="148" height="160" rx="6" fill={cardBg} stroke={borderGold} stroke-width="1" />
 	{#if qr}
-		<a href={verificationUrl} target="_blank" rel="noopener" aria-label="Verify this certificate online">
+		<a href={verificationUrl} target="_blank" rel="noopener" aria-label={m.learn_cert_verify_online()}>
 			<!-- One module of white margin around the code, as in the PDF. -->
 			<g transform="translate(639 357) scale({100 / (qr.size + 2)})">
 				<rect width={qr.size + 2} height={qr.size + 2} fill="#FFFFFF" />

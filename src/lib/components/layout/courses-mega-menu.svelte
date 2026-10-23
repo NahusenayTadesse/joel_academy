@@ -4,6 +4,7 @@
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import Layers from '@lucide/svelte/icons/layers';
 	import type { Category } from '$lib/content/catalog.types';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 
 	let { categories }: { categories: Pick<Category, 'id' | 'name' | 'slug'>[] } = $props();
@@ -14,7 +15,7 @@
 	<Popover.Trigger
 		class="flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
 	>
-		Courses
+		{m.shell_nav_courses()}
 		<ChevronDown class="size-3.5" aria-hidden="true" />
 	</Popover.Trigger>
 	<Popover.Portal>
@@ -24,7 +25,7 @@
 			class="z-50 w-[420px] rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[side=bottom]:slide-in-from-top-2 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
 		>
 			<p class="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-				Popular categories
+				{m.shell_menu_popular_categories()}
 			</p>
 			<div class="grid grid-cols-2 gap-1">
 				{#each categories as category (category.id)}
@@ -44,7 +45,7 @@
 					onclick={() => (open = false)}
 					class="flex items-center justify-between rounded-md px-2 py-1.5 text-sm font-medium text-brand-ink hover:bg-accent"
 				>
-					Browse all courses
+					{m.shell_menu_browse_all_courses()}
 					<ArrowRight class="size-3.5" />
 				</a>
 				<a
@@ -52,7 +53,7 @@
 					onclick={() => (open = false)}
 					class="flex items-center justify-between rounded-md px-2 py-1.5 text-sm text-foreground/80 hover:bg-accent hover:text-foreground"
 				>
-					View all categories
+					{m.shell_menu_view_all_categories()}
 					<ArrowRight class="size-3.5" />
 				</a>
 			</div>

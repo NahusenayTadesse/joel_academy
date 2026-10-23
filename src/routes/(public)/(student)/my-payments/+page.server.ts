@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { course, enrollment, paymentMethod } from '$lib/server/db/schema';
 import { requireUser } from '$lib/server/student';
+import { m } from '$lib/paraglide/messages';
 import type { PaymentRecord as PaymentRow } from '$lib/components/student/home/payment-status';
 import type { PageServerLoad } from './$types';
 
@@ -46,7 +47,7 @@ export const load: PageServerLoad = async (event) => {
 				status: row.status === 'ACTIVE' ? 'APPROVED' : row.status === 'REJECTED' ? 'DECLINED' : 'PENDING',
 				amount: row.amount,
 				currency: row.currency,
-				method: row.methodName ?? 'Bank transfer',
+				method: row.methodName ?? m.account_bank_transfer(),
 				reference: row.reference,
 				// No separate "submitted" stamp is kept: a pending row was last written by its submission.
 				submittedAt: (row.status === 'PENDING' ? row.updatedAt : row.createdAt).toISOString(),

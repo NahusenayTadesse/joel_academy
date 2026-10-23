@@ -3,6 +3,7 @@
 	import Layers from '@lucide/svelte/icons/layers';
 	import Card from '$lib/components/ui/card.svelte';
 	import type { Category } from '$lib/content/catalog.types';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
@@ -31,8 +32,7 @@
 		{/if}
 		{#if typeof courseCount === 'number'}
 			<p class="text-xs text-muted-foreground">
-				{courseCount}
-				{courseCount === 1 ? 'course' : 'courses'}
+				{m.catalog_course_count({ count: courseCount })}
 			</p>
 		{/if}
 	</a>

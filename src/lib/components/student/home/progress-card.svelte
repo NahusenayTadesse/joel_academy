@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Card from '$lib/components/ui/card.svelte';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	/** A card built around a circular progress ring - for the most recent course's completion. */
@@ -18,7 +19,7 @@
 </script>
 
 <Card class={cn('flex items-center gap-4 p-5', className)}>
-	<svg viewBox="0 0 96 96" class="size-20 shrink-0 -rotate-90" role="img" aria-label="{Math.round(clamped)}% complete">
+	<svg viewBox="0 0 96 96" class="size-20 shrink-0 -rotate-90" role="img" aria-label={m.learn_percent_complete({ percent: Math.round(clamped) })}>
 		<circle cx="48" cy="48" r={RADIUS} class="stroke-muted" stroke-width="8" fill="none" />
 		<circle
 			cx="48"

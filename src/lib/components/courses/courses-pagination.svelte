@@ -3,6 +3,7 @@
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import { buttonVariants } from '$lib/components/ui/variants';
+	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	/*
@@ -56,7 +57,7 @@
 	>
 		<div class="flex items-center gap-2">
 			<nav
-				aria-label="pagination"
+				aria-label={m.catalog_pagination_label()}
 				class="mx-0 flex w-fit justify-center"
 				aria-busy={isLoading}
 			>
@@ -64,7 +65,7 @@
 					<li>
 						<a
 							href={href(Math.max(1, page - 1))}
-							aria-label="Go to previous page"
+							aria-label={m.catalog_pagination_previous_label()}
 							aria-disabled={page <= 1 || isLoading}
 							class={cn(
 								buttonVariants({ variant: 'ghost', size: 'default' }),
@@ -73,7 +74,7 @@
 							)}
 						>
 							<ChevronLeft class="h-4 w-4" />
-							<span class="hidden sm:inline">Previous</span>
+							<span class="hidden sm:inline">{m.catalog_pagination_previous()}</span>
 						</a>
 					</li>
 					{#each pages as entry, index (entry === 'ellipsis' ? `ellipsis-${index}` : entry)}
@@ -81,7 +82,7 @@
 							{#if entry === 'ellipsis'}
 								<span aria-hidden="true" class="flex h-9 w-9 items-center justify-center">
 									<Ellipsis class="h-4 w-4" />
-									<span class="sr-only">More pages</span>
+									<span class="sr-only">{m.catalog_pagination_more()}</span>
 								</span>
 							{:else}
 								<a
@@ -101,7 +102,7 @@
 					<li>
 						<a
 							href={href(Math.min(totalPages, page + 1))}
-							aria-label="Go to next page"
+							aria-label={m.catalog_pagination_next_label()}
 							aria-disabled={page >= totalPages || isLoading}
 							class={cn(
 								buttonVariants({ variant: 'ghost', size: 'default' }),
@@ -109,7 +110,7 @@
 								(page >= totalPages || isLoading) && disabledClass
 							)}
 						>
-							<span class="hidden sm:inline">Next</span>
+							<span class="hidden sm:inline">{m.catalog_pagination_next()}</span>
 							<ChevronRight class="h-4 w-4" />
 						</a>
 					</li>

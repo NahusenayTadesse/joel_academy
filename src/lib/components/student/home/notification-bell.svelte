@@ -8,6 +8,7 @@
 	import EmptyState from '$lib/components/common/empty-state.svelte';
 	import Skeleton from '$lib/components/ui/skeleton.svelte';
 	import { buttonVariants } from '$lib/components/ui/variants';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES } from '$lib/site';
 	import { cn } from '@nahu/admin-kit/utils.js';
 	import NotificationCard from './notification-card.svelte';
@@ -50,7 +51,7 @@
 		return async ({ result }) => {
 			marking = false;
 			if (result.type !== 'success') {
-				toast.error('Could not mark notifications as read', { description: 'Please try again.' });
+				toast.error(m.learn_notifications_mark_failed(), { description: m.learn_try_again() });
 				return;
 			}
 			items = items?.map((item) => ({ ...item, read: true })) ?? null;
@@ -64,7 +65,7 @@
 <DropdownMenu.Root onOpenChange={(open) => open && loadLatest()}>
 	<DropdownMenu.Trigger
 		class={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'relative')}
-		aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
+		aria-label={unreadCount > 0 ? m.learn_bell_unread_label({ count: unreadCount }) : m.learn_notifications()}
 	>
 		<Bell class="size-4" />
 		{#if unreadCount > 0}
@@ -83,7 +84,7 @@
 			class="z-50 w-80 max-w-[calc(100vw-2rem)] rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
 		>
 			<div class="flex items-center justify-between gap-2 px-2 py-1.5">
-				<p class="text-sm font-semibold">Notifications</p>
+				<p class="text-sm font-semibold">{m.learn_notifications()}</p>
 				{#if unreadCount > 0}
 					<ActionForm action="{ROUTES.student.notifications}?/readAll" submit={markAllRead}>
 						<DropdownMenu.Item closeOnSelect={false}>
@@ -94,7 +95,7 @@
 									disabled={marking}
 									class="rounded-sm px-1 text-xs font-medium text-brand-ink outline-none hover:underline focus-visible:underline disabled:opacity-50 data-highlighted:underline"
 								>
-									Mark all read
+									{m.learn_mark_all_read()}
 								</button>
 							{/snippet}
 						</DropdownMenu.Item>
@@ -103,9 +104,9 @@
 			</div>
 			<DropdownMenu.Separator class="-mx-1 my-1 h-px bg-border" />
 			{#if failed}
-				<p class="px-3 py-6 text-center text-sm text-muted-foreground">Could not load notifications.</p>
+				<p class="px-3 py-6 text-center text-sm text-muted-foreground">{m.learn_notifications_load_failed()}</p>
 			{:else if items === null}
-				<div class="space-y-2 p-1" aria-label="Loading notifications">
+				<div class="space-y-2 p-1" aria-label={m.learn_notifications_loading()}>
 					{#each { length: 3 }, index (index)}
 						<Skeleton class="h-14 w-full rounded-lg" />
 					{/each}
@@ -113,12 +114,12 @@
 			{:else if items.length === 0}
 				<EmptyState
 					icon={Bell}
-					title="You're all caught up"
-					description="New notifications will appear here."
+					title={m.learn_caught_up_title()}
+					description={m.learn_caught_up_desc()}
 					class="border-none bg-transparent p-6"
 				/>
 			{:else}
-				<DropdownMenu.Group class="max-h-80 space-y-1 overflow-y-auto p-1" aria-label="Latest notifications">
+				<DropdownMenu.Group class="max-h-80 space-y-1 overflow-y-auto p-1" aria-label={m.learn_notifications_latest()}>
 					{#each items as notification (notification.id)}
 						<DropdownMenu.Item>
 							{#snippet child({ props })}
@@ -136,7 +137,7 @@
 						href={ROUTES.student.notifications}
 						class="flex items-center justify-center rounded-sm px-2 py-2 text-sm font-medium text-brand-ink outline-none hover:bg-accent data-highlighted:bg-accent"
 					>
-						View all notifications
+						{m.learn_view_all_notifications()}
 					</a>
 				{/snippet}
 			</DropdownMenu.Item>

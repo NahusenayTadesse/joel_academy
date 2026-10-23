@@ -1,5 +1,22 @@
+import { getLocale, INTL_LOCALES, type Locale } from '$lib/i18n';
+import { m } from '$lib/paraglide/messages';
+
+/** The current page's language; English outside a request (scripts, tests). */
+function currentLocale(): Locale {
+	try {
+		return getLocale();
+	} catch {
+		return 'en';
+	}
+}
+
+/** The `Intl` locale for the current page's language ('en-US' outside a request). */
+function intlLocale(): string {
+	return INTL_LOCALES[currentLocale()] ?? 'en-US';
+}
+
 /** Formats a number as currency. Defaults to ETB to match the academy's primary market. */
-export function formatCurrency(value: number | string, currency = 'ETB', locale = 'en-US'): string {
+export function formatCurrency(value: number | string, currency = 'ETB', locale = intlLocale()): string {
 	const amount = typeof value === 'string' ? Number(value) : value;
 	if (!Number.isFinite(amount)) return '—';
 	return new Intl.NumberFormat(locale, {
@@ -10,13 +27,13 @@ export function formatCurrency(value: number | string, currency = 'ETB', locale 
 }
 
 /** Formats a number with locale-aware thousands separators. */
-export function formatNumber(value: number, locale = 'en-US'): string {
+export function formatNumber(value: number, locale = intlLocale()): string {
 	if (!Number.isFinite(value)) return '—';
 	return new Intl.NumberFormat(locale).format(value);
 }
 
 /** Formats a number as a compact string (e.g. 12_400 -> "12.4K"). */
-export function formatCompactNumber(value: number, locale = 'en-US'): string {
+export function formatCompactNumber(value: number, locale = intlLocale()): string {
 	if (!Number.isFinite(value)) return '—';
 	return new Intl.NumberFormat(locale, { notation: 'compact', maximumFractionDigits: 1 }).format(
 		value
@@ -28,9 +45,10 @@ export function formatDurationMinutes(minutes: number | null | undefined): strin
 	if (!minutes || !Number.isFinite(minutes) || minutes <= 0) return '—';
 	const hours = Math.floor(minutes / 60);
 	const remainingMinutes = Math.round(minutes % 60);
-	if (hours === 0) return `${remainingMinutes}m`;
-	if (remainingMinutes === 0) return `${hours}h`;
-	return `${hours}h ${remainingMinutes}m`;
+	const locale = currentLocale();
+	if (hours === 0) return m.shell_duration_minutes({ minutes: remainingMinutes }, { locale });
+	if (remainingMinutes === 0) return m.shell_duration_hours({ hours }, { locale });
+	return m.shell_duration_hours_minutes({ hours, minutes: remainingMinutes }, { locale });
 }
 
 /** Formats a second count into a human-readable duration (e.g. 125 -> "2:05"). */

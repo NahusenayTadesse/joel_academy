@@ -18,6 +18,7 @@
 	import Label from '$lib/components/ui/label.svelte';
 	import LoadingButton from '$lib/components/ui/loading-button.svelte';
 	import { localPhone } from '$lib/phone';
+	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	let { data, form } = $props();
@@ -54,12 +55,12 @@
 </script>
 
 <svelte:head>
-	<title>Account · {siteConfig.name}</title>
+	<title>{m.account_account_title()} · {siteConfig.name}</title>
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="mx-auto w-full max-w-3xl space-y-6 p-4 sm:p-6">
-	<PageHeader title="Account" description="Your details, phone number for SMS updates, and password." />
+	<PageHeader title={m.account_account_title()} description={m.account_account_description()} />
 
 	<!-- Profile -->
 	<section class={sectionClass} aria-labelledby="profile-heading">
@@ -67,12 +68,12 @@
 			<span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand-ink">
 				<User class="size-4" aria-hidden="true" />
 			</span>
-			<h2 id="profile-heading" class="text-lg font-bold text-foreground">Profile</h2>
+			<h2 id="profile-heading" class="text-lg font-bold text-foreground">{m.account_profile()}</h2>
 		</div>
 		<ActionForm action="?/profile" class="space-y-4" submit={submit('profile', false)}>
 			<AuthField
 				name="name"
-				label="Full name"
+				label={m.account_full_name()}
 				autocomplete="name"
 				icon={User}
 				value={account.name}
@@ -81,11 +82,11 @@
 			/>
 			<div class="space-y-2">
 				<div class="flex items-center justify-between">
-					<Label for="email">Email Address</Label>
+					<Label for="email">{m.account_email_label()}</Label>
 					{#if account.emailVerified}
-						<Badge variant="success">Verified</Badge>
+						<Badge variant="success">{m.account_verified()}</Badge>
 					{:else}
-						<Badge variant="warning">Not confirmed</Badge>
+						<Badge variant="warning">{m.account_not_confirmed()}</Badge>
 					{/if}
 				</div>
 				<div class="relative">
@@ -95,12 +96,12 @@
 					/>
 					<Input id="email" type="email" value={account.email} readonly class="pl-9 text-muted-foreground" />
 				</div>
-				<p class="text-xs text-muted-foreground">Your email is how you sign in, so it can't be changed here.</p>
+				<p class="text-xs text-muted-foreground">{m.account_email_locked()}</p>
 			</div>
 			{#if form?.profile && 'saved' in form.profile}
-				<p class={successClass} role="status"><CircleCheck class="size-4" aria-hidden="true" /> Profile saved.</p>
+				<p class={successClass} role="status"><CircleCheck class="size-4" aria-hidden="true" /> {m.account_profile_saved()}</p>
 			{/if}
-			<LoadingButton type="submit" loading={busy === 'profile'} loadingText="Saving...">Save profile</LoadingButton>
+			<LoadingButton type="submit" loading={busy === 'profile'} loadingText={m.account_saving()}>{m.account_save_profile()}</LoadingButton>
 		</ActionForm>
 	</section>
 
@@ -111,9 +112,9 @@
 				<MessageSquareText class="size-4" aria-hidden="true" />
 			</span>
 			<div>
-				<h2 id="phone-heading" class="text-lg font-bold text-foreground">Phone number</h2>
+				<h2 id="phone-heading" class="text-lg font-bold text-foreground">{m.account_phone_number()}</h2>
 				<p class="text-sm text-muted-foreground">
-					We text a verified number when you're enrolled, a payment is reviewed, or a certificate is ready.
+					{m.account_phone_section_description()}
 				</p>
 			</div>
 		</div>
@@ -123,15 +124,15 @@
 				<div class="flex flex-col gap-3 rounded-lg bg-success/10 p-3 sm:flex-row sm:items-center sm:justify-between" role="status">
 					<p class="flex items-center gap-2 text-sm text-success-ink">
 						<CircleCheck class="size-4 shrink-0" aria-hidden="true" />
-						Phone number verified. You'll get SMS updates at {localPhone(form.verifyCode.verified)}.
+						{m.account_phone_verified_msg({ phone: localPhone(form.verifyCode.verified) })}
 					</p>
 					<Button size="sm" variant="outline" href={data.continueTo ?? ROUTES.student.courses} class="shrink-0">
-						{data.continueTo ? 'Continue' : 'Go to My Courses'}
+						{data.continueTo ? m.account_continue() : m.account_go_to_my_courses()}
 					</Button>
 				</div>
 			{:else if form?.removePhone}
 				<p class={successClass} role="status">
-					<CircleCheck class="size-4" aria-hidden="true" /> Phone number removed. We won't text you anymore.
+					<CircleCheck class="size-4" aria-hidden="true" /> {m.account_phone_removed()}
 				</p>
 			{/if}
 
@@ -139,14 +140,14 @@
 				<!-- Step two: the code. -->
 				<div class="rounded-lg border border-brand/30 bg-brand/5 p-4">
 					<p class="text-sm text-foreground">
-						Enter the 6-digit code we sent to
-						<span class="font-semibold">{localPhone(data.pendingPhone)}</span>. It's valid for 5 minutes.
+						{m.account_code_sent_before()}
+						<span class="font-semibold">{localPhone(data.pendingPhone)}</span>{m.account_code_sent_after()}
 					</p>
 					<ActionForm action="?/verifyCode" class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start" submit={submit('verifyCode')}>
 						<div class="sm:w-48">
 							<AuthField
 								name="code"
-								label="Verification code"
+								label={m.account_verification_code()}
 								placeholder="123456"
 								autocomplete="one-time-code"
 								inputmode="numeric"
@@ -156,8 +157,8 @@
 								disabled={busy === 'verifyCode'}
 							/>
 						</div>
-						<LoadingButton type="submit" class="sm:mt-6" loading={busy === 'verifyCode'} loadingText="Checking...">
-							Verify number
+						<LoadingButton type="submit" class="sm:mt-6" loading={busy === 'verifyCode'} loadingText={m.account_checking()}>
+							{m.account_verify_number()}
 						</LoadingButton>
 					</ActionForm>
 					<div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
@@ -168,19 +169,19 @@
 								class="font-medium text-brand-ink hover:underline disabled:opacity-50"
 								disabled={busy === 'resend'}
 							>
-								{busy === 'resend' ? 'Sending...' : 'Send a new code'}
+								{busy === 'resend' ? m.account_sending() : m.account_send_new_code()}
 							</button>
 						</ActionForm>
 						<ActionForm action="?/cancelCode" submit={submit('cancel')}>
 							<button type="submit" class="text-muted-foreground hover:text-foreground hover:underline">
-								Use a different number
+								{m.account_use_different_number()}
 							</button>
 						</ActionForm>
 					</div>
 					{#if form?.sendCode && 'error' in form.sendCode}
 						<p class="mt-3 {errorClass}" role="alert">{form.sendCode.error}</p>
 					{:else if form?.sendCode && 'sent' in form.sendCode}
-						<p class="mt-3 text-sm text-muted-foreground" role="status">A new code is on its way.</p>
+						<p class="mt-3 text-sm text-muted-foreground" role="status">{m.account_new_code_sent()}</p>
 					{/if}
 				</div>
 			{:else if account.phone && !changing}
@@ -189,26 +190,26 @@
 					<div class="flex items-center gap-3">
 						<Phone class="size-4 text-muted-foreground" aria-hidden="true" />
 						<span class="font-medium text-foreground">{localPhone(account.phone)}</span>
-						<Badge variant="success" class="gap-1"><BadgeCheck class="size-3" aria-hidden="true" /> Verified</Badge>
+						<Badge variant="success" class="gap-1"><BadgeCheck class="size-3" aria-hidden="true" /> {m.account_verified()}</Badge>
 					</div>
 					<div class="flex flex-wrap gap-2">
 						<Button size="sm" variant="outline" onclick={() => ((changing = true), (confirmingRemove = false))}>
-							Change number
+							{m.account_change_number()}
 						</Button>
 						{#if !confirmingRemove}
 							<Button size="sm" variant="ghost" class="text-destructive" onclick={() => (confirmingRemove = true)}>
-								Remove
+								{m.account_remove()}
 							</Button>
 						{/if}
 					</div>
 				</div>
 				{#if confirmingRemove}
 					<ActionForm action="?/removePhone" class="flex flex-col gap-3 rounded-lg bg-destructive/5 p-4 sm:flex-row sm:items-center sm:justify-between" submit={submit('remove')}>
-						<p class="text-sm text-foreground">Remove this number? You'll stop getting SMS updates.</p>
+						<p class="text-sm text-foreground">{m.account_remove_confirm()}</p>
 						<div class="flex shrink-0 gap-2">
-							<Button size="sm" variant="ghost" onclick={() => (confirmingRemove = false)}>Keep it</Button>
+							<Button size="sm" variant="ghost" onclick={() => (confirmingRemove = false)}>{m.account_keep_it()}</Button>
 							<LoadingButton type="submit" size="sm" variant="destructive" loading={busy === 'remove'}>
-								Remove number
+								{m.account_remove_number()}
 							</LoadingButton>
 						</div>
 					</ActionForm>
@@ -217,14 +218,14 @@
 				<!-- Step one: the number. -->
 				{#if data.codeUnsent && !form?.sendCode}
 					<p class={errorClass} role="alert">
-						Your account is ready, but we couldn't send a code to this number just now. Please try again.
+						{m.account_code_unsent()}
 					</p>
 				{/if}
 				<ActionForm action="?/sendCode" class="flex flex-col gap-3 sm:flex-row sm:items-start" submit={submit('sendCode', false)}>
 					<div class="flex-1">
 						<AuthField
 							name="phone"
-							label={account.phone ? 'New phone number' : 'Phone number'}
+							label={account.phone ? m.account_new_phone_number() : m.account_phone_number()}
 							type="tel"
 							placeholder="0912 345 678"
 							autocomplete="tel"
@@ -237,13 +238,13 @@
 									: ''}
 							errors={form?.sendCode && 'error' in form.sendCode ? [form.sendCode.error] : undefined}
 							disabled={busy === 'sendCode'}
-							hint="An Ethiopian mobile number (09… or 07…). We'll text you a code to confirm it."
+							hint={m.account_phone_hint()}
 						/>
 					</div>
 					<div class="flex gap-2 sm:mt-6">
-						<LoadingButton type="submit" loading={busy === 'sendCode'} loadingText="Sending...">Send code</LoadingButton>
+						<LoadingButton type="submit" loading={busy === 'sendCode'} loadingText={m.account_sending()}>{m.account_send_code()}</LoadingButton>
 						{#if changing}
-							<Button variant="ghost" onclick={() => (changing = false)}>Cancel</Button>
+							<Button variant="ghost" onclick={() => (changing = false)}>{m.account_cancel()}</Button>
 						{/if}
 					</div>
 				</ActionForm>
@@ -259,12 +260,10 @@
 			</span>
 			<div>
 				<h2 id="password-heading" class="text-lg font-bold text-foreground">
-					{account.hasPassword ? 'Change password' : 'Set a password'}
+					{account.hasPassword ? m.account_change_password() : m.account_set_a_password()}
 				</h2>
 				<p class="text-sm text-muted-foreground">
-					{account.hasPassword
-						? "You'll stay signed in here; other devices will be signed out."
-						: 'You sign in with Google. Add a password to sign in with your email too.'}
+					{account.hasPassword ? m.account_password_change_note() : m.account_password_google_note()}
 				</p>
 			</div>
 		</div>
@@ -272,7 +271,7 @@
 			{#if account.hasPassword}
 				<AuthField
 					name="currentPassword"
-					label="Current password"
+					label={m.account_current_password()}
 					type="password"
 					autocomplete="current-password"
 					icon={Lock}
@@ -283,7 +282,7 @@
 			<div class="grid gap-4 sm:grid-cols-2">
 				<AuthField
 					name="newPassword"
-					label="New password"
+					label={m.account_new_password()}
 					type="password"
 					autocomplete="new-password"
 					icon={Lock}
@@ -292,7 +291,7 @@
 				/>
 				<AuthField
 					name="confirmPassword"
-					label="Confirm new password"
+					label={m.account_confirm_new_password()}
 					type="password"
 					autocomplete="new-password"
 					icon={Lock}
@@ -301,18 +300,18 @@
 				/>
 			</div>
 			<p class="text-xs text-muted-foreground">
-				At least 8 characters, with an uppercase and a lowercase letter, a number and a symbol.
+				{m.account_password_rules()}
 			</p>
 			{#if passwordError && !passwordError.field}
 				<p class={errorClass} role="alert">{passwordError.error}</p>
 			{:else if form?.password && 'saved' in form.password}
 				<p class={successClass} role="status">
 					<CircleCheck class="size-4" aria-hidden="true" />
-					{form.password.saved === 'set' ? 'Password set.' : 'Password changed.'}
+					{form.password.saved === 'set' ? m.account_password_set() : m.account_password_changed()}
 				</p>
 			{/if}
-			<LoadingButton type="submit" loading={busy === 'password'} loadingText="Saving...">
-				{account.hasPassword ? 'Change password' : 'Set password'}
+			<LoadingButton type="submit" loading={busy === 'password'} loadingText={m.account_saving()}>
+				{account.hasPassword ? m.account_change_password() : m.account_set_password()}
 			</LoadingButton>
 		</ActionForm>
 	</section>
