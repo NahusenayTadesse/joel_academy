@@ -81,7 +81,3 @@ export function phoneChangedSms(details: { newPhone: string | null; url: string 
 export function certificateRevokedSms(details: { courseTitle: string; code: string; reason: string }) {
 	return `${NAME}: Your certificate ${details.code} for "${clip(details.courseTitle, 60)}" has been revoked. Reason: ${sentence(details.reason, 120)}. Questions? Reply to our email.`;
 }
-
-export function paymentNeedsReviewSms(details: { studentName: string; courseTitle: string; reason: string; url: string }) {
-	return `${NAME}: Online payment needs review. ${clip(details.studentName, 40)}, "${clip(details.courseTitle, 50)}": ${sentence(details.reason, 110)}. ${details.url}`;
-}

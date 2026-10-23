@@ -1,16 +1,15 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ChapaVerification } from './chapa';
 
 /*
- * Promo quoting, full-discount enrollment and Chapa settlement against a real database, with
- * Chapa's verify API and the mailer replaced. Runs only when DATABASE_URL names a database ending
- * in `_test`, since it writes (and then removes) its own user, codes and payments.
+ * Promo quoting and full-discount enrollment against a real database, with the mailer replaced.
+ * Runs only when DATABASE_URL names a database ending in `_test`, since it writes (and then
+ * removes) its own user, codes and payments.
  */
 
 const url = process.env.DATABASE_URL ?? '';
 const enabled = /\/[a-z0-9_]+_test(\?|$)/i.test(url);
 
-const sent = vi.hoisted(() => ({ enrolled: [] as unknown[], certificates: [] as unknown[], staffReviews: [] as unknown[] }));
+const sent = vi.hoisted(() => ({ enrolled: [] as unknown[], certificates: [] as unknown[] }));
 vi.mock('$lib/server/email', () => ({
 	enrollmentConfirmedEmail: vi.fn(async (details: unknown) => {
 		sent.enrolled.push(details);
@@ -20,10 +19,7 @@ vi.mock('$lib/server/email', () => ({
 		sent.certificates.push(details);
 		return 'SKIPPED';
 	}),
-	receiptSubmittedAdminEmail: vi.fn(async () => undefined),
-	paymentNeedsReviewAdminEmail: vi.fn(async (details: unknown) => {
-		sent.staffReviews.push(details);
-	})
+	receiptSubmittedAdminEmail: vi.fn(async () => undefined)
 }));
 
 describe.skipIf(!enabled)('checkout against the test database', () => {
@@ -34,7 +30,6 @@ describe.skipIf(!enabled)('checkout against the test database', () => {
 		schema: typeof import('./db/schema');
 		promo: typeof import('./promo');
 		enrollment: typeof import('./enrollment');
-		settlement: typeof import('./chapa-settlement');
 		orm: typeof import('drizzle-orm');
 	};
 	let paidCourse: { id: number; price: string; discountPrice: string | null; currency: string };
@@ -46,7 +41,6 @@ describe.skipIf(!enabled)('checkout against the test database', () => {
 			schema: await import('./db/schema'),
 			promo: await import('./promo'),
 			enrollment: await import('./enrollment'),
-			settlement: await import('./chapa-settlement'),
 			orm: await import('drizzle-orm')
 		};
 		const { db, schema, orm } = mod;
@@ -74,11 +68,9 @@ describe.skipIf(!enabled)('checkout against the test database', () => {
 		const { db, schema, orm } = mod;
 		sent.enrolled.length = 0;
 		sent.certificates.length = 0;
-		sent.staffReviews.length = 0;
 		await db.delete(schema.certificate).where(orm.eq(schema.certificate.userId, userId));
 		await db.delete(schema.lessonProgress).where(orm.eq(schema.lessonProgress.userId, userId));
 		await db.delete(schema.enrollment).where(orm.eq(schema.enrollment.userId, userId));
-		await db.delete(schema.chapaPayment).where(orm.eq(schema.chapaPayment.userId, userId));
 	});
 
 	async function code(suffix: string, values: Partial<typeof import('./db/schema').promoCode.$inferInsert>) {
@@ -130,19 +122,20 @@ describe.skipIf(!enabled)('checkout against the test database', () => {
 		await expect(quote('bad code!')).rejects.toMatchObject({ code: 'INVALID' });
 	});
 
-	it('counts redemptions, holding in-flight Chapa checkouts for an hour, but not the student’s own', async () => {
+	it('counts redemptions from pending and active places, but not the student’s own', async () => {
 		const { db, schema, promo } = mod;
 		const limited = await code('M', { maxRedemptions: 1 });
 		const [found] = await db.select().from(schema.promoCode).where(mod.orm.eq(schema.promoCode.code, limited));
 
-		// Someone else's checkout in flight holds the only redemption…
+		// Someone else's receipt under review holds the only redemption…
 		const otherId = `${userId}-b`;
 		await db.insert(schema.user).values({ id: otherId, name: 'Other Buyer', email: `${otherId}@example.com` });
 		try {
-			await db.insert(schema.chapaPayment).values({
-				txRef: `jta-hold-${Date.now()}`,
+			await db.insert(schema.enrollment).values({
 				userId: otherId,
 				courseId: paidCourse.id,
+				status: 'PENDING',
+				paymentProvider: 'MANUAL',
 				amount: '1.00',
 				promoCodeId: found.id
 			});
@@ -155,13 +148,14 @@ describe.skipIf(!enabled)('checkout against the test database', () => {
 			).resolves.toBeTruthy();
 			expect((await promo.redemptionCounts()).get(found.id)).toBe(1);
 
-			// An hour later the abandoned checkout lets it go.
+			// A rejected receipt lets it go.
 			await db
-				.update(schema.chapaPayment)
-				.set({ createdAt: new Date(Date.now() - 61 * 60 * 1000) })
-				.where(mod.orm.eq(schema.chapaPayment.userId, otherId));
+				.update(schema.enrollment)
+				.set({ status: 'REJECTED' })
+				.where(mod.orm.eq(schema.enrollment.userId, otherId));
 			await expect(promo.quoteCourse({ userId, courseId: paidCourse.id, code: limited })).resolves.toBeTruthy();
 		} finally {
+			await db.delete(schema.enrollment).where(mod.orm.eq(schema.enrollment.userId, otherId));
 			await db.delete(schema.user).where(mod.orm.eq(schema.user.id, otherId));
 		}
 	});
@@ -227,133 +221,5 @@ describe.skipIf(!enabled)('checkout against the test database', () => {
 		const again = await enrollment.markLessonComplete(userId, lessons[0].id);
 		expect(again).toMatchObject({ certificateCode: last.certificateCode, certificateIssued: false });
 		expect(sent.certificates).toHaveLength(1);
-	});
-
-	describe('settleChapaPayment', () => {
-		async function payment(amount = '16.99', currency = 'ETB') {
-			const { db, schema } = mod;
-			const txRef = `jta-test${Math.random().toString(36).slice(2, 12)}`;
-			await db.insert(schema.chapaPayment).values({ txRef, userId, courseId: paidCourse.id, amount, currency });
-			return txRef;
-		}
-		const chapaSays = (over: Partial<ChapaVerification> = {}) =>
-			vi.fn(async (txRef: string): Promise<ChapaVerification> => ({
-				found: true,
-				status: 'success',
-				amount: '16.99',
-				currency: 'ETB',
-				txRef,
-				reference: 'APtest123',
-				message: 'ok',
-				...over
-			}));
-		const placeOf = async () => mod.enrollment.getEnrollment(userId, paidCourse.id);
-
-		it('settles a verified payment: PAID, enrollment ACTIVE via Chapa, one email', async () => {
-			const txRef = await payment();
-			const verify = chapaSays();
-			const outcome = await mod.settlement.settleChapaPayment(txRef, verify);
-			expect(outcome).toMatchObject({ status: 'paid', alreadySettled: false, payment: { status: 'PAID', chapaReference: 'APtest123' } });
-			expect(await placeOf()).toMatchObject({
-				status: 'ACTIVE',
-				paymentProvider: 'CHAPA',
-				amount: '16.99',
-				transactionReference: 'APtest123'
-			});
-			expect((await placeOf())?.paidAt).toBeInstanceOf(Date);
-			expect(sent.enrolled).toHaveLength(1);
-
-			// Again: nothing new is written, nobody is emailed twice, Chapa is not even asked.
-			const again = await mod.settlement.settleChapaPayment(txRef, verify);
-			expect(again).toMatchObject({ status: 'paid', alreadySettled: true });
-			expect(verify).toHaveBeenCalledTimes(1);
-			expect(sent.enrolled).toHaveLength(1);
-		});
-
-		it('settles exactly once when the webhook and the return page race', async () => {
-			const txRef = await payment();
-			const verify = chapaSays();
-			const outcomes = await Promise.all([1, 2, 3].map(() => mod.settlement.settleChapaPayment(txRef, verify)));
-			expect(outcomes.every((o) => o.status === 'paid')).toBe(true);
-			expect(outcomes.filter((o) => o.status === 'paid' && !o.alreadySettled)).toHaveLength(1);
-			expect(sent.enrolled).toHaveLength(1);
-		});
-
-		it('turns a pending or rejected receipt into an ACTIVE Chapa enrollment', async () => {
-			const { db, schema } = mod;
-			await db.insert(schema.enrollment).values({
-				userId,
-				courseId: paidCourse.id,
-				status: 'REJECTED',
-				paymentProvider: 'MANUAL',
-				receipt: 'old.png',
-				rejectionReason: 'Blurry'
-			});
-			const outcome = await mod.settlement.settleChapaPayment(await payment(), chapaSays());
-			expect(outcome.status).toBe('paid');
-			expect(await placeOf()).toMatchObject({ status: 'ACTIVE', paymentProvider: 'CHAPA', rejectionReason: null });
-		});
-
-		it('records a second payment for an active course and alerts staff to refund it', async () => {
-			const first = await payment();
-			await mod.settlement.settleChapaPayment(first, chapaSays());
-			const second = await payment();
-			const outcome = await mod.settlement.settleChapaPayment(second, chapaSays());
-			expect(outcome).toMatchObject({ status: 'paid', payment: { status: 'PAID' } });
-			expect(sent.enrolled).toHaveLength(1);
-			expect(sent.staffReviews).toHaveLength(1);
-			expect(sent.staffReviews[0]).toMatchObject({ reason: expect.stringMatching(/refund/i) });
-		});
-
-		it('refuses an amount or currency mismatch and marks the payment FAILED', async () => {
-			const short = await payment();
-			expect(await mod.settlement.settleChapaPayment(short, chapaSays({ amount: '1.00' }))).toMatchObject({
-				status: 'failed',
-				payment: { status: 'FAILED' }
-			});
-			// Money was taken: staff hear about it once, not again on every re-check.
-			expect(sent.staffReviews).toHaveLength(1);
-			expect(sent.staffReviews[0]).toMatchObject({ reason: expect.stringMatching(/needs staff review/i) });
-			await mod.settlement.settleChapaPayment(short, chapaSays({ amount: '1.00' }));
-			expect(sent.staffReviews).toHaveLength(1);
-			const dollars = await payment();
-			expect(await mod.settlement.settleChapaPayment(dollars, chapaSays({ currency: 'USD' }))).toMatchObject({
-				status: 'failed'
-			});
-			expect(await placeOf()).toBeUndefined();
-			expect(sent.enrolled).toHaveLength(0);
-			expect(sent.staffReviews).toHaveLength(2);
-		});
-
-		it('leaves an unconfirmed payment PENDING and reports a retryable wait', async () => {
-			const txRef = await payment();
-			expect(await mod.settlement.settleChapaPayment(txRef, chapaSays({ status: 'pending' }))).toMatchObject({
-				status: 'pending',
-				retryable: true,
-				payment: { status: 'PENDING' }
-			});
-			const unreachable = vi.fn(async (): Promise<ChapaVerification> => {
-				throw new Error('ECONNRESET');
-			});
-			expect(await mod.settlement.settleChapaPayment(txRef, unreachable)).toMatchObject({ status: 'pending', retryable: true });
-			expect(await placeOf()).toBeUndefined();
-		});
-
-		it('marks a cancelled payment FAILED, and still settles it if Chapa later says it was paid', async () => {
-			const txRef = await payment();
-			expect(await mod.settlement.settleChapaPayment(txRef, chapaSays({ status: 'cancelled' }))).toMatchObject({
-				status: 'failed'
-			});
-			expect(await mod.settlement.settleChapaPayment(txRef, chapaSays())).toMatchObject({ status: 'paid' });
-			expect(await placeOf()).toMatchObject({ status: 'ACTIVE' });
-		});
-
-		it('ignores a reference it never issued', async () => {
-			expect(await mod.settlement.settleChapaPayment('jta-unknownref', chapaSays())).toMatchObject({
-				status: 'pending',
-				retryable: false,
-				payment: null
-			});
-		});
 	});
 });

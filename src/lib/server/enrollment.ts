@@ -17,9 +17,8 @@ import { courseProgress, type CourseProgress } from '$lib/progress';
 
 /*
  * Who may learn what. Free courses enroll straight to ACTIVE; paid ones go PENDING with a receipt
- * until staff approve, or ACTIVE once Chapa confirms the money (`chapa-settlement.ts`), or straight
- * to ACTIVE when a promo code covers the whole price. Lesson content is open to ACTIVE enrollments,
- * and preview lessons to anyone signed in. Every function takes the user id from the caller's
+ * until staff approve, or straight to ACTIVE when a promo code covers the whole price. Lesson
+ * content is open to ACTIVE enrollments, and preview lessons to anyone signed in. Every function takes the user id from the caller's
  * session, never from a form, and every price comes from `quoteCourse`, never from the page.
  *
  * Emails go out after the write has committed; they never fail the request (see `$lib/server/email`).

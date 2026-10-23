@@ -3,8 +3,6 @@ import { eq } from 'drizzle-orm';
 import { MAX_UPLOAD_BYTES, saveUploadedFile, UploadRefused } from '@nahu/admin-kit/server/files';
 import { db } from '$lib/server/db';
 import { paymentMethod, promoCode, user as userTable } from '$lib/server/db/schema';
-import { ChapaError, chapaEnabled } from '$lib/server/chapa';
-import { latestPendingPayment, settleChapaPayment, startChapaCheckout } from '$lib/server/chapa-settlement';
 import { receiptReceivedEmail, receiptSubmittedAdminEmail } from '$lib/server/email';
 import {
 	activePaymentMethods,
@@ -22,9 +20,6 @@ import { receiptProblem } from '$lib/receipt';
 import { ROUTES } from '$lib/site';
 import type { Actions, PageServerLoad } from './$types';
 
-/** A Chapa checkout older than this is not re-verified on every visit. */
-const RECHECK_WINDOW_MS = 24 * 60 * 60 * 1000;
-
 async function paidCourse(slug: string) {
 	const found = await getCourse(slug);
 	if (!found) error(404, 'Course not found');
@@ -35,7 +30,7 @@ async function paidCourse(slug: string) {
 
 /** The refusal the student sees for anything checkout can say no to; anything else is a fault. */
 function refusal(err: unknown): string | null {
-	if (err instanceof EnrollmentError || err instanceof PromoError || err instanceof ChapaError) return err.message;
+	if (err instanceof EnrollmentError || err instanceof PromoError) return err.message;
 	return null;
 }
 
@@ -45,23 +40,6 @@ export const load: PageServerLoad = async (event) => {
 	const courseId = Number(found.id);
 	const current = await getEnrollment(user.id, courseId);
 	if (current?.status === 'ACTIVE') redirect(303, ROUTES.student.learn(found.slug));
-
-	// Back from Chapa by some other way than its return link (or before the webhook arrived): settle
-	// the latest attempt now, so nobody is offered a second payment for a course already paid for.
-	let chapaPending: { txRef: string; amount: string; currency: string; createdAt: string } | null = null;
-	const pendingPayment = await latestPendingPayment(user.id, courseId);
-	if (pendingPayment && Date.now() - pendingPayment.createdAt.getTime() < RECHECK_WINDOW_MS) {
-		const outcome = await settleChapaPayment(pendingPayment.txRef);
-		if (outcome.status === 'paid') redirect(303, ROUTES.student.learn(found.slug));
-		if (outcome.status === 'pending') {
-			chapaPending = {
-				txRef: pendingPayment.txRef,
-				amount: pendingPayment.amount,
-				currency: pendingPayment.currency,
-				createdAt: pendingPayment.createdAt.toISOString()
-			};
-		}
-	}
 
 	// A promo code arrives in the URL (the promo step is a GET form), so a reload keeps it.
 	const promoInput = normalizePromoCode(event.url.searchParams.get('promo'));
@@ -117,8 +95,6 @@ export const load: PageServerLoad = async (event) => {
 		promoInput,
 		promoError,
 		requestedStep: Number(event.url.searchParams.get('step')) || null,
-		chapa: chapaEnabled(),
-		chapaPending,
 		// Only a suggestion: students without a verified phone are offered SMS updates, never stopped.
 		hasVerifiedPhone: Boolean(phone?.verified),
 		methods,
@@ -220,31 +196,6 @@ export const actions: Actions = {
 			})
 		]);
 		redirect(303, ROUTES.student.checkout(found.slug));
-	},
-
-	/** Opens a Chapa checkout and sends the student there; nothing is enrolled until it verifies. */
-	chapa: async (event) => {
-		const user = requireActionUser(event);
-		const found = await paidCourse(event.params.slug);
-		if (!chapaEnabled()) return fail(400, { errors: { chapa: 'Online payment is not available right now.' } });
-		const posted = await event.request.formData();
-
-		let checkoutUrl: string;
-		try {
-			checkoutUrl = await startChapaCheckout({
-				user: { id: user.id, name: user.name, email: user.email },
-				courseId: Number(found.id),
-				promoCode: postedPromo(posted),
-				origin: event.url.origin,
-				slug: found.slug
-			});
-		} catch (err) {
-			if (err instanceof EnrollmentError && err.code === 'ALREADY_ENROLLED') redirect(303, ROUTES.student.learn(found.slug));
-			const message = refusal(err);
-			if (!message) throw err;
-			return fail(400, { errors: { chapa: message } });
-		}
-		redirect(303, checkoutUrl);
 	},
 
 	/** A promo code that covers the whole price: enrolled at once, nothing to pay. */

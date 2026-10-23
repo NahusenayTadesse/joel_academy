@@ -4,12 +4,10 @@
 	import Award from '@lucide/svelte/icons/award';
 	import CircleCheck from '@lucide/svelte/icons/circle-check';
 	import Clock from '@lucide/svelte/icons/clock';
-	import CreditCard from '@lucide/svelte/icons/credit-card';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import Gift from '@lucide/svelte/icons/gift';
 	import Landmark from '@lucide/svelte/icons/landmark';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
-	import ShieldCheck from '@lucide/svelte/icons/shield-check';
 	import Signal from '@lucide/svelte/icons/signal';
 	import TriangleAlert from '@lucide/svelte/icons/triangle-alert';
 	import Wallet from '@lucide/svelte/icons/wallet';
@@ -61,17 +59,11 @@
 	const coveredByPromo = $derived(data.promo !== null && Number(amountDue) <= 0);
 	const promoCode = $derived(data.promo?.code ?? '');
 
-	/* 'chapa', or a bank method's id. Chapa leads when it is offered. */
-	let chosenMethod = $state<'chapa' | number | null>(null);
+	/* A bank method's id; the first one leads. */
+	let chosenMethod = $state<number | null>(null);
 	const postedMethodId = $derived(Number(form?.values?.paymentMethodId) || null);
-	const selected = $derived(
-		chosenMethod ??
-			(errors.chapa ? 'chapa' : postedMethodId) ??
-			(data.chapa ? 'chapa' : (data.methods[0]?.id ?? null))
-	);
-	const selectedMethod = $derived(
-		selected === 'chapa' ? undefined : data.methods.find((method) => method.id === selected)
-	);
+	const selected = $derived(chosenMethod ?? postedMethodId ?? data.methods[0]?.id ?? null);
+	const selectedMethod = $derived(data.methods.find((method) => method.id === selected));
 
 	let receipt = $state<File | null>(null);
 	let receiptError = $state<string | null>(null);
@@ -87,9 +79,8 @@
 	]);
 
 	const dateFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' });
-	const dateTimeFormat = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' });
 
-	/** A failed action shows a toast and keeps what was typed; a redirect to Chapa leaves the site. */
+	/** A failed action shows a toast and keeps what was typed. */
 	function afterAction(title: string) {
 		return async ({
 			result,
@@ -98,11 +89,6 @@
 			result: import('@sveltejs/kit').ActionResult;
 			update: (options?: { reset?: boolean }) => Promise<void>;
 		}) => {
-			if (result.type === 'redirect' && new URL(result.location, location.href).origin !== location.origin) {
-				// `goto` cannot leave the site; keep the button busy while the browser does.
-				window.location.href = result.location;
-				return;
-			}
 			submitting = false;
 			if (result.type === 'failure') {
 				toast.error(title, { description: 'Please check the details and try again.' });
@@ -217,7 +203,7 @@
 						</Button>
 					</div>
 				</ActionForm>
-			{:else if step === 3 && data.methods.length === 0 && !data.chapa}
+			{:else if step === 3 && data.methods.length === 0}
 				<div class="space-y-6">
 					<EmptyState
 						icon={Wallet}
@@ -235,8 +221,7 @@
 					<div>
 						<h2 class="text-lg font-bold text-foreground">Choose a payment method</h2>
 						<p class="mt-1 text-sm text-muted-foreground">
-							Pay {formatCurrency(amountDue, course.currency)} online with Chapa and start right away, or pay by bank
-							transfer and upload your receipt.
+							Pay {formatCurrency(amountDue, course.currency)} by bank transfer and upload your receipt.
 						</p>
 					</div>
 
@@ -249,95 +234,19 @@
 							<div>
 								<p class="font-medium">Your previous payment was not approved.</p>
 								{#if submission?.rejectionReason}<p class="mt-0.5">{submission.rejectionReason}</p>{/if}
-								<p class="mt-0.5">Pay online, or submit a new receipt below to try again.</p>
-							</div>
-						</div>
-					{/if}
-
-					{#if data.chapaPending}
-						<div
-							class="flex items-start gap-2 rounded-lg border border-warning/40 bg-warning/5 px-3 py-2 text-sm text-warning"
-							role="status"
-						>
-							<Clock class="mt-0.5 size-4 shrink-0" />
-							<div>
-								<p class="font-medium">
-									You started a Chapa payment of {formatCurrency(data.chapaPending.amount, data.chapaPending.currency)} on
-									{dateTimeFormat.format(new Date(data.chapaPending.createdAt))} that isn't confirmed yet.
-								</p>
-								<p class="mt-0.5">If you completed it, check its status before paying again.</p>
-								<Button
-									variant="outline"
-									size="sm"
-									class="mt-2"
-									href="{ROUTES.student.checkout(course.slug)}/complete?tx_ref={encodeURIComponent(data.chapaPending.txRef)}"
-								>
-									Check payment status
-								</Button>
+								<p class="mt-0.5">Submit a new receipt below to try again.</p>
 							</div>
 						</div>
 					{/if}
 
 					<div class="grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Payment method">
-						{#if data.chapa}
-							{@render methodCard('chapa', 'Pay online with Chapa', 'telebirr, CBE Birr, M-Pesa, cards', CreditCard)}
-						{/if}
 						{#each data.methods as method (method.id)}
 							{@render methodCard(method.id, method.name, method.accountName, Landmark)}
 						{/each}
 					</div>
 					{#if errors.paymentMethodId}<p class="text-sm text-destructive">{errors.paymentMethodId}</p>{/if}
 
-					{#if selected === 'chapa'}
-						<ActionForm action="?/chapa" class="space-y-6" submit={() => {
-								submitting = true;
-								return afterAction('Could not start the payment');
-							}}>
-							<HiddenField name="promoCode" value={promoCode} />
-							<Card>
-								<CardContent class="space-y-4 p-5">
-									<div>
-										<h3 class="text-sm font-bold text-foreground">Pay online with Chapa</h3>
-										<p class="mt-1 text-sm text-muted-foreground">
-											You'll be taken to Chapa's secure checkout to pay {formatCurrency(amountDue, course.currency)}
-											with telebirr, CBE Birr, M-Pesa or a card. When the payment goes through you're brought back here and
-											enrolled straight away - no receipt to upload.
-										</p>
-									</div>
-									<dl class="grid gap-2 text-sm sm:grid-cols-2">
-										<div>
-											<dt class="text-muted-foreground">Amount to pay</dt>
-											<dd class="font-medium text-foreground">{formatCurrency(amountDue, course.currency)}</dd>
-										</div>
-										{#if data.promo}
-											<div>
-												<dt class="text-muted-foreground">Promo code</dt>
-												<dd class="font-medium text-foreground">{data.promo.code}</dd>
-											</div>
-										{/if}
-									</dl>
-									<p
-										class="flex items-start gap-2 rounded-lg border border-info/30 bg-info/5 px-3 py-2 text-sm text-info"
-									>
-										<ShieldCheck class="mt-0.5 size-4 shrink-0" />
-										Your payment details are entered on Chapa's page; the academy never sees them.
-									</p>
-									{#if errors.chapa}
-										<p class="rounded-lg bg-destructive/10 p-3 text-sm text-destructive" role="alert">{errors.chapa}</p>
-									{/if}
-								</CardContent>
-							</Card>
-							<div class="flex items-center justify-between gap-3">
-								<Button type="button" variant="outline" onclick={() => (chosenStep = 2)} disabled={submitting}>
-									Back
-								</Button>
-								<Button type="submit" disabled={submitting}>
-									{#if submitting}<LoaderCircle class="mr-2 size-4 animate-spin" />{/if}
-									Pay {formatCurrency(amountDue, course.currency)} with Chapa
-								</Button>
-							</div>
-						</ActionForm>
-					{:else if selectedMethod}
+					{#if selectedMethod}
 						<ActionForm action="?/submit" enctype="multipart/form-data" class="space-y-6" submit={({ cancel }) => {
 								receiptError = receiptProblem(receipt, data.maxReceiptBytes);
 								if (receiptError) {
@@ -527,7 +436,7 @@
 	</div>
 </div>
 
-{#snippet methodCard(id: 'chapa' | number, name: string, detail: string, Icon: typeof Landmark)}
+{#snippet methodCard(id: number, name: string, detail: string, Icon: typeof Landmark)}
 	{@const isSelected = selected === id}
 	<button
 		type="button"

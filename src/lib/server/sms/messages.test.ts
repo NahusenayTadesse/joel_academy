@@ -8,7 +8,6 @@ import {
 	otpSms,
 	passwordResetSms,
 	passwordChangedSms,
-	paymentNeedsReviewSms,
 	paymentRejectedSms,
 	phoneChangedSms,
 	receiptReceivedSms,
@@ -27,7 +26,7 @@ describe('SMS copy', () => {
 	it('mentions a payment only for paid enrollments', () => {
 		const free = enrollmentConfirmedSms({ courseTitle: 'Intro', amount: 0, currency: 'ETB', provider: 'FREE', url });
 		expect(free).toBe(`Joel Talargie Academy: You're enrolled in "Intro". Start learning: ${url}`);
-		const paid = enrollmentConfirmedSms({ courseTitle: 'Intro', amount: '1500', currency: 'ETB', provider: 'CHAPA', url });
+		const paid = enrollmentConfirmedSms({ courseTitle: 'Intro', amount: '1500', currency: 'ETB', provider: 'MANUAL', url });
 		expect(paid).toContain('Your payment of ETB 1,500.00 is confirmed.');
 	});
 
@@ -70,8 +69,7 @@ describe('security and status texts', () => {
 		passwordChangedSms(url),
 		phoneChangedSms({ newPhone: '251911223344', url }),
 		phoneChangedSms({ newPhone: null, url }),
-		certificateRevokedSms({ courseTitle: long, code: 'JTA-2026-000123', reason: long }),
-		paymentNeedsReviewSms({ studentName: long, courseTitle: long, reason: long, url })
+		certificateRevokedSms({ courseTitle: long, code: 'JTA-2026-000123', reason: long })
 	];
 
 	it('fit one text, keep their link and use plain characters only', () => {
@@ -82,7 +80,6 @@ describe('security and status texts', () => {
 			expect(text).not.toMatch(/[‘’“”…  ]/);
 		}
 		expect(texts()[0]).toContain(url);
-		expect(texts()[5]).toContain(url);
 	});
 
 	it('tells the old number only the last digits of the new one', () => {

@@ -52,7 +52,7 @@
 			format: 'money',
 			label: 'Revenue',
 			value: k.revenue,
-			hint: 'Approved and Chapa payments, after discounts',
+			hint: 'Approved payments, after discounts',
 			tone: 'positive'
 		},
 		{

@@ -1,18 +1,14 @@
-import { and, eq, gt, inArray, isNotNull, isNull } from 'drizzle-orm';
+import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { chapaPayment, course, enrollment, promoCode } from '$lib/server/db/schema';
+import { course, enrollment, promoCode } from '$lib/server/db/schema';
 import { effectivePrice } from '$lib/progress';
 import { normalizePromoCode, PROMO_CODE_PATTERN, promoPricing, type PromoPricing } from '$lib/promo';
 
 /*
  * Promo codes at checkout. The server alone prices a course: every write re-quotes the code here,
  * whatever the page showed. Redemptions are counted, not stored, from enrollments that carry the
- * code and Chapa checkouts still in flight — so an abandoned checkout holds its place for an hour
- * and then lets it go.
+ * code.
  */
-
-/** How long an unpaid Chapa checkout keeps its redemption reserved. */
-export const PENDING_HOLD_MS = 60 * 60 * 1000;
 
 type Executor = Pick<typeof db, 'select'>;
 
@@ -32,26 +28,21 @@ export interface PromoQuote extends PromoPricing {
 }
 
 /**
- * Who holds each code: one redemption per student and course, whether it is an enrollment (active,
- * or a receipt under review) or a Chapa checkout started within the hold. A student's abandoned
- * attempts and the place they finally got therefore count once, not once each.
+ * Who holds each code: one redemption per student and course, from enrollments that are active or
+ * have a receipt under review.
  */
 async function holders(executor: Executor, promoIds?: number[]): Promise<Map<number, Set<string>>> {
-	const holdFrom = new Date(Date.now() - PENDING_HOLD_MS);
-	const only = <T extends typeof enrollment.promoCodeId | typeof chapaPayment.promoCodeId>(column: T) =>
-		promoIds ? inArray(column, promoIds) : isNotNull(column);
-	const [enrolled, inFlight] = await Promise.all([
-		executor
-			.select({ promoId: enrollment.promoCodeId, userId: enrollment.userId, courseId: enrollment.courseId })
-			.from(enrollment)
-			.where(and(only(enrollment.promoCodeId), inArray(enrollment.status, ['ACTIVE', 'PENDING']))),
-		executor
-			.select({ promoId: chapaPayment.promoCodeId, userId: chapaPayment.userId, courseId: chapaPayment.courseId })
-			.from(chapaPayment)
-			.where(and(only(chapaPayment.promoCodeId), eq(chapaPayment.status, 'PENDING'), gt(chapaPayment.createdAt, holdFrom)))
-	]);
+	const enrolled = await executor
+		.select({ promoId: enrollment.promoCodeId, userId: enrollment.userId, courseId: enrollment.courseId })
+		.from(enrollment)
+		.where(
+			and(
+				promoIds ? inArray(enrollment.promoCodeId, promoIds) : isNotNull(enrollment.promoCodeId),
+				inArray(enrollment.status, ['ACTIVE', 'PENDING'])
+			)
+		);
 	const byCode = new Map<number, Set<string>>();
-	for (const row of [...enrolled, ...inFlight]) {
+	for (const row of enrolled) {
 		if (row.promoId === null) continue;
 		const set = byCode.get(row.promoId) ?? new Set<string>();
 		set.add(`${row.userId}:${row.courseId}`);

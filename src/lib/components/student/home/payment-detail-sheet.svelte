@@ -48,9 +48,7 @@
 						</div>
 						{#if payment.reference}
 							<div class="flex items-center justify-between gap-4">
-								<dt class="shrink-0 text-muted-foreground">
-									{payment.provider === 'CHAPA' ? 'Reference' : 'Transaction ID'}
-								</dt>
+								<dt class="shrink-0 text-muted-foreground">Transaction ID</dt>
 								<dd class="min-w-0 text-right font-medium break-all text-foreground">{payment.reference}</dd>
 							</div>
 						{/if}
@@ -60,7 +58,7 @@
 						</div>
 						{#if payment.reviewedAt}
 							<div class="flex items-center justify-between gap-4">
-								<dt class="text-muted-foreground">{payment.provider === 'CHAPA' ? 'Confirmed' : 'Reviewed'}</dt>
+								<dt class="text-muted-foreground">Reviewed</dt>
 								<dd class="text-right font-medium text-foreground">{formatDateTime(payment.reviewedAt)}</dd>
 							</div>
 						{/if}
@@ -68,16 +66,8 @@
 
 					{#if payment.status === 'PENDING'}
 						<p class="rounded-lg border border-warning/40 bg-warning/5 px-3 py-2 text-sm {warningText}">
-							{#if payment.provider === 'CHAPA'}
-								We're waiting for Chapa to confirm this payment. Your course unlocks as soon as it does.
-							{:else}
-								Your payment is being reviewed by the academy. You'll be notified once it's approved and your
-								course access is unlocked.
-							{/if}
-						</p>
-					{:else if payment.status === 'INCOMPLETE'}
-						<p class="rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground">
-							This online checkout was not completed. Nothing was charged for it.
+							Your payment is being reviewed by the academy. You'll be notified once it's approved and your
+							course access is unlocked.
 						</p>
 					{:else if payment.status === 'DECLINED' && payment.reason}
 						<p class="rounded-lg border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm break-words text-destructive">
@@ -87,7 +77,7 @@
 
 					{#if payment.status === 'APPROVED'}
 						<Button href={ROUTES.student.learn(payment.courseSlug)} class="w-full">Go to Course</Button>
-					{:else if payment.status === 'DECLINED' && payment.provider === 'MANUAL'}
+					{:else if payment.status === 'DECLINED'}
 						<Button href={ROUTES.student.checkout(payment.courseSlug)} class="w-full">Resubmit payment</Button>
 					{/if}
 				</div>

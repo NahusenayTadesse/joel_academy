@@ -9,7 +9,6 @@ import {
 	certificateIssuedSms,
 	certificateRevokedSms,
 	passwordChangedSms,
-	paymentNeedsReviewSms,
 	phoneChangedSms,
 	receiptReceivedSms,
 	sendSms,
@@ -178,11 +177,9 @@ export function enrollmentConfirmedEmail(details: {
 }) {
 	const paid = Number(details.amount) > 0;
 	const how =
-		details.provider === 'CHAPA'
-			? `Your payment of <strong>${escape(formatCurrency(details.amount, details.currency))}</strong> through Chapa is confirmed${details.reference ? ` (reference ${escape(details.reference)})` : ''}.`
-			: details.provider === 'MANUAL'
-				? `We have approved your payment of <strong>${escape(formatCurrency(details.amount, details.currency))}</strong>.`
-				: '';
+		details.provider === 'MANUAL'
+			? `We have approved your payment of <strong>${escape(formatCurrency(details.amount, details.currency))}</strong>.`
+			: '';
 	const learnUrl = siteUrl(ROUTES.student.learn(details.courseSlug));
 	const email = sendEmail({
 		to: details.to,
@@ -403,33 +400,6 @@ export function receiptReceivedEmail(details: {
 				link: ROUTES.student.payments
 			})
 		])
-	);
-}
-
-/** A Chapa payment took money but can't be matched (wrong amount or currency, or paid twice). */
-export function paymentNeedsReviewAdminEmail(details: {
-	studentName: string;
-	studentEmail: string;
-	courseTitle: string;
-	amount: number | string;
-	currency: string;
-	reason: string;
-	reference?: string | null;
-}) {
-	const reviewUrl = siteUrl('/dashboard/enrollments');
-	return toAdmins(
-		'payment-needs-review',
-		`Online payment needs review: ${details.courseTitle}`,
-		layout({
-			heading: 'An online payment needs your review',
-			paragraphs: [
-				`Chapa took a payment from <strong>${escape(details.studentName)}</strong> (${escape(details.studentEmail)}) for <strong>${escape(details.courseTitle)}</strong>${details.reference ? ` (reference ${escape(details.reference)})` : ''}, but it could not be applied automatically:`,
-				`<em>${escape(details.reason)}</em>`,
-				`Expected ${escape(formatCurrency(details.amount, details.currency))}. Decide whether to enroll the student or refund them in Chapa.`
-			],
-			action: { label: 'Open enrollments', url: reviewUrl }
-		}),
-		paymentNeedsReviewSms({ studentName: details.studentName, courseTitle: details.courseTitle, reason: details.reason, url: reviewUrl })
 	);
 }
 

@@ -18,8 +18,9 @@ export * from './report-range';
  * The admin reports. Definitions, so every number on the page means one thing:
  *
  * - An enrollment *counts* once it is ACTIVE, on the day it became so: `paid_at` (receipt approved,
- *   Chapa verified, or a staff enrolment), else `created_at` (a free course starts ACTIVE).
- * - *Paid* means MANUAL or CHAPA; FREE covers free courses, 100% promo codes and staff enrolments.
+ *   or a staff enrolment), else `created_at` (a free course starts ACTIVE).
+ * - *Paid* means MANUAL, or CHAPA for online payments taken before Chapa was switched off; FREE
+ *   covers free courses, 100% promo codes and staff enrolments.
  * - *Revenue* is `amount` (what was left to pay after any promo) of paid ACTIVE enrollments whose
  *   `paid_at` falls in the range. All courses are priced in ETB.
  * - Every date is compared and bucketed in UTC — the database session's time zone.
@@ -152,12 +153,14 @@ async function revenueOverTime(range: ReportRange, keys: string[]): Promise<Time
 		.groupBy(bucket, enrollment.paymentProvider);
 	const of = (provider: string) =>
 		rows.filter((row) => row.provider === provider).map((row) => ({ key: row.key, value: num(row.value) }));
+	// Chapa is no longer offered: its series only shows for a range that still has Chapa revenue.
+	const chapa = of('CHAPA');
 	return {
 		keys,
 		labels: keys.map((key) => bucketLabel(key, range.bucket)),
 		series: [
 			{ label: 'Manual (receipt)', data: fillBuckets(keys, of('MANUAL')) },
-			{ label: 'Chapa', data: fillBuckets(keys, of('CHAPA')) }
+			...(chapa.length > 0 ? [{ label: 'Chapa', data: fillBuckets(keys, chapa) }] : [])
 		]
 	};
 }
@@ -240,9 +243,11 @@ async function revenueByProvider(range: ReportRange) {
 		.from(enrollment)
 		.where(revenueIn(range))
 		.groupBy(enrollment.paymentProvider);
-	return PAID.map((provider) => {
+	return PAID.flatMap((provider) => {
 		const row = rows.find((entry) => entry.provider === provider);
-		return { provider, revenue: round2(num(row?.revenue)), payments: num(row?.payments) };
+		// Chapa is no longer offered: listed only when the range still has Chapa payments.
+		if (!row && provider === 'CHAPA') return [];
+		return [{ provider, revenue: round2(num(row?.revenue)), payments: num(row?.payments) }];
 	});
 }
 

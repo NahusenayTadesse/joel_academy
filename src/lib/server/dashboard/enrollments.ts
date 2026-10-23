@@ -1,7 +1,7 @@
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/mysql-core';
 import { db } from '$lib/server/db';
-import { chapaPayment, course, enrollment, paymentMethod, promoCode, user } from '$lib/server/db/schema';
+import { course, enrollment, paymentMethod, promoCode, user } from '$lib/server/db/schema';
 import { enrollmentConfirmedEmail, paymentRejectedEmail } from '$lib/server/email';
 
 export type EnrollmentStatus = (typeof enrollment.$inferSelect)['status'];
@@ -65,32 +65,6 @@ export async function enrollmentForReview(id: number) {
 		.where(eq(enrollment.id, id))
 		.limit(1);
 	return row ?? null;
-}
-
-/** The latest Chapa checkouts, paid or not, with who and what they were for. Read-only for staff. */
-export async function listChapaPayments(limit = 50) {
-	return db
-		.select({
-			txRef: chapaPayment.txRef,
-			status: chapaPayment.status,
-			studentName: user.name,
-			studentEmail: user.email,
-			course: course.name,
-			amount: chapaPayment.amount,
-			currency: chapaPayment.currency,
-			discountAmount: chapaPayment.discountAmount,
-			promoCode: promoCode.code,
-			chapaReference: chapaPayment.chapaReference,
-			failureReason: chapaPayment.failureReason,
-			createdAt: chapaPayment.createdAt,
-			verifiedAt: chapaPayment.verifiedAt
-		})
-		.from(chapaPayment)
-		.innerJoin(user, eq(user.id, chapaPayment.userId))
-		.innerJoin(course, eq(course.id, chapaPayment.courseId))
-		.leftJoin(promoCode, eq(promoCode.id, chapaPayment.promoCodeId))
-		.orderBy(desc(chapaPayment.createdAt), desc(chapaPayment.txRef))
-		.limit(limit);
 }
 
 export async function statusCounts(): Promise<Record<EnrollmentStatus, number>> {

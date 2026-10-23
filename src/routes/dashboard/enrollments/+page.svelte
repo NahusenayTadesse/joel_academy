@@ -3,10 +3,8 @@
 	import Check from '@lucide/svelte/icons/check';
 	import X from '@lucide/svelte/icons/x';
 	import FileText from '@lucide/svelte/icons/file-text';
-	import RefreshCw from '@lucide/svelte/icons/refresh-cw';
 	import type { ColumnDef } from '@tanstack/table-core';
 	import PageHeader from '@nahu/admin-kit/components/PageHeader.svelte';
-	import PageSection from '@nahu/admin-kit/components/PageSection.svelte';
 	import Notice from '@nahu/admin-kit/components/Notice.svelte';
 	import ConfirmAction from '@nahu/admin-kit/components/ConfirmAction.svelte';
 	import Statuses from '@nahu/admin-kit/components/Table/statuses.svelte';
@@ -26,15 +24,13 @@
 	let { data } = $props();
 
 	type Row = (typeof data.rows)[number];
-	type Payment = (typeof data.payments)[number];
 
 	const STATUS_LABELS = { PENDING: 'Pending', ACTIVE: 'Active', REJECTED: 'Rejected' } as const;
-	const CHAPA_LABELS = { PENDING: 'Pending', PAID: 'Paid', FAILED: 'Failed' } as const;
 	/** How the place was paid for; the badge says the stored value, the tooltip what it means. */
 	const PROVIDERS = {
 		FREE: { variant: 'outline', hint: 'Nothing to pay (free course, full promo or enrolled by staff)' },
 		MANUAL: { variant: 'secondary', hint: 'Bank transfer, receipt reviewed by staff' },
-		CHAPA: { variant: 'default', hint: 'Paid online through Chapa' }
+		CHAPA: { variant: 'default', hint: 'Paid online through Chapa (no longer offered)' }
 	} as const satisfies Record<Row['paymentProvider'], { variant: BadgeVariant; hint: string }>;
 
 	/** "SAVE20 (−Br50.00)", or '' when no code was used. */
@@ -43,10 +39,6 @@
 		return discount > 0 ? `${code} (−${formatCurrency(discount, currency)})` : code;
 	}
 
-	/** Chapa took money but not the amount or currency asked for: a person has to sort it out. */
-	const needsReview = (payment: Payment) =>
-		payment.status === 'FAILED' && (payment.failureReason ?? '').includes('Needs staff review');
-	const reviewCount = $derived(data.payments.filter(needsReview).length);
 	const total = $derived(data.counts.PENDING + data.counts.ACTIVE + data.counts.REJECTED);
 	const tabs = $derived([
 		{ key: null, label: 'All', count: total },
@@ -117,7 +109,7 @@
 		{ id: 'reference', accessorFn: (row) => row.reference ?? '', header: 'Reference' },
 		{
 			id: 'receipt',
-			header: 'Receipt / Chapa',
+			header: 'Receipt',
 			enableSorting: false,
 			cell: ({ row }) => renderSnippet(receiptCell, row.original)
 		},
@@ -141,63 +133,6 @@
 		}
 	];
 
-	const paymentColumns: ColumnDef<Payment>[] = [
-		{
-			id: 'student',
-			accessorFn: (row) => `${row.studentName} ${row.studentEmail}`,
-			header: 'Student',
-			cell: ({ row }) => renderSnippet(paymentStudentCell, row.original)
-		},
-		{ id: 'course', accessorKey: 'course', header: 'Course' },
-		{
-			id: 'amount',
-			accessorKey: 'amount',
-			header: 'Amount',
-			meta: { align: 'right' },
-			cell: ({ row }) => formatCurrency(row.original.amount, row.original.currency)
-		},
-		{
-			id: 'discount',
-			accessorFn: (row) => promoText(row.promoCode, row.discountAmount, row.currency),
-			header: 'Discount'
-		},
-		{
-			id: 'status',
-			accessorKey: 'status',
-			header: 'Status',
-			cell: ({ row }) => renderSnippet(paymentStatusCell, row.original)
-		},
-		{
-			id: 'chapaReference',
-			accessorFn: (row) => row.chapaReference ?? '',
-			header: 'Chapa reference',
-			cell: ({ row }) => renderSnippet(paymentReferenceCell, row.original)
-		},
-		{
-			id: 'failureReason',
-			accessorFn: (row) => row.failureReason ?? '',
-			header: 'Failure reason',
-			cell: ({ row }) => renderSnippet(failureCell, row.original)
-		},
-		{
-			id: 'createdAt',
-			accessorFn: (row) => new Date(row.createdAt).getTime(),
-			header: 'Created',
-			cell: ({ row }) => dateTime(row.original.createdAt)
-		},
-		{
-			id: 'verifiedAt',
-			accessorFn: (row) => (row.verifiedAt ? new Date(row.verifiedAt).getTime() : 0),
-			header: 'Verified',
-			cell: ({ row }) => dateTime(row.original.verifiedAt) || '—'
-		},
-		{
-			id: 'actions',
-			header: '',
-			enableSorting: false,
-			cell: ({ row }) => renderSnippet(recheckCell, row.original)
-		}
-	];
 </script>
 
 {#snippet studentCell(row: Row)}
@@ -230,24 +165,7 @@
 {/snippet}
 
 {#snippet receiptCell(row: Row)}
-	{#if row.paymentProvider === 'CHAPA'}
-		<div class="flex flex-col text-xs">
-			<span class="font-mono">{row.reference ?? '—'}</span>
-			{#if row.paidAt}<span class="text-muted-foreground">Paid {dateTime(row.paidAt)}</span>{/if}
-			{#if row.receipt}
-				<!-- A receipt uploaded before the Chapa payment settled: kept for the refund decision. -->
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- a stored file, not a page -->
-				<a
-					href={fileUrl(row.receipt)}
-					target="_blank"
-					rel="noopener"
-					class="mt-1 inline-flex items-center gap-1 text-amber-700 hover:underline dark:text-amber-400"
-				>
-					<FileText class="size-3" /> Receipt also uploaded
-				</a>
-			{/if}
-		</div>
-	{:else if row.receipt}
+	{#if row.receipt}
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- a stored file, not a page -->
 		<a
 			href={fileUrl(row.receipt)}
@@ -297,58 +215,6 @@
 			</Button>
 		{/if}
 	</div>
-{/snippet}
-
-{#snippet paymentStudentCell(row: Payment)}
-	<div class="flex flex-col">
-		<span class="font-medium">{row.studentName}</span>
-		<a href="mailto:{row.studentEmail}" class="text-xs text-muted-foreground hover:underline"
-			>{row.studentEmail}</a
-		>
-	</div>
-{/snippet}
-
-{#snippet paymentStatusCell(row: Payment)}
-	<div class="flex flex-col items-start gap-1">
-		<Statuses status={row.status} label={CHAPA_LABELS[row.status]} />
-		{#if needsReview(row)}<Badge variant="destructive">Needs staff review</Badge>{/if}
-	</div>
-{/snippet}
-
-{#snippet paymentReferenceCell(row: Payment)}
-	<div class="flex flex-col text-xs">
-		<span class="font-mono">{row.chapaReference ?? '—'}</span>
-		<span class="font-mono text-muted-foreground" title="Our reference (tx_ref)">{row.txRef}</span>
-	</div>
-{/snippet}
-
-{#snippet failureCell(row: Payment)}
-	{#if row.failureReason}
-		<span class="text-xs" class:text-destructive={needsReview(row)}
-			><BigText text={row.failureReason} max={40} /></span
-		>
-	{:else}
-		<span class="text-xs text-muted-foreground">—</span>
-	{/if}
-{/snippet}
-
-{#snippet recheckCell(row: Payment)}
-	{#if row.status !== 'PAID'}
-		<div class="flex justify-end">
-			<ConfirmAction
-				action="?/recheck"
-				label="Re-check"
-				variant="outline"
-				icon={RefreshCw}
-				title="Ask Chapa about this payment again?"
-				description="If Chapa confirms {formatCurrency(
-					row.amount,
-					row.currency
-				)} was paid, {row.studentName} gets {row.course} straight away. Nothing changes otherwise."
-				fields={{ txRef: row.txRef }}
-			/>
-		</div>
-	{/if}
 {/snippet}
 
 <div class="flex flex-col gap-6">
@@ -424,28 +290,6 @@
 		/>
 	{/key}
 
-	<PageSection
-		title="Online payments (Chapa)"
-		hint="The latest 50 Chapa checkouts. A place is only given once Chapa confirms the exact amount; Re-check asks Chapa again."
-	>
-		{#if reviewCount}
-			<Notice tone="danger" title="{reviewCount} Chapa payment(s) need staff review.">
-				Chapa took money, but not the amount or currency the course was priced at, so no place was
-				given. Contact the student, then enrol them by hand or refund the payment in Chapa.
-			</Notice>
-		{/if}
-		{#key data.payments}
-			<DataTable
-				columns={paymentColumns}
-				data={data.payments}
-				fileName="Chapa payments"
-				defaultPageSize={10}
-				facetKeys={['status']}
-				facetLabels={{ status: 'Status' }}
-				rowClass={(row) => (needsReview(row) ? 'bg-destructive/10' : null)}
-			/>
-		{/key}
-	</PageSection>
 </div>
 
 <FormDialog
