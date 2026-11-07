@@ -3,29 +3,33 @@
 	import { Tabs } from 'bits-ui';
 	import Download from '@lucide/svelte/icons/download';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
+	import FileDown from '@lucide/svelte/icons/file-down';
 	import FileText from '@lucide/svelte/icons/file-text';
 	import NotebookPen from '@lucide/svelte/icons/notebook-pen';
 	import Paperclip from '@lucide/svelte/icons/paperclip';
+	import YouTubeEmbed from '@nahu/admin-kit/components/YouTubeEmbed.svelte';
+	import type { BodyPart } from '$lib/lesson-body';
 	import { formatFileSize } from '$lib/lesson-files';
 	import Textarea from '$lib/components/ui/textarea.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	/*
-	 * The original lesson tabs. `html` arrives sanitised from the server (sanitize-html), which is
-	 * what makes the {@html} below safe. Notes stay in this browser, as they did in the original; the parent
+	 * The original lesson tabs. `body` arrives sanitised from the server (sanitize-html), which is
+	 * what makes the {@html} below safe; YouTube links on a line of their own arrive as players. Notes stay in this browser, as they did in the original; the parent
 	 * must key this component on the lesson.
 	 */
 	let {
 		lessonId,
 		lessonType,
-		html,
+		body,
 		externalUrl,
-		resources
+		resources,
+		downloads = []
 	}: {
 		lessonId: number;
 		lessonType: string;
-		html: string;
+		body: BodyPart[];
 		externalUrl: string | null;
 		/** A link, or a file served by `/lesson-files/[id]` (its href and original name, never the stored one). */
 		resources: {
@@ -34,6 +38,8 @@
 			url: string | null;
 			file: { href: string; name: string; size: number } | null;
 		}[];
+		/** Branded PDFs (`/downloads/…`) that go with the lesson: its section's workbook, handouts, the outline. */
+		downloads?: { key: string; title: string; detail: string; href: string }[];
 	} = $props();
 
 	const listClass =
@@ -76,18 +82,30 @@
 		<Tabs.Trigger value="description" class={triggerClass}>{m.learn_tab_description()}</Tabs.Trigger>
 		<Tabs.Trigger value="resources" class={cn(triggerClass, 'gap-1.5')}>
 			{m.learn_tab_resources()}
-			{#if resources.length > 0}
-				<span class="rounded-full bg-white/15 px-1.5 py-0.5 text-[10px]">{resources.length}</span>
+			{#if resources.length + downloads.length > 0}
+				<span class="rounded-full bg-white/15 px-1.5 py-0.5 text-[10px]">{resources.length + downloads.length}</span>
 			{/if}
 		</Tabs.Trigger>
 		<Tabs.Trigger value="notes" class={triggerClass}>{m.learn_tab_notes()}</Tabs.Trigger>
 	</Tabs.List>
 
 	<Tabs.Content value="description" class={contentClass}>
-		{#if html}
-			<div class="lesson-content max-w-none text-sm text-sidebar-foreground/80">
-				{@html html}
-			</div>
+		{#if body.length}
+			<!-- Players sit outside .lesson-content: its element styles are for the text, not the kit's player. -->
+			{#each body as part, index (index)}
+				{#if part.kind === 'youtube'}
+					<div class="my-4">
+						<YouTubeEmbed
+							video={part.video}
+							title={m.learn_embedded_video({ n: body.slice(0, index + 1).filter((p) => p.kind === 'youtube').length })}
+						/>
+					</div>
+				{:else}
+					<div class="lesson-content max-w-none text-sm text-sidebar-foreground/80">
+						{@html part.html}
+					</div>
+				{/if}
+			{/each}
 		{/if}
 		{#if lessonType === 'EXTERNAL_LINK' && externalUrl}
 			<a
@@ -96,13 +114,13 @@
 				rel="noopener noreferrer"
 				class={cn(
 					'inline-flex items-center gap-2 text-sm font-medium text-sidebar-primary hover:underline',
-					html && 'mt-4'
+					body.length && 'mt-4'
 				)}
 			>
 				<ExternalLink class="size-4" />
 				{m.learn_open_external()}
 			</a>
-		{:else if !html}
+		{:else if !body.length}
 			<p class="text-sm text-sidebar-foreground/60">{m.learn_no_description()}</p>
 		{/if}
 	</Tabs.Content>
@@ -158,6 +176,35 @@
 							{@render body()}
 						</div>
 					{/if}
+				{/each}
+			</div>
+		{/if}
+
+		{#if downloads.length}
+			<h3 class="mt-6 mb-3 text-xs font-semibold tracking-wider text-sidebar-foreground/60 uppercase">
+				{m.learn_pdf_heading()}
+			</h3>
+			<div class="grid gap-3 sm:grid-cols-2">
+				{#each downloads as download (download.key)}
+					<!-- Drawn by the server on request: a download, never a SvelteKit page. -->
+					<a
+						href={download.href}
+						download
+						data-sveltekit-reload
+						class="flex items-center gap-3 rounded-xl border border-sidebar-border bg-white/5 p-3 transition-colors hover:border-sidebar-primary"
+						aria-label={m.learn_pdf_download({ title: `${download.title} · ${download.detail}` })}
+					>
+						<span
+							class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary/15 text-sidebar-primary"
+						>
+							<FileDown class="size-5" />
+						</span>
+						<span class="min-w-0 flex-1">
+							<span class="block truncate text-sm font-medium text-white">{download.title}</span>
+							<span class="block truncate text-xs text-sidebar-foreground/60">{download.detail} · PDF</span>
+						</span>
+						<Download class="size-4 shrink-0 text-sidebar-foreground/50" aria-hidden="true" />
+					</a>
 				{/each}
 			</div>
 		{/if}

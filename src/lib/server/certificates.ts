@@ -11,7 +11,7 @@ type Executor = Pick<typeof db, 'select' | 'insert'>;
  * finishing the last lesson twice must not get two numbers. Pass a transaction to make issuing
  * part of a larger write.
  *
- * Codes run per year (JTA-2026-000123). The unique index settles the rare race between two issues
+ * Codes run per year (EAS-2026-000123). The unique index settles the rare race between two issues
  * in the same instant: the loser retries with the next number.
  */
 export async function issueCertificate(
@@ -37,8 +37,8 @@ export async function issueCertificate(
 		const [{ issued }] = await executor
 			.select({ issued: sql<number>`count(*)` })
 			.from(certificate)
-			.where(sql`${certificate.code} like ${`JTA-${year}-%`}`);
-		const code = `JTA-${year}-${String(Number(issued) + 1 + attempt).padStart(6, '0')}`;
+			.where(sql`${certificate.code} like ${`EAS-${year}-%`}`);
+		const code = `EAS-${year}-${String(Number(issued) + 1 + attempt).padStart(6, '0')}`;
 		try {
 			await executor.insert(certificate).values({
 				code,

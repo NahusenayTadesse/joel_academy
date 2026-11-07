@@ -46,10 +46,7 @@
 		<AppSidebar footer={data.user?.email ?? ''}>
 			{#snippet logo()}
 				<span class="flex items-center gap-2 text-lg font-bold">
-					<span
-						class="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-xs text-primary-foreground"
-						>JT</span
-					>
+					<img src="/logo-mark.png" alt="" width="28" height="28" class="size-7 rounded-md" />
 					Dashboard
 				</span>
 			{/snippet}

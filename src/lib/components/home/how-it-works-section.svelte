@@ -13,7 +13,7 @@
 	<div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
 		<div
 			class="glow absolute -top-1/2 left-1/2 size-[56rem] -translate-x-1/2 opacity-25"
-			style:--glow-color="#1d6fe0"
+			style:--glow-color="#0a5299"
 		></div>
 		<div
 			class="absolute inset-0 opacity-40"
@@ -41,7 +41,7 @@
 						{stepNumber(index)}
 					</span>
 					<span
-						class="h-px w-12 bg-linear-to-r from-sky-400 to-transparent transition-all duration-500 group-hover:w-24"
+						class="h-px w-12 bg-linear-to-r from-[#8fdc6a] to-transparent transition-all duration-500 group-hover:w-24"
 						aria-hidden="true"
 					></span>
 					<h3 class="text-base font-semibold text-white">{step.title}</h3>

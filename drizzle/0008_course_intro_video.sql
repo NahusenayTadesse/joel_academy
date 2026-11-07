@@ -1,0 +1,1 @@
+ALTER TABLE `course` ADD `intro_video_url` varchar(500);

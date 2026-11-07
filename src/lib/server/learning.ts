@@ -8,6 +8,8 @@ import { courseProgress } from '$lib/progress';
 import { studentQuiz } from '$lib/server/quiz';
 import { pickActiveLesson, resumeSeconds, savedPosition, touchLesson } from '$lib/server/resume';
 import { lessonFileHref } from '$lib/lesson-files';
+import { handoutLinks } from '$lib/server/handouts';
+import { splitLessonBody } from '$lib/lesson-body';
 
 /*
  * The learning page's read model. Only the lesson being viewed carries a body, and only when the
@@ -53,7 +55,7 @@ export async function loadLearning(slug: string, userId: string, requestedLesson
 	// An unpublished course stays open to the students already on it, and to no one else.
 	if (!row.status && !current) return null;
 
-	const [sections, lessons, done, [issued]] = await Promise.all([
+	const [sections, lessons, done, [issued], handouts] = await Promise.all([
 		db.select().from(courseSection).where(eq(courseSection.courseId, row.id)).orderBy(asc(courseSection.sortOrder), asc(courseSection.id)),
 		db
 			.select({
@@ -73,7 +75,9 @@ export async function loadLearning(slug: string, userId: string, requestedLesson
 			.select({ code: certificate.code, revokedAt: certificate.revokedAt })
 			.from(certificate)
 			.where(and(eq(certificate.userId, userId), eq(certificate.courseId, row.id)))
-			.limit(1)
+			.limit(1),
+		// Branded PDFs: the outline and section workbooks are open to all, handouts as staff chose.
+		handoutLinks(row.id, current?.status === 'ACTIVE')
 	]);
 
 	// Lessons in curriculum order: section by section, as the sidebar lists them.
@@ -123,7 +127,8 @@ export async function loadLearning(slug: string, userId: string, requestedLesson
 			tracked ? touchLesson(current.id, active.id) : undefined
 		]);
 		lessonContent = {
-			html: body?.content ? sanitizeLessonHtml(body.content) : '',
+			// A YouTube link pasted on a line of its own comes out as a player slot.
+			body: body?.content ? splitLessonBody(sanitizeLessonHtml(body.content)) : [],
 			// Only the player's own input is sent: a YouTube id, or a (signed) embed address.
 			video: playableVideo(body?.videoUrl),
 			externalUrl: safeHref(body?.externalUrl),
@@ -154,6 +159,7 @@ export async function loadLearning(slug: string, userId: string, requestedLesson
 		progress: courseProgress(lessons, done),
 		activeLessonId: active?.id ?? null,
 		lessonContent,
+		handouts,
 		certificate: issued && !issued.revokedAt ? { code: issued.code } : null
 	};
 }

@@ -16,7 +16,7 @@
 		<div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
 			<div
 				class="glow absolute -bottom-2/3 left-1/2 size-[50rem] -translate-x-1/2 opacity-50"
-				style:--glow-color="#1d6fe0"
+				style:--glow-color="#0a5299"
 			></div>
 			<!-- A planet's limb rising from the bottom edge, echoing the hero's globe. -->
 			<div
@@ -34,7 +34,7 @@
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- an editor-set path or https link -->
 		<a
 			href={cmsHref(cta.ctaUrl)}
-			class="group mt-9 inline-flex h-13 items-center gap-2 rounded-2xl bg-white px-7 text-base font-semibold text-[#0b2a5c] shadow-[0_0_40px_rgb(124_196_255/0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_60px_rgb(124_196_255/0.7)]"
+			class="group mt-9 inline-flex h-13 items-center gap-2 rounded-2xl bg-white px-7 text-base font-semibold text-[#012a51] shadow-[0_0_40px_rgb(124_196_255/0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_60px_rgb(124_196_255/0.7)]"
 		>
 			{cta.ctaText}
 			<ArrowRight class="size-4 transition-transform group-hover:translate-x-1" />

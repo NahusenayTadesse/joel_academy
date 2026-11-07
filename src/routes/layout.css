@@ -46,8 +46,9 @@
 }
 
 /*
- * The icy-blue theme of Joel's own site (../joel), so the academy reads as the same brand: a cool
- * blue primary drifting to cyan, frosted-glass surfaces, and a near-black navy for dark mode.
+ * The Ethio AI School logo's palette: its deep blue gear as the primary, the book's green as the
+ * second brand colour (gradients run blue to green), the pencil's gold as the highlight, and a
+ * near-black navy for dark mode.
  */
 :root {
 	--background: oklch(0.985 0.006 230);
@@ -59,7 +60,7 @@
 	--popover-foreground: oklch(0.22 0.035 245);
 
 	/* A shade deep enough that white text on it, and it as text on white, both pass WCAG AA. */
-	--primary: oklch(0.52 0.16 248);
+	--primary: oklch(0.44 0.133 253);
 	--on-brand: oklch(1 0 0);
 	--primary-foreground: var(--on-brand);
 	--secondary: oklch(0.95 0.014 232);
@@ -82,26 +83,26 @@
 
 	--border: oklch(0.91 0.016 236);
 	--input: oklch(0.89 0.02 236);
-	--ring: oklch(0.52 0.16 248);
+	--ring: oklch(0.44 0.133 253);
 
-	--brand: oklch(0.52 0.16 248);
+	--brand: oklch(0.44 0.133 253);
 	--brand-foreground: var(--on-brand);
-	--brand-ink: oklch(0.47 0.16 250);
+	--brand-ink: oklch(0.42 0.13 253);
 	--success-ink: oklch(0.45 0.1 170);
-	--primary-ink: oklch(0.47 0.16 250);
-	--brand-dark: oklch(0.34 0.11 252);
+	--primary-ink: oklch(0.42 0.13 253);
+	--brand-dark: oklch(0.283 0.083 252);
 	/* Primary button gradient stops: linear-gradient(135deg, from -> to). */
-	--brand-gradient-from: oklch(0.54 0.18 258);
-	--brand-gradient-to: oklch(0.55 0.13 222);
+	--brand-gradient-from: oklch(0.44 0.133 253);
+	--brand-gradient-to: oklch(0.52 0.165 142);
 
-	--secondary-blue: oklch(0.45 0.1 255);
-	--tertiary: oklch(0.55 0.11 205);
+	--secondary-blue: oklch(0.397 0.114 251);
+	--tertiary: oklch(0.52 0.165 142);
 	--tertiary-foreground: hsl(0 0% 100%);
 	--placeholder: oklch(0.68 0.025 240);
 
-	--chart-1: oklch(0.6 0.17 250);
-	--chart-2: oklch(0.68 0.12 215);
-	--chart-3: hsl(42 93% 50%);
+	--chart-1: oklch(0.5 0.14 253);
+	--chart-2: oklch(0.62 0.2 142);
+	--chart-3: oklch(0.84 0.17 85);
 	--chart-4: oklch(0.58 0.2 285);
 	--chart-5: hsl(20 92% 56%);
 	--chart-6: oklch(0.7 0.12 190);
@@ -113,16 +114,16 @@
 	/* A permanently dark navy sidebar, independent of the light/dark toggle. */
 	--sidebar: oklch(0.17 0.04 252);
 	--sidebar-foreground: oklch(0.86 0.04 240);
-	--sidebar-primary: oklch(0.66 0.15 242);
+	--sidebar-primary: oklch(0.72 0.19 142);
 	--sidebar-primary-foreground: oklch(0.15 0.04 252);
 	--sidebar-accent: oklch(0.24 0.05 252);
 	--sidebar-accent-foreground: hsl(0 0% 100%);
 	--sidebar-border: oklch(0.24 0.05 252);
-	--sidebar-ring: oklch(0.66 0.15 242);
+	--sidebar-ring: oklch(0.72 0.19 142);
 
 	--auth-gradient-from: oklch(0.96 0.025 240);
 	--auth-gradient-via: oklch(0.99 0.004 230);
-	--auth-gradient-to: oklch(0.96 0.03 210);
+	--auth-gradient-to: oklch(0.96 0.035 142);
 
 	/*
 	 * Theme-independent deep navy for the cinematic bands (the learning framework, the final call
@@ -137,8 +138,8 @@
 	--glass-card-bg: rgb(255 255 255 / 0.72);
 	--glass-border: rgb(12 40 80 / 0.09);
 	--glass-shadow: 0 8px 32px rgb(20 70 140 / 0.08);
-	--gradient-from: #1d6fe0;
-	--gradient-to: #0a9ec2;
+	--gradient-from: #0a5299;
+	--gradient-to: #138a0c;
 }
 
 .dark {
@@ -150,7 +151,7 @@
 	--popover: oklch(0.17 0.03 252);
 	--popover-foreground: oklch(0.97 0.01 230);
 
-	--primary: oklch(0.72 0.14 238);
+	--primary: oklch(0.72 0.13 248);
 	--primary-foreground: oklch(0.14 0.03 252);
 	--secondary: oklch(0.22 0.035 252);
 	--secondary-foreground: oklch(0.97 0.01 230);
@@ -171,26 +172,26 @@
 
 	--border: oklch(1 0 0 / 0.1);
 	--input: oklch(1 0 0 / 0.14);
-	--ring: oklch(0.72 0.14 238);
+	--ring: oklch(0.72 0.13 248);
 
-	--brand: oklch(0.72 0.14 238);
+	--brand: oklch(0.72 0.13 248);
 	--brand-foreground: oklch(0.14 0.03 252);
-	--brand-dark: oklch(0.82 0.1 232);
+	--brand-dark: oklch(0.82 0.09 245);
 	/* On dark surfaces the light blue already reads well as text. */
 	--brand-ink: var(--brand);
 	--success-ink: var(--success);
 	--primary-ink: var(--primary);
-	--brand-gradient-from: oklch(0.74 0.14 245);
-	--brand-gradient-to: oklch(0.82 0.11 212);
+	--brand-gradient-from: oklch(0.72 0.13 248);
+	--brand-gradient-to: oklch(0.78 0.17 142);
 
 	--secondary-blue: oklch(0.75 0.09 245);
-	--tertiary: oklch(0.72 0.1 205);
+	--tertiary: oklch(0.76 0.17 142);
 	--tertiary-foreground: oklch(0.14 0.03 252);
 	--placeholder: oklch(0.55 0.03 245);
 
-	--chart-1: oklch(0.7 0.15 245);
-	--chart-2: oklch(0.78 0.11 212);
-	--chart-3: hsl(42 93% 58%);
+	--chart-1: oklch(0.7 0.13 248);
+	--chart-2: oklch(0.76 0.18 142);
+	--chart-3: oklch(0.86 0.16 85);
 	--chart-4: oklch(0.7 0.16 285);
 	--chart-5: hsl(20 92% 62%);
 	--chart-6: oklch(0.78 0.1 190);
@@ -199,15 +200,15 @@
 
 	--auth-gradient-from: oklch(0.16 0.04 255);
 	--auth-gradient-via: oklch(0.12 0.025 252);
-	--auth-gradient-to: oklch(0.16 0.04 220);
+	--auth-gradient-to: oklch(0.16 0.04 150);
 
 	--site-deep: oklch(0.1 0.025 252);
 	--glass-bg: rgb(255 255 255 / 0.035);
 	--glass-card-bg: rgb(255 255 255 / 0.05);
 	--glass-border: rgb(255 255 255 / 0.1);
 	--glass-shadow: 0 8px 32px rgb(0 0 0 / 0.37);
-	--gradient-from: #7cc4ff;
-	--gradient-to: #c4f1ff;
+	--gradient-from: #7ab8ff;
+	--gradient-to: #8fdc6a;
 }
 
 @theme inline {
@@ -468,7 +469,7 @@
 
 /*
  * ─── Glass and light ──────────────────────────────────────────────────────────────────────────
- * The frosted surfaces, gradient text and colour clouds of Joel's site. `glass`/`glass-card` sit
+ * The frosted surfaces, gradient text and colour clouds. `glass`/`glass-card` sit
  * in the components layer, so a `rounded-*` or `p-*` next to them still applies.
  */
 @layer components {
@@ -493,7 +494,7 @@
 	}
 	/* Light-on-dark gradient text for the fixed navy bands, whatever the theme. */
 	.text-gradient-ice {
-		background: linear-gradient(100deg, #7cc4ff, #c4f1ff);
+		background: linear-gradient(100deg, #7ab8ff, #8fdc6a);
 		-webkit-background-clip: text;
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
@@ -520,7 +521,7 @@
 		background-size: 56px 56px;
 		mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
 	}
-	/* A hairline gradient border (blue to cyan) drawn with a mask, for highlighted cards. */
+	/* A hairline gradient border (blue to green) drawn with a mask, for highlighted cards. */
 	.gradient-border {
 		position: relative;
 	}

@@ -1,7 +1,7 @@
 {
 	"id": "/",
-	"name": "Joel Talargie Academy",
-	"short_name": "JT Academy",
+	"name": "Ethio AI School",
+	"short_name": "Ethio AI",
 	"description": "Learn with purpose. Build with confidence. Self-paced courses in AI, technology and online work.",
 	"lang": "en",
 	"dir": "ltr",
@@ -19,8 +19,7 @@
 		{ "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
 		{ "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
 		{ "src": "/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-		{ "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-		{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+		{ "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
 	],
 	"shortcuts": [
 		{
@@ -51,7 +50,7 @@
 			"sizes": "1280x720",
 			"type": "image/webp",
 			"form_factor": "wide",
-			"label": "The academy home page"
+			"label": "The Ethio AI School home page"
 		},
 		{
 			"src": "/screenshots/courses-wide.webp",

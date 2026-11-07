@@ -56,7 +56,7 @@ describe('sendSms without SMS_KEY', () => {
 			{
 				to: '251912345678',
 				kind: 'test',
-				message: 'Joel Talargie Academy: Hello',
+				message: 'Ethio AI School: Hello',
 				status: 'SKIPPED',
 				error: null
 			}
@@ -64,8 +64,8 @@ describe('sendSms without SMS_KEY', () => {
 	});
 
 	it('does not brand a message twice', async () => {
-		await sendSms({ to: '0912345678', message: 'Joel Talargie Academy code: 123456.', kind: 'otp' });
-		expect(state.logged[0].message).toBe('Joel Talargie Academy code: 123456.');
+		await sendSms({ to: '0912345678', message: 'Ethio AI School code: 123456.', kind: 'otp' });
+		expect(state.logged[0].message).toBe('Ethio AI School code: 123456.');
 	});
 });
 

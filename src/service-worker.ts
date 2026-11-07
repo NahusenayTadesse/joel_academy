@@ -27,7 +27,7 @@ const OFFLINE_URL_AM = '/am/offline';
 
 const PRECACHE = [
 	...build,
-	...files.filter((file) => /^\/(icons\/|icon\.svg|favicon\.ico|manifest\.webmanifest)/.test(file)),
+	...files.filter((file) => /^\/(icons\/|logo-mark\.png|favicon\.ico|manifest\.webmanifest)/.test(file)),
 	OFFLINE_URL,
 	OFFLINE_URL_AM
 ];
@@ -44,7 +44,9 @@ const PRIVATE = [
 	/^\/(my|my-courses|my-certificates|my-wishlist|my-payments|my-notifications|checkout)(\/|$)/,
 	/^\/certificates\/verify(\/|$)/,
 	// Lesson attachments: only for students who may open the lesson, and never kept on the device.
-	/^\/lesson-files(\/|$)/
+	/^\/lesson-files(\/|$)/,
+	// Course PDFs: what they hold depends on who asks, and access can end.
+	/^\/downloads(\/|$)/
 ];
 
 /** Public pages worth keeping for offline reading. */

@@ -1,10 +1,12 @@
 <script lang="ts">
 	import Star from '@lucide/svelte/icons/star';
 	import Users from '@lucide/svelte/icons/users';
+	import YouTubeEmbed from '@nahu/admin-kit/components/YouTubeEmbed.svelte';
 	import CourseCard from '$lib/components/catalog/course-card.svelte';
 	import PageBreadcrumb from '$lib/components/common/page-breadcrumb.svelte';
 	import CourseChecklist from '$lib/components/courses/course-checklist.svelte';
 	import CourseCurriculum from '$lib/components/courses/course-curriculum.svelte';
+	import CourseDownloads from '$lib/components/courses/course-downloads.svelte';
 	import CourseEnrollCard from '$lib/components/courses/course-enroll-card.svelte';
 	import CourseReviews from '$lib/components/reviews/course-reviews.svelte';
 	import { reviewCountText } from '$lib/components/reviews/rules';
@@ -66,6 +68,8 @@
 				</div>
 			</div>
 
+			<YouTubeEmbed url={course.introVideoUrl} title={m.catalog_course_intro_video({ title: course.title })} />
+
 			<div class="prose prose-sm max-w-none text-foreground dark:prose-invert">
 				<h2 class="text-lg font-semibold text-foreground">{m.catalog_course_about()}</h2>
 				<p class="text-sm whitespace-pre-line text-muted-foreground">{course.description}</p>
@@ -74,6 +78,7 @@
 			<CourseChecklist title={m.catalog_course_outcomes()} items={course.outcomes} variant="check" />
 			<CourseChecklist title={m.catalog_course_requirements()} items={course.requirements} variant="dot" />
 			<CourseCurriculum sections={course.sections} />
+			<CourseDownloads slug={course.slug} handouts={data.handouts} />
 			<CourseReviews
 				summary={data.reviews.summary}
 				reviews={data.reviews.items}

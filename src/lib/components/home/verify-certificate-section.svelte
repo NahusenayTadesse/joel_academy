@@ -90,14 +90,10 @@
 				>
 					<div class="flex items-center justify-between border-b border-border/60 pb-4">
 						<div class="flex items-center gap-2.5">
-							<div
-								class="flex size-8 items-center justify-center rounded-lg bg-linear-to-br from-brand-gradient-from to-brand-gradient-to text-xs font-bold text-primary-foreground"
-							>
-								JTA
-							</div>
+							<img src="/logo-mark.png" alt="" width="32" height="32" class="size-8 rounded-lg ring-1 ring-border" />
 							<div>
 								<p class="text-xs font-bold tracking-wider text-foreground uppercase">
-									Joel Talargie Academy
+									Ethio AI School
 								</p>
 								<p class="text-[11px] text-muted-foreground">{m.home_verify_system()}</p>
 							</div>
@@ -125,7 +121,7 @@
 								</div>
 							</div>
 						</div>
-						<p class="mt-3 font-mono text-xs font-bold text-foreground">JTA-2026-000123</p>
+						<p class="mt-3 font-mono text-xs font-bold text-foreground">EAS-2026-000123</p>
 						<p class="mt-1 text-[11px] text-muted-foreground">
 							{m.home_verify_token()}
 						</p>

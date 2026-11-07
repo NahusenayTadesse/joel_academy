@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Toaster } from 'svelte-sonner';
+	import { setKitLabels } from '@nahu/admin-kit/labels';
 	import AnnouncementBar from '$lib/components/layout/announcement-bar.svelte';
 	import PublicFooter from '$lib/components/layout/public-footer.svelte';
 	import PublicHeader from '$lib/components/layout/public-header.svelte';
@@ -8,6 +9,9 @@
 	import { wishlist } from '$lib/wishlist.svelte';
 
 	let { data, children } = $props();
+
+	// The kit's YouTube player speaks the site's language; read per render, so a language switch shows.
+	setKitLabels(() => ({ youtubePlay: (title: string) => m.video_play({ title }), youtubeWatch: m.video_watch_on_youtube() }));
 
 	// Hearts follow the account once signed in (and the browser's own list when not).
 	$effect(() => {

@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { and, asc, eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
-import { course, courseSection, lesson, lessonResource } from '$lib/server/db/schema';
+import { course, courseHandout, courseSection, lesson, lessonResource } from '$lib/server/db/schema';
 
 /** The course a curriculum URL names, or a 404. */
 export async function courseFromParam(param: string) {
@@ -103,6 +103,28 @@ export async function moveResource(lessonId: number, id: number, direction: Dire
 			tx.update(lessonResource).set({ sortOrder }).where(eq(lessonResource.id, rowId))
 		);
 	});
+}
+
+export async function moveHandout(courseId: number, id: number, direction: Direction) {
+	return db.transaction(async (tx) => {
+		const siblings = await tx
+			.select({ id: courseHandout.id })
+			.from(courseHandout)
+			.where(eq(courseHandout.courseId, courseId))
+			.orderBy(asc(courseHandout.sortOrder), asc(courseHandout.id));
+		return move(siblings, id, direction, (rowId, sortOrder) =>
+			tx.update(courseHandout).set({ sortOrder }).where(eq(courseHandout.id, rowId))
+		);
+	});
+}
+
+/** A handout of this course, or null. */
+export async function handoutOf(courseId: number, handoutId: number) {
+	const [row] = await db
+		.select()
+		.from(courseHandout)
+		.where(and(eq(courseHandout.id, handoutId), eq(courseHandout.courseId, courseId)));
+	return row ?? null;
 }
 
 /** The next free position at the end of a list, so a new row lands last rather than first. */

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import GraduationCap from '@lucide/svelte/icons/graduation-cap';
 	import { ROUTES, siteConfig } from '$lib/site';
 
 	let { children } = $props();
@@ -13,9 +12,9 @@
 		<a
 			href={ROUTES.home}
 			aria-label={siteConfig.name}
-			class="absolute top-0 left-1/2 z-10 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl bg-brand text-brand-foreground shadow-lg ring-4 ring-background"
+			class="absolute top-0 left-1/2 z-10 size-14 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl shadow-lg ring-4 ring-background"
 		>
-			<GraduationCap class="size-7" aria-hidden="true" />
+			<img src="/logo-mark.png" alt="" width="56" height="56" class="size-full" />
 		</a>
 		<div class="rounded-3xl border border-border bg-card p-8 pt-12 shadow-xl sm:p-10 sm:pt-14">
 			{@render children()}

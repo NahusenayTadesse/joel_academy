@@ -90,6 +90,8 @@ export interface CourseDetail {
 	outcomes: string[];
 	requirements: string[];
 	sections: CourseSection[];
+	/** A YouTube link, drawn as a click-to-play player by the kit's `YouTubeEmbed`. */
+	introVideoUrl?: string | null;
 	/** Average of the published reviews, one decimal; undefined until a course has one. */
 	rating?: number;
 	/** Published reviews behind `rating`. */

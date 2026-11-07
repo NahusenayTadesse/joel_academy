@@ -6,7 +6,7 @@ import { deLocalizeUrl } from '$lib/paraglide/runtime';
  * "/am" twin: routing "/am/dashboard" to the dashboard would skip the access rules, which match
  * on the address as typed.
  */
-const UNLOCALIZED = /^\/(dashboard|api|media|lesson-files|health|newsletter|sitemap\.xml|robots\.txt)(\/|$)/;
+const UNLOCALIZED = /^\/(dashboard|api|media|lesson-files|downloads|health|newsletter|sitemap\.xml|robots\.txt)(\/|$)/;
 
 export const reroute: Reroute = ({ url }) => {
 	const path = deLocalizeUrl(url).pathname;

@@ -67,7 +67,7 @@
 							name="content"
 							bind:value={$form.content}
 							label="Lesson body"
-							description="Notes, instructions or the reading itself. Shown under the video for video lessons."
+							description="Notes, instructions or the reading itself. Shown under the video for video lessons. A YouTube link on a line of its own plays as a video."
 							error={$errors.content?.[0] ?? ''}
 							placeholder="Write the lesson…"
 							minHeight="22rem"

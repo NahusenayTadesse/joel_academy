@@ -40,10 +40,10 @@ function embeddedQr(pdf: PDFDocument): boolean[][] {
 }
 
 const input = {
-	academyName: 'Joel Talargie Academy',
+	academyName: 'Ethio AI School',
 	recipientName: 'Abebe Kebede',
 	courseTitle: 'Introduction to Data Analysis',
-	code: 'JTA-2026-000123',
+	code: 'EAS-2026-000123',
 	issuedAt: new Date('2026-05-04T10:00:00Z'),
 	verificationUrl: 'https://academy.example/certificates/verify/abc123'
 };

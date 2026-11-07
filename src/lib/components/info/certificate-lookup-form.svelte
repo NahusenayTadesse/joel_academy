@@ -115,7 +115,7 @@
 						</div>
 						<p class="text-xs text-muted-foreground">
 							{m.info_verify_code_hint_before()}
-							<span class="font-mono font-medium text-foreground">JTA-2026-...</span
+							<span class="font-mono font-medium text-foreground">EAS-2026-...</span
 							>{m.info_verify_code_hint_after()}
 						</p>
 					</div>

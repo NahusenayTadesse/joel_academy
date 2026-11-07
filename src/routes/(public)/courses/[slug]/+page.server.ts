@@ -14,6 +14,7 @@ import {
 	saveReview
 } from '$lib/server/reviews';
 import { waitText } from '$lib/server/spam';
+import { handoutLinks } from '$lib/server/handouts';
 import { requireActionUser } from '$lib/server/student';
 import { ROUTES, siteConfig } from '$lib/site';
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
@@ -82,6 +83,8 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 		publishedReviews(courseId, shown),
 		locals.user ? ownReview(locals.user.id, courseId) : null
 	]);
+	// Handouts for everyone, and the students-only ones for a student on the course.
+	const handouts = await handoutLinks(courseId, enrollment?.status === 'ACTIVE');
 	// The live numbers, so a review just written shows here even before the catalog cache turns over.
 	course.rating = summary.count ? summary.average : undefined;
 	course.reviewCount = summary.count || undefined;
@@ -115,6 +118,7 @@ export const load: PageServerLoad = async ({ params, url, locals }) => {
 	return {
 		course,
 		enrollment,
+		handouts,
 		reviews: {
 			summary,
 			items: reviews,

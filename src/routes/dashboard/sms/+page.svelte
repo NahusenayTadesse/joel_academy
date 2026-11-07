@@ -165,7 +165,7 @@
 					</Button>
 				</ActionForm>
 				<p class="mt-3 text-xs text-muted-foreground">
-					Texts start with “Joel Talargie Academy:”.
+					Texts start with “Ethio AI School:”.
 					{data.senderId ? 'Sent from the sender id in SMS_SHORTCODE_ID.' : 'Sent from the GeezSMS account’s default sender (no SMS_SHORTCODE_ID).'}
 					{data.staffPhones
 						? `${data.staffPhones} staff number${data.staffPhones === 1 ? '' : 's'} in ADMIN_NOTIFY_PHONE get new-receipt and contact alerts.`

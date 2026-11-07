@@ -1,4 +1,4 @@
-# Joel Academy
+# Ethio AI School
 
 A lean SvelteKit + MySQL LMS using @nahu/admin-kit, Better Auth and Superforms.
 

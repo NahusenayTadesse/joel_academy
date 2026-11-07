@@ -38,7 +38,7 @@
 		</Card>
 
 		<div class="max-w-sm text-center text-xs text-muted-foreground/80">
-			{m.info_verify_registry_record()} • Joel Talargie Academy
+			{m.info_verify_registry_record()} • Ethio AI School
 		</div>
 	</div>
 </div>

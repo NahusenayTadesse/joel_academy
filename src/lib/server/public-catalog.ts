@@ -114,7 +114,7 @@ async function loadSnapshot(): Promise<Snapshot> {
 			shortDescription: row.shortDescription || row.description.slice(0, 200),
 			thumbnailKey: null,
 			thumbnailUrl: mediaUrl(row.thumbnail),
-			presenterName: presenter?.name ?? 'Joel Talargie Academy',
+			presenterName: presenter?.name ?? 'Ethio AI School',
 			categoryId: owner ? String(owner.id) : '',
 			categoryName: owner?.name ?? '',
 			categorySlug: owner?.slug ?? '',
@@ -258,6 +258,7 @@ export async function getCourse(slug: string): Promise<(CourseDetail & { instruc
 		description: row.description,
 		outcomes: splitLines(row.outcomes),
 		requirements: splitLines(row.requirements),
+		introVideoUrl: row.introVideoUrl,
 		sections: curriculum,
 		instructorSlug: snap.presenterSlugs.get(summary.id)
 	};

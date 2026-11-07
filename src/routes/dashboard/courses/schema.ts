@@ -7,7 +7,8 @@ import {
 	optionalText,
 	orderField,
 	requiredText,
-	slugField
+	slugField,
+	youtubeUrl
 } from '../form-fields';
 
 // Mirrors the enums in the db schema, which is server-only and cannot be imported by the form.
@@ -34,6 +35,7 @@ const fields = z.object({
 	categoryId: optionalReference,
 	instructorId: optionalReference,
 	thumbnail: imageFile.optional(),
+	introVideoUrl: youtubeUrl,
 	accessType: z.enum(ACCESS_TYPES).default('FREE'),
 	price: z.number().min(0, 'Zero or more').max(99_999_999).default(0),
 	discountPrice: z.number().min(0, 'Zero or more').nullable().default(null),

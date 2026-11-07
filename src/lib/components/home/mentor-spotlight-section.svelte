@@ -79,7 +79,7 @@
 					{:else}
 						<div
 							class={cn(
-								'flex aspect-square w-full items-center justify-center rounded-[2.1rem] bg-linear-to-br from-[#1d6fe0] to-[#0b2a5c] text-8xl font-bold text-white/90',
+								'flex aspect-square w-full items-center justify-center rounded-[2.1rem] bg-linear-to-br from-[#0a5299] to-[#012a51] text-8xl font-bold text-white/90',
 								instructor.avatarColor
 							)}
 						>

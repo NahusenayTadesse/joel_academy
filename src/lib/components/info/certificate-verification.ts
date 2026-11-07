@@ -12,7 +12,7 @@ export interface CertificateVerification {
  * Supports:
  * - Full verification URLs: `https://.../certificates/verify/<token>`
  * - Query URLs: `https://.../certificates/verify?token=<token>` or `?code=<code>`
- * - Direct token / certificate code: `JTA-2026-...` or high-entropy verification tokens
+ * - Direct token / certificate code: `EAS-2026-...` or high-entropy verification tokens
  */
 export function extractVerificationIdentifier(raw: string): string {
 	const trimmed = raw.trim();

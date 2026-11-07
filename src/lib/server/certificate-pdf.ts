@@ -11,12 +11,10 @@ import {
 } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import QRCode from 'qrcode';
-// Ethiopic (Amharic, Tigrinya…) glyphs, which the PDF standard fonts lack. Inlined into the
-// server bundle so the deployed build needs no font files beside it. Droid Sans Ethiopic,
-// Apache-2.0 (see ./fonts/LICENSE.md).
-import ethiopicRegularData from './fonts/DroidSansEthiopic-Regular.ttf?inline';
-import ethiopicBoldData from './fonts/DroidSansEthiopic-Bold.ttf?inline';
 import { isoDay } from '$lib/components/student/certificate-format';
+import { drawable, ETHIOPIC, ethiopicBoldBytes, ethiopicRegularBytes, hex, runsOf, runsWidth } from './pdf/text';
+
+export { drawable };
 
 /*
  * The certificate as a PDF: the same A4-landscape sheet as `certificate-sheet.svelte` (and the
@@ -24,9 +22,9 @@ import { isoDay } from '$lib/components/student/certificate-format';
  * verification page. Coordinates below are the sheet's (842 x 595 pt, y downwards); `Y` turns
  * them into PDF space.
  *
- * The standard PDF fonts cover Latin script only (WinAnsi), and this project has no font
- * embedding (no fontkit), so a character outside it prints as "?" — the on-screen certificate,
- * and printing it, show every script.
+ * The standard PDF fonts cover Latin script only (WinAnsi); Ethiopic names and titles are drawn
+ * in an embedded fallback font (`./pdf/text`), and anything else prints as "?" — the on-screen
+ * certificate, and printing it, show every script.
  */
 
 export interface CertificatePdfInput {
@@ -42,12 +40,9 @@ const W = 842;
 const H = 595;
 const Y = (y: number) => H - y;
 
-const hex = (value: string): RGB =>
-	rgb(parseInt(value.slice(1, 3), 16) / 255, parseInt(value.slice(3, 5), 16) / 255, parseInt(value.slice(5, 7), 16) / 255);
-
 const C = {
-	primary: hex('#0B2A5C'),
-	accent: hex('#1D6FE0'),
+	primary: hex('#012A51'),
+	accent: hex('#0A5299'),
 	gold: hex('#C5A059'),
 	borderGold: hex('#DFC68E'),
 	darkInk: hex('#0F172A'),
@@ -82,19 +77,6 @@ export function verificationQrPath(url: string): { size: number; path: string } 
 	return { size: modules.size, path };
 }
 
-/** `text` with every character the font cannot draw replaced, so drawing it never throws. */
-export function drawable(text: string, font: PDFFont): string {
-	const supported = new Set(font.getCharacterSet());
-	return Array.from(text.normalize('NFC'))
-		.map((char) => {
-			if (supported.has(char.codePointAt(0)!)) return char;
-			// An accented letter the font lacks still reads as its base letter.
-			const base = char.normalize('NFD').replace(/[̀-ͯ]/g, '');
-			return base && Array.from(base).every((part) => supported.has(part.codePointAt(0)!)) ? base : '?';
-		})
-		.join('');
-}
-
 interface TextOptions {
 	font: PDFFont;
 	size: number;
@@ -105,40 +87,6 @@ interface TextOptions {
 	/** Shrinks to fit this width, down to `minSize`, then shortens with an ellipsis. */
 	maxWidth?: number;
 	minSize?: number;
-}
-
-const ETHIOPIC = /[\u1200-\u139f\u2d80-\u2ddf\uab00-\uab2f]/u;
-
-const fontBytes = (dataUri: string) => Buffer.from(dataUri.slice(dataUri.indexOf(',') + 1), 'base64');
-
-interface Run {
-	text: string;
-	font: PDFFont;
-}
-
-/**
- * Splits `text` into runs, each in the font that can draw it: the Latin font where it can, the
- * fallback (Ethiopic) where only it can. A title like "የAI መሰረታዊ — AI Foundations" mixes both.
- */
-function runsOf(text: string, font: PDFFont, fallback?: PDFFont): Run[] {
-	const primary = new Set(font.getCharacterSet());
-	const secondary = fallback ? new Set(fallback.getCharacterSet()) : null;
-	const runs: Run[] = [];
-	for (const char of Array.from(text.normalize('NFC'))) {
-		const code = char.codePointAt(0)!;
-		const last = runs[runs.length - 1];
-		// The Latin font unless only the fallback has the character; a space stays in its run.
-		const latin = primary.has(code) || !secondary?.has(code);
-		const use = char === ' ' && last ? last.font : latin ? font : fallback!;
-		if (last && last.font === use) last.text += char;
-		else runs.push({ text: char, font: use });
-	}
-	return runs.map((run) => ({ ...run, text: drawable(run.text, run.font) }));
-}
-
-function runsWidth(runs: Run[], size: number, spacing = 0) {
-	const chars = runs.reduce((total, run) => total + Array.from(run.text).length, 0);
-	return runs.reduce((total, run) => total + run.font.widthOfTextAtSize(run.text, size), 0) + spacing * Math.max(0, chars - 1);
 }
 
 /** Draws `value` centred on `cx` with its baseline at sheet `y`, mixing fonts where needed. */
@@ -237,8 +185,8 @@ export async function certificatePdf(input: CertificatePdfInput): Promise<Uint8A
 		pdf.embedFont(StandardFonts.HelveticaBold),
 		pdf.embedFont(StandardFonts.HelveticaOblique),
 		verificationQrPng(input.verificationUrl).then((png) => pdf.embedPng(png)),
-		needsEthiopic ? pdf.embedFont(fontBytes(ethiopicRegularData), { subset: true }) : undefined,
-		needsEthiopic ? pdf.embedFont(fontBytes(ethiopicBoldData), { subset: true }) : undefined
+		needsEthiopic ? pdf.embedFont(ethiopicRegularBytes(), { subset: true }) : undefined,
+		needsEthiopic ? pdf.embedFont(ethiopicBoldBytes(), { subset: true }) : undefined
 	]);
 
 	// Canvas and the triple border.

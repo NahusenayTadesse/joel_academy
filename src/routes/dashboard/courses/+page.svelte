@@ -87,6 +87,14 @@
 				inTable: false
 			},
 			{
+				name: 'introVideoUrl',
+				label: 'Intro video (YouTube link, optional)',
+				type: 'text',
+				required: false,
+				inTable: false,
+				placeholder: 'https://youtu.be/… — plays at the top of the course page'
+			},
+			{
 				name: 'accessType',
 				label: 'Access',
 				type: 'select',

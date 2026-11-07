@@ -39,7 +39,7 @@ import { sendEmail } from './send';
  * stay English.
  */
 
-const BRAND = '#1d6fe0';
+const BRAND = '#0a5299';
 
 const escape = (value: string | number | null | undefined) =>
 	String(value ?? '')

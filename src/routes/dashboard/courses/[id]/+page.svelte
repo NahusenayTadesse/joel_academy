@@ -2,6 +2,8 @@
 	import HiddenField from '@nahu/admin-kit/formComponents/HiddenField.svelte';
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
+	import FileDown from '@lucide/svelte/icons/file-down';
+	import FileText from '@lucide/svelte/icons/file-text';
 	import Plus from '@lucide/svelte/icons/plus';
 	import SquarePen from '@lucide/svelte/icons/square-pen';
 	import Trash from '@lucide/svelte/icons/trash';
@@ -18,6 +20,7 @@
 	import { Badge } from '@nahu/admin-kit/components/ui/badge/index.js';
 	import { renderSnippet } from '@nahu/admin-kit/components/ui/data-table/index.js';
 	import { resolve } from '$app/paths';
+	import { DOWNLOADS } from '$lib/downloads';
 	import { formatDuration } from '../../form-fields';
 	import LessonFields from './LessonFields.svelte';
 	import MoveButtons from './MoveButtons.svelte';
@@ -178,6 +181,12 @@
 					<ExternalLink class="size-4" /> View on site
 				</Button>
 			{/if}
+			<Button href="/dashboard/courses/{data.course.id}/handouts" variant="outline" size="sm">
+				<FileText class="size-4" /> Handouts{data.handoutCount ? ` (${data.handoutCount})` : ''}
+			</Button>
+			<Button href="{DOWNLOADS.outline(data.course.slug)}?view" target="_blank" variant="outline" size="sm" data-sveltekit-reload>
+				<FileDown class="size-4" /> Outline PDF
+			</Button>
 			<FormDialog
 				title="Add section"
 				triggerLabel="Add section"
@@ -220,6 +229,16 @@
 				/>
 				<Button variant="ghost" size="sm" onclick={() => editSection(section)}>
 					<SquarePen class="size-4" /> Edit
+				</Button>
+				<Button
+					href="{DOWNLOADS.section(data.course.slug, section.id)}?view"
+					target="_blank"
+					variant="ghost"
+					size="sm"
+					data-sveltekit-reload
+					title="The section's workbook, as an enrolled student downloads it"
+				>
+					<FileDown class="size-4" /> Workbook PDF
 				</Button>
 				<ConfirmAction
 					action="?/deleteSection"

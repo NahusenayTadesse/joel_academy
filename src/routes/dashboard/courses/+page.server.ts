@@ -59,7 +59,7 @@ const crud = contentCrud({
 			values.discountPrice = money(values.discountPrice);
 		}
 		nullToBlank(values, ['subtitle', 'shortDescription']);
-		blankToNull(values, ['outcomes', 'requirements', 'tags']);
+		blankToNull(values, ['outcomes', 'requirements', 'tags', 'introVideoUrl']);
 		// The first publish dates the course; republishing after a pause keeps that date.
 		if (values.status && !before?.publishedAt) values.publishedAt = new Date();
 		return values;

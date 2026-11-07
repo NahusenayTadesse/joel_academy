@@ -2,7 +2,7 @@ import { asc, count, eq, inArray } from 'drizzle-orm';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { db } from '$lib/server/db';
-import { courseSection, lesson, lessonProgress, lessonResource } from '$lib/server/db/schema';
+import { courseHandout, courseSection, lesson, lessonProgress, lessonResource } from '$lib/server/db/schema';
 import {
 	courseFromParam,
 	lessonOf,
@@ -20,7 +20,7 @@ import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ params }) => {
 	const course = await courseFromParam(params.id);
 
-	const [sections, lessons, sectionForm, sectionEditForm, lessonForm] = await Promise.all([
+	const [sections, lessons, [handouts], sectionForm, sectionEditForm, lessonForm] = await Promise.all([
 		db
 			.select()
 			.from(courseSection)
@@ -42,6 +42,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			.from(lesson)
 			.where(eq(lesson.courseId, course.id))
 			.orderBy(asc(lesson.sortOrder), asc(lesson.id)),
+		db.select({ total: count() }).from(courseHandout).where(eq(courseHandout.courseId, course.id)),
 		superValidate(zod4(sectionSchema)),
 		superValidate(zod4(sectionEditSchema)),
 		superValidate(zod4(lessonSchema))
@@ -70,6 +71,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	return {
 		course,
+		handoutCount: handouts.total,
 		sections: sections.map((section) => ({
 			...section,
 			lessons: lessons

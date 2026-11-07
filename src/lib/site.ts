@@ -1,8 +1,8 @@
 import { localizePath } from '$lib/i18n';
 
 export const siteConfig = {
-	name: 'Joel Talargie Academy',
-	shortName: 'JTA',
+	name: 'Ethio AI School',
+	shortName: 'EAS',
 	tagline: 'Digital Construct',
 	description: 'Learn with purpose. Build with confidence.'
 } as const;

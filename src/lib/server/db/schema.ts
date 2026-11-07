@@ -69,6 +69,8 @@ export const course = mysqlTable(
 		instructorId: int('instructor_id').references(() => instructor.id, { onDelete: 'set null' }),
 		/** A kit-stored upload, or a path under /static for seeded courses. */
 		thumbnail: varchar('thumbnail', { length: 255 }),
+		/** A YouTube link (as pasted from the address bar or Share), played on the course page. */
+		introVideoUrl: varchar('intro_video_url', { length: 500 }),
 		accessType: mysqlEnum('access_type', ACCESS_TYPES).notNull().default('FREE'),
 		price: decimal('price', { precision: 10, scale: 2 }).notNull().default('0.00'),
 		discountPrice: decimal('discount_price', { precision: 10, scale: 2 }),
@@ -158,6 +160,43 @@ export const lessonResource = mysqlTable(
 		sortOrder: int('sort_order').notNull().default(0)
 	},
 	(table) => [index('resource_lesson_idx').on(table.lessonId)]
+);
+
+export const HANDOUT_STYLES = ['DOCUMENT', 'CHECKLIST', 'WORKSHEET'] as const;
+export const HANDOUT_AUDIENCES = ['STUDENTS', 'PUBLIC'] as const;
+
+/**
+ * A branded PDF staff write for a course, or for one of its sections: notes, a checklist, a
+ * worksheet. The body is sanitised HTML like a lesson's; the PDF is drawn from it on every
+ * download (`$lib/server/course-pdfs`), so it always shows the current text and branding.
+ */
+export const courseHandout = mysqlTable(
+	'course_handout',
+	{
+		id: int('id').autoincrement().primaryKey(),
+		courseId: int('course_id')
+			.notNull()
+			.references(() => course.id, { onDelete: 'cascade' }),
+		/** Null for a handout that belongs to the whole course. */
+		sectionId: int('section_id').references(() => courseSection.id, { onDelete: 'cascade' }),
+		title: varchar('title', { length: 200 }).notNull(),
+		/** Printed under the title on the cover. */
+		summary: varchar('summary', { length: 500 }),
+		/** CHECKLIST prints lists as tick boxes; WORKSHEET adds name/date fields and answer lines. */
+		style: mysqlEnum('style', HANDOUT_STYLES).notNull().default('DOCUMENT'),
+		/** STUDENTS: those with an active enrollment. PUBLIC: anyone who can see the course. */
+		audience: mysqlEnum('audience', HANDOUT_AUDIENCES).notNull().default('STUDENTS'),
+		/** Sanitised HTML. */
+		content: text('content'),
+		published: boolean('published').notNull().default(false),
+		sortOrder: int('sort_order').notNull().default(0),
+		createdAt: timestamp('created_at').defaultNow().notNull(),
+		updatedAt: timestamp('updated_at')
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull()
+	},
+	(table) => [index('handout_course_idx').on(table.courseId), index('handout_section_idx').on(table.sectionId)]
 );
 
 /** Bank accounts and wallets a student can pay a course fee into. */
@@ -267,7 +306,7 @@ export const certificate = mysqlTable(
 	'certificate',
 	{
 		id: int('id').autoincrement().primaryKey(),
-		/** Printed on the certificate: JTA-2026-000123. */
+		/** Printed on the certificate: EAS-2026-000123. */
 		code: varchar('code', { length: 32 }).notNull().unique(),
 		/** Unguessable, for the QR code's verification link. */
 		token: varchar('token', { length: 64 }).notNull().unique(),

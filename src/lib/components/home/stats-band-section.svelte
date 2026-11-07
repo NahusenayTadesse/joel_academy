@@ -26,7 +26,7 @@
 {#if items.length > 0}
 	<section class="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6">
 		<div
-			class="relative isolate overflow-hidden rounded-[2rem] bg-linear-to-br from-[#0b2a5c] via-[#1d6fe0] to-[#0a9ec2] px-6 py-14 text-white shadow-glow"
+			class="relative isolate overflow-hidden rounded-[2rem] bg-linear-to-br from-[#012a51] via-[#0a5299] to-[#127a0a] px-6 py-14 text-white shadow-glow"
 		>
 			<div
 				class="absolute inset-0 -z-10 opacity-30"
@@ -35,7 +35,7 @@
 			></div>
 			<div
 				class="glow absolute -top-1/2 -right-1/4 -z-10 size-[30rem] opacity-40"
-				style:--glow-color="#c4f1ff"
+				style:--glow-color="#8fdc6a"
 				aria-hidden="true"
 			></div>
 			<div

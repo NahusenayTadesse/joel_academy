@@ -1,5 +1,4 @@
 <script lang="ts">
-	import GraduationCap from '@lucide/svelte/icons/graduation-cap';
 	import RotateCw from '@lucide/svelte/icons/rotate-cw';
 	import WifiOff from '@lucide/svelte/icons/wifi-off';
 	import Button from '$lib/components/ui/button.svelte';
@@ -21,9 +20,7 @@
 	class="public-site flex min-h-dvh flex-col items-center justify-center gap-6 bg-background px-6 py-16 text-center [padding-top:max(4rem,env(safe-area-inset-top))]"
 >
 	<a href={ROUTES.home} class="flex items-center gap-2">
-		<span class="flex size-8 items-center justify-center rounded-lg bg-brand text-brand-foreground">
-			<GraduationCap class="size-4" />
-		</span>
+		<img src="/logo-mark.png" alt="" width="32" height="32" class="size-8 rounded-lg ring-1 ring-border" />
 		<span class="text-sm font-semibold tracking-tight">{siteConfig.name}</span>
 	</a>
 	<span class="flex size-16 items-center justify-center rounded-full bg-muted">

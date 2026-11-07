@@ -49,7 +49,7 @@
 
 {#if announcement.enabled && !dismissed}
 	<div
-		class="flex items-center justify-center gap-2 bg-linear-to-r from-[#0b2a5c] via-[#1d6fe0] to-[#0a7fa8] bg-[length:200%_100%] px-4 py-2 text-center text-xs font-medium text-white animate-shimmer [animation-duration:12s] sm:text-sm"
+		class="flex items-center justify-center gap-2 bg-linear-to-r from-[#012a51] via-[#0a5299] to-[#127a0a] bg-[length:200%_100%] px-4 py-2 text-center text-xs font-medium text-white animate-shimmer [animation-duration:12s] sm:text-sm"
 	>
 		<span>
 			{announcement.text}

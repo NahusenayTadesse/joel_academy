@@ -21,6 +21,7 @@
 	import Button from '$lib/components/ui/button.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { ROUTES, siteConfig } from '$lib/site';
+	import { DOWNLOADS } from '$lib/downloads';
 	import { cn } from '@nahu/admin-kit/utils.js';
 
 	let { data } = $props();
@@ -44,6 +45,39 @@
 	const nextLesson = $derived(
 		currentIndex >= 0 && currentIndex < flatLessons.length - 1 ? flatLessons[currentIndex + 1] : undefined
 	);
+
+	/* The PDFs that go with the lesson: its section's workbook and handouts, the course's, the outline. */
+	const STYLE_NAMES = {
+		DOCUMENT: m.learn_pdf_style_document,
+		CHECKLIST: m.learn_pdf_style_checklist,
+		WORKSHEET: m.learn_pdf_style_worksheet
+	};
+	const downloads = $derived([
+		...(activeSection
+			? [
+					{
+						key: `section-${activeSection.id}`,
+						title: activeSection.title,
+						detail: m.learn_pdf_section_workbook(),
+						href: DOWNLOADS.section(data.course.slug, activeSection.id)
+					}
+				]
+			: []),
+		...data.handouts
+			.filter((handout) => handout.sectionId === null || handout.sectionId === activeSection?.id)
+			.map((handout) => ({
+				key: `handout-${handout.id}`,
+				title: handout.title,
+				detail: STYLE_NAMES[handout.style](),
+				href: handout.href
+			})),
+		{
+			key: 'outline',
+			title: data.course.title,
+			detail: m.learn_pdf_course_outline(),
+			href: DOWNLOADS.outline(data.course.slug)
+		}
+	]);
 
 	const isActive = $derived(data.enrollment?.status === 'ACTIVE');
 	/* A video lesson is completed by watching it, as in the original; a finished one stays open. */
@@ -217,9 +251,10 @@
 							<LessonTabs
 								lessonId={activeLesson.id}
 								lessonType={activeLesson.lessonType}
-								html={data.lessonContent.html}
+								body={data.lessonContent.body}
 								externalUrl={data.lessonContent.externalUrl}
 								resources={data.lessonContent.resources}
+								{downloads}
 							/>
 						{/key}
 					{/if}

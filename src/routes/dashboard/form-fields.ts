@@ -1,4 +1,5 @@
 import { z } from 'zod/v4';
+import { isUsableYouTubeUrl } from '@nahu/admin-kit/youtube';
 import { LESSON_VIDEO_HINT, parseLessonVideo } from '$lib/video';
 
 /*
@@ -69,6 +70,20 @@ export const lessonVideoUrl = z
 	.trim()
 	.max(500)
 	.refine((value) => value === '' || parseLessonVideo(value) !== null, LESSON_VIDEO_HINT)
+	.nullish();
+
+/**
+ * A YouTube video: the link from the address bar or the Share button, read by the kit's
+ * `parseYouTubeUrl`. Never the `<iframe>` snippet: the site draws its own player.
+ */
+export const youtubeUrl = z
+	.string()
+	.trim()
+	.max(500)
+	.refine(
+		(value) => value === '' || isUsableYouTubeUrl(value),
+		'Paste the YouTube link from the address bar or Share, like https://youtu.be/…'
+	)
 	.nullish();
 
 /** One stored image, under the kit's upload limit. */

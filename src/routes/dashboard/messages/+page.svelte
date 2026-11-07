@@ -25,7 +25,7 @@
 	]);
 
 	const replyLink = (row: Row) =>
-		`mailto:${row.email}?subject=${encodeURIComponent('Re: your message to Joel Talargie Academy')}`;
+		`mailto:${row.email}?subject=${encodeURIComponent('Re: your message to Ethio AI School')}`;
 
 	const columns: ColumnDef<Row>[] = [
 		{

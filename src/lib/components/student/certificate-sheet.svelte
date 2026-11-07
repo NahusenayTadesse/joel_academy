@@ -26,8 +26,8 @@
 		qr?: { size: number; path: string } | null;
 	} = $props();
 
-	const primary = '#0B2A5C';
-	const accent = '#1D6FE0';
+	const primary = '#012A51';
+	const accent = '#0A5299';
 	const gold = '#C5A059';
 	const borderGold = '#DFC68E';
 	const darkInk = '#0F172A';

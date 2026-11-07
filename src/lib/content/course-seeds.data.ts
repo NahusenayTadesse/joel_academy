@@ -76,13 +76,13 @@ export const COURSE_SEEDS: CourseSeed[] = [
 						isPreview: true,
 						videoUrl: 'https://youtu.be/xTz_mlIin5c',
 						content:
-							'<p>Welcome to the <strong>Joel Talargie Academy</strong>! In this opening orientation, lead instructor <strong>Joel Talargie</strong> welcomes you to the academy and provides a complete roadmap of modern generative AI and tech ecosystems.</p><h3>Key Takeaways</h3><ul><li>The shift from traditional computing to AI-accelerated workflows</li><li>Essential accounts to set up: Anthropic Claude, OpenAI ChatGPT, Dala AI Studio, Google AI</li><li>Best practices for data security, privacy, and effective continuous learning</li></ul>',
+							'<p>Welcome to the <strong>Ethio AI School</strong>! In this opening orientation, lead instructor <strong>Joel Talargie</strong> welcomes you to the academy and provides a complete roadmap of modern generative AI and tech ecosystems.</p><h3>Key Takeaways</h3><ul><li>The shift from traditional computing to AI-accelerated workflows</li><li>Essential accounts to set up: Anthropic Claude, OpenAI ChatGPT, Dala AI Studio, Google AI</li><li>Best practices for data security, privacy, and effective continuous learning</li></ul>',
 						resources: [
 							{
 								id: 'res-ai-orient-1',
 								title: 'Academy Orientation & Tool Setup Guide (PDF)',
 								externalUrl: 'https://preview.mailerlite.io/forms/2549291/194589885305193786/share',
-								originalFileName: 'JoelAcademy-AI-Setup-Guide.pdf',
+								originalFileName: 'EthioAISchool-AI-Setup-Guide.pdf',
 								mimeType: 'application/pdf',
 								fileSize: 1024 * 450
 							},
@@ -98,13 +98,13 @@ export const COURSE_SEEDS: CourseSeed[] = [
 					},
 					{
 						id: 'l-ai-orient-2',
-						title: 'How to Navigate & Get Certified in Joel Academy',
+						title: 'How to Navigate & Get Certified in Ethio AI School',
 						lessonType: 'TEXT',
 						durationSeconds: 300,
 						isMandatory: true,
 						isPreview: true,
 						content:
-							'<p>Learn how to maximize your learning experience inside the Joel Talargie Academy. Track your progress across modules, save timestamped lesson notes, complete hands-on practical exercises, and claim your verified, shareable certificate upon course completion.</p>'
+							'<p>Learn how to maximize your learning experience inside the Ethio AI School. Track your progress across modules, save timestamped lesson notes, complete hands-on practical exercises, and claim your verified, shareable certificate upon course completion.</p>'
 					}
 				]
 			}

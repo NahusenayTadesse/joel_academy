@@ -153,7 +153,7 @@
 				{#if result.courseTitle}
 					{@render field(m.info_verify_field_course(), result.courseTitle, 'mt-0.5 font-semibold text-foreground', true)}
 				{/if}
-				{@render field(m.info_verify_field_issued_by(), 'Joel Talargie Academy', 'mt-0.5 font-medium text-foreground')}
+				{@render field(m.info_verify_field_issued_by(), 'Ethio AI School', 'mt-0.5 font-medium text-foreground')}
 				{#if result.certificateNumber}
 					{@render field(
 						m.info_verify_field_certificate_id(),

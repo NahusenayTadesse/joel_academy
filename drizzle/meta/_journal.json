@@ -50,6 +50,20 @@
       "when": 1792754596706,
       "tag": "0006_page_views",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1794064606566,
+      "tag": "0007_handouts",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1794078341283,
+      "tag": "0008_course_intro_video",
+      "breakpoints": true
     }
   ]
 }
